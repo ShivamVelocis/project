@@ -8,12 +8,9 @@ exports.addContent = async (req, res) => {
   try {
     let content = new Content(req.body);
     let saveContent = await content.save();
-    // console.log(saveContent);
     res.redirect("all");
   } catch (error) {
-    // console.log(error.message);
     res.render("addContent", { error: "Error while adding content" });
-    // res.render("ErrorPage", { error: "Error while adding new content" });
   }
 };
 
@@ -32,7 +29,6 @@ exports.getContent = async (req, res) => {
 exports.getContents = async (req, res) => {
   try {
     let contents = await Content.find({});
-    // console.log(contents)
     if (contents.length > 0) {
       res.render("contents", { contents: contents });
     }else{
@@ -48,7 +44,6 @@ exports.removeContent = async (req, res) => {
   // console.log(id);
   try {
     let result = await Content.findOneAndRemove({ _id: id });
-    // console.log(result);
     if (result !== undefined && result !== null) {
       return res.send(result);
     }
@@ -71,7 +66,6 @@ exports.contentToUpdate = async (req, res) => {
 };
 
 exports.updateContent = async (req, res) => {
-  // console.log(req.params.id);
   let id = req.params.id;
   let updatedContent = req.body;
   try {

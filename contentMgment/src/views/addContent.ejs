@@ -2,37 +2,37 @@
 <html lang="en">
 
 <head>
-    <%- include('partials/head.ejs') %>>
-    <script>
-        function validateForm() {
-            let title = document.forms["myForm"]["title"].value;
-            let description = document.forms["myForm"]["description"].value;
-            if (title == "") {
-                alert("Title must be filled out");
-                return false;
+    <%- include('partials/head.ejs') %>
+        <script>
+            function validateForm() {
+                let title = document.forms["myForm"]["title"].value;
+                let description = document.forms["myForm"]["description"].value;
+                if (title == "") {
+                    alert("Title must be filled out");
+                    return false;
+                }
+                if (description == "") {
+                    alert("Description must be filled out");
+                    return false;
+                }
+                return true
             }
-            if (description == "") {
-                alert("Description must be filled out");
-                return false;
-            }
-            return true
-        }
 
-    </script>
-    <title>Content Mangement</title>
+        </script>
+        <title>Content Mangement</title>
 </head>
 
 <body>
 
     <div class="container">
         <%- include('partials/NavBar.ejs') %>
-            <div class="row justify-content-start">
+            <div class="row justify-content-center mt-5">
                 <% if(error){ %>
                     <div class="alert alert-danger" role="alert">
                         <%= error %>
                     </div>
                     <% } %>
-                        <div class="col-4 offset-md-4">
+                        <div class="col-6 jumbotron">
                             <form name="myForm" action="/content/" method="post" onsubmit="return validateForm()">
                                 <div class="form-group">
                                     <label for="title">Title</label>
@@ -43,7 +43,7 @@
                                     <textarea class="form-control" id="description" rows="3"
                                         name="description"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-light">Submit</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
                         </div>
             </div>

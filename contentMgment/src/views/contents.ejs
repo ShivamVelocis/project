@@ -46,7 +46,7 @@
 
     <div class="container">
         <%- include('partials/NavBar.ejs') %>
-            <div class="row justify-content-start">
+            <div class="row justify-content-center mt-5">
                 <div class="col">
                     <% if(contents.length>0) {%>
                         <table class="table">
@@ -70,7 +70,7 @@
                                             <%= content.title%>
                                         </td>
                                         <td>
-                                            <%= content.description%>
+                                            <%= content.description.substring(0, 20)%>...
                                         </td>
                                         <td>
                                             <button class="btn" onclick="viewContent('<%= content._id%>')">

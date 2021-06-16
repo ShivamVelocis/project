@@ -25,8 +25,8 @@
 <body>
     <div class="container">
         <%- include('partials/NavBar.ejs') %>
-        <div class="row justify-content-start">
-            <div class="col- offset-md-4">
+        <div class="row justify-content-center mt-3">
+            <div class="col-6 jumbotron">
                 <form name="myForm" action="/content/updateContent/<%=oldCont._id%>" onsubmit="return validateForm()"
                     method="post">
                     <div class="form-group">
@@ -38,7 +38,7 @@
                         <textarea class="form-control" id="description" rows="3"
                             name="description"><%= oldCont.description%></textarea>
                     </div>
-                    <button type="submit" class="btn btn-light">Update</button>
+                    <button type="submit" class="btn btn-secondary">Update</button>
                 </form>
             </div>
         </div>
