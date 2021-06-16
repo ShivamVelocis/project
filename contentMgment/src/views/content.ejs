@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs') %>
+    <title>Content</title>
+</head>
+
+<body>
+    <div class="container">
+        <%- include('partials/NavBar.ejs') %>
+            <h2>Content</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <b> Title: </b>
+                        <%=content.title%>
+                    </h5>
+                    <p class="card-text">
+                        <b>Description:</b>
+                        <%=content.description%>
+                    </p>
+                </div>
+            </div>
+    </div>
+
+
+</body>
+
+</html>

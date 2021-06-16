@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+    <%- include('partials/head.ejs') %>
+    <title>Contents</title>
+    <style>
+        .btn {
+            background-color: DodgerBlue;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Darker background on mouse-over */
+        .btn:hover {
+            background-color: RoyalBlue;
+        }
+    </style>
+    <script>
+        function viewContent(id) {
+            window.location = `/content/${id}`
+        }
+        function editContent(id) {
+            window.location = `/content/update/${id}`
+        }
+        async function deleteContent(id) {
+            let result = await fetch(`/content/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json"
+                }
+            });
+            // console.log(result)
+            if (result.statusText == "OK") {
+                window.location = `/content/all`
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <%- include('partials/NavBar.ejs') %>
+            <div class="row justify-content-start">
+                <div class="col">
+                    <table class="table">
+                        <!-- Table header -->
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <!-- Table body -->
+                        <tbody>
+                            <% contents.map((content,i)=>{%>
+                                <tr>
+                                    <th scope="row">
+                                        <%= i+1%>
+                                    </th>
+                                    <td>
+                                        <%= content.title%>
+                                    </td>
+                                    <td>
+                                        <%= content.description%>
+                                    </td>
+                                    <td>
+                                        <button class="btn" onclick="viewContent('<%= content._id%>')">
+                                            <i class="fa fa-location-arrow"></i>
+                                        </button>
+                                        <button class="btn" onclick="editContent('<%= content._id%>')">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button class="btn" type="button" data-toggle="modal" data-target='#<%=i %>'>
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                        <!-- Modal start-->
+                                        <div class="modal fade" id='<%=i %>' tabindex="-1" role="dialog"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Warning </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Do you want to delete <b>
+                                                            <%= content.title %>
+                                                        </b>?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger"
+                                                            onclick="deleteContent('<%= content._id%>')"> Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Modal end-->
+                                    </td>
+                                </tr>
+                                <%}) %>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" onclick="window.location =`/content/`"> Add Content </button>
+    </div>
+
+
+</body>
+
+</html>
