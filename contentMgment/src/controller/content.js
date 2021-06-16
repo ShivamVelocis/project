@@ -32,11 +32,14 @@ exports.getContent = async (req, res) => {
 exports.getContents = async (req, res) => {
   try {
     let contents = await Content.find({});
+    // console.log(contents)
     if (contents.length > 0) {
       res.render("contents", { contents: contents });
+    }else{
+      res.render("ErrorPage", { error: "No content added yet!" });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Unable to get ant content" });
+    res.render("ErrorPage", { error: "Unable to get any content" });
   }
 };
 
