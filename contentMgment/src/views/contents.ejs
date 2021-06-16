@@ -70,7 +70,7 @@
                                             <%= content.title%>
                                         </td>
                                         <td>
-                                            <%= content.description.substring(0, 20)%>...
+                                            <%= content.description.substring(0, 20)%> <% if(content.description.length>=20) {%>...<% } %>  
                                         </td>
                                         <td>
                                             <button class="btn" onclick="viewContent('<%= content._id%>')">
