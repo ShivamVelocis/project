@@ -1,0 +1,245 @@
+body {margin:auto; background:#164e5f; font-size:14px; font-family: 'Open Sans', sans-serif;}
+.text-muted{color:#cccccc!important;}
+table{border-radius:4px 4px 0px 0px;overflow:hidden;}
+th{text-align:center;background:#dfeaec;font-weight:400;border-color:#dfeaec!important;}
+input:focus,select:focus,button:focus{border-color:inherit!important;box-shadow:none!important}
+.cardCampaignCustomer{border-radius:4px 4px 0px 0px}
+/*----------profile css start-------------*/
+.profileSection{background:#fff;border-top:10px solid #19698e;padding:3px 15px;text-align:right;}
+.profile-wrapper,.searchBar{display:inline-block;}
+.profile-wrapper {position:relative;cursor:pointer;}
+ul.profile-wrapper,ul.profile-wrapper ul{list-style:none;padding:0px;margin:0px;}
+.profile-wrapper::after{content:'';position:absolute;top:8px;right:0px;border-color:#333 transparent transparent;border-width:6px;border-style:solid;}
+.profile-wrapper::before{content:'';position:absolute;top:8px;right:0px;border-color:#eee transparent transparent;border-width:6px;border-style: solid;}
+.profile-wrapper:hover::after{border-color:#111 transparent transparent;}
+.profile {position:relative;}
+.profile img{width:20px;margin:0px 20px 0px 5px;}
+.profile .fa.fa-user{margin:0px 15px 0px 20px;}
+/* hide menu */
+.profile-wrapper .menu{display:none;background:#164e5f;width:100%;position:absolute;z-index:1;right:0;width:200px;text-align:left;border-top:3px solid #fff;}
+.profile-wrapper .menu li{font-size:12px;margin:0; padding:10px;}
+.profile-wrapper .menu li a{color:#fff;text-decoration:none;}
+.profile-wrapper .menu li:hover{background-color:#043746;}
+.profile-wrapper .profile:hover .menu{display:block;}
+/*----------profile css end-------------*/
+
+/*----------search bar css end-------------*/
+.searchBar{position:relative;}
+.searchBar:hover .search-container{display:block;}
+.search-container{padding:5px;background:#164e5f;position:absolute;width:236px;right:0;border-top:3px solid #fff;display:none;}
+.search-container input[type=text]{padding:4px;border-color:transparent;outline:none;}
+.search-container button{float:right;padding:4px 10px;background:#ddd;font-size:17px;border:none;cursor:pointer;}
+.search-container button:hover{background:#ccc;outline:none;}
+/*----------search bar css end-------------*/
+
+/*----------header css start-------------*/
+.loginBg header{border-top:10px solid #19698e;}
+header{background:url('/files/images/header-bg.jpg') no-repeat; background-size: 100% 100%;}
+header img{width:100%;}
+.logoLeft{padding:20px 0}
+/*----------header css end-------------*/
+.loginBg,.contentWrapper{padding:0 50px;}
+.login-wrapper{width:100%; background:#eaeaea; justify-content: center;display: flex; padding:50px 0;min-height:494px;}
+.content-wrapper{background:#fff;overflow:hidden;min-height:467px;}
+.login-box{position:relative; width:425px; min-height:335px; background:#fff; border-top:3px solid #19698e; box-shadow: 0px 0px 10px #c8c8c8; padding:30px 30px 0 30px;}
+.login-box h1{font-size:26px; margin-bottom:40px; font-size: 23px; font-weight:600;}
+.loginBtn{width:100%; background:#19698e; border:#19698e; color:#fff; margin:30px 0 80px 0; font-size: 18px;}
+.loginBtn:hover{width:100%; background:#52abd4; border:#52abd4; }
+.login-footer{background:#003647; margin:0px -30px; color:#fff; padding:10px 30px 10px;font-size:12px;bottom:0px;position:absolute;width:100%;}
+.login-footer a{color:#fff;}
+/*----------navigation css start-------------*/
+nav.navbar{background-color:#dfeaec;padding:0rem;}
+nav .navbar-brand{display:none;}
+nav.navbar ul.navbar-nav{display:flex;justify-content:space-around;width:100%;padding:0px 15px;}
+nav.navbar ul.navbar-nav li{border-right:1px solid #d1e0e3;padding:.5rem 0rem;width:100%;text-align:center;}
+nav.navbar ul.navbar-nav li.active, nav.navbar ul.navbar-nav li:hover{background-color:#b9d5d9;}
+nav.navbar ul.navbar-nav li:last-child{border-right:0px;}
+nav.navbar ul.navbar-nav li a{color:#212529;text-decoration:none;}
+/*----------navigation css end-------------*/
+/*----------widgets css start-------------*/
+.widgets .card{border-radius:0px;}
+.widgets .card-body{padding:1.25rem 1.25rem 0;}
+.widgets span{background:#fff;width:105px;height:105px;font-size:25px;line-height:100px;font-weight:600;border-radius:50%;display:inline-block;color:#3b393a;}
+.widgets .cardCampaign{background-color:#dfeaec;}
+.widgets .cardOpportunity{background-color:#b9d5d9;}
+.widgets .cardAccount{background-color:#e7f5f6;}
+.widgets .cardCampaign:hover{background-color:#ccd8db;}
+.widgets .cardOpportunity:hover{background-color:#c6dde1;}
+.widgets .cardAccount:hover{background-color:#ceebed;}
+.widgets .card-footer{background-color:transparent;font-size:18px;font-weight:600;border-width:0;height:75px;}
+/*----------widgets css end-------------*/
+
+/*----------User Wise Campaign Report form css start-------------*/
+.cardUserWiseCampaignReport{border-radius:0px;}
+.cardUserWiseCampaignReport.CampaignReportRadius{border-radius:4px 4px 0px 0px;}
+.cardUserWiseCampaignReport	.btn-default{background-color:#145e77!important;border-color:#145e77!important;color:#fff;/*margin-top:30px*/}
+.cardUserWiseCampaignReport	sup{color:#ff0000}
+/*----------User Wise Campaign Report form css end-------------*/
+
+/*----------Lead Master Information css end-------------*/
+.customerResponse{background-color:rgba(0,0,0,.03); padding:5px 10px;}
+#msform fieldset:not(:first-of-type){display:none}
+#msform .action-button,#msform .action-button-previous{float:right}
+#msform .action-button-previous{margin-right:4px;}
+
+/*
+#msform{text-align:center;position:relative;margin-top:20px}
+#msform fieldset{background:white;border:0 none;border-radius:.5rem;box-sizing:border-box;width:100%;margin:0;padding-bottom:20px;position:relative}
+
+
+#msform input,#msform textarea{padding:8px 15px 8px 15px;border:1px solid #ccc;border-radius:0;margin-bottom:25px;margin-top:2px;width:100%;box-sizing:border-box;font-family:montserrat;color:#2c3e50;background-color:#eceff1;font-size:16px;letter-spacing:1px}
+#msform input:focus,#msform textarea:focus{-moz-box-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important;border:1px solid #673ab7;outline-width:0}
+#msform .action-button{width:100px;background:#673ab7;font-weight:bold;color:white;border:0 none;border-radius:0;cursor:pointer;padding:10px 5px;margin:10px 0 10px 5px;float:right}
+#msform .action-button:hover,#msform .action-button:focus{background-color:#311b92}
+#msform .action-button-previous{width:100px;background:#616161;font-weight:bold;color:white;border:0 none;border-radius:0;cursor:pointer;padding:10px 5px;margin:10px 5px 10px 0;float:right}
+#msform .action-button-previous:hover,#msform .action-button-previous:focus{background-color:#000}
+*/
+#progressbar{/*width:50%;*/margin:0px auto 30px;overflow:hidden;color:#a4d3db!important;text-align:center;}
+#progressbar ul{padding:0px;}
+#progressbar:after{border-bottom:1px solid red;content:" ";}
+#progressbar .active{color:#30747f}
+#progressbar li{list-style-type:none;font-size:15px;width:50%;float:left;position:relative;font-weight:400}
+#progressbar #account:before{font-family:FontAwesome;content:"\f201";/*float:left;*/}
+#progressbar #personal:before{font-family:FontAwesome;content:"\f1d8";/*float:right*/}
+/*#progressbar #payment:before{font-family:FontAwesome;content:"\f030";}
+#progressbar #confirm:before{font-family:FontAwesome;content:"\f00c"}*/
+#progressbar #account span,#progressbar #personal span{font-weight:600;/*float:left;width:100%;text-align:left*/}
+#progressbar #personal span{/*text-align:right;*/}
+#progressbar li:before{width:60px;height:60px;line-height:55px;display:block;font-size:20px;color:#fff;background:#a4d3db;border-radius:50%;margin:0 auto -10px auto;padding:2px;z-index:1;position:relative;}
+#progressbar li:after{/*content:' ';width:100%;height:2px;background:#a4d3db!important;position:absolute;left:0;top:25px;z-index:0;*/}
+#progressbar li.active:before,#progressbar li.active:after{background:#30747f;}
+#progressbar li span:before{font-family:FontAwesome;content:"\f0d8";display:block;font-size:40px;margin-bottom:-10px;}
+#progressbar .progresstop{width:48%;height:2px;background:#a4d3db!important;margin:auto;position:relative;top:9px;z-index:0;}
+#progressbar .progressbottom{height:1px;background:#30747f!important;margin:auto 15px;position:relative;top:70px;z-index:0;}
+#msform .submittedSuccessfully{font-size:3rem;color:#00a700;}
+/*----------Lead Master Information css end-------------*/
+
+/*----------footer css start-------------*/
+footer{background:#145e77; padding:13px 0; color:#fff; font-size:12px; width:100%;}
+
+
+@media screen and (max-width: 991px) {
+    .widgets .card-footer{font-size:13px;}
+    nav .navbar-brand{display:block;}
+    nav.navbar ul.navbar-nav li{text-align:left;}
+    .navbar-light .navbar-toggler,.navbar-light .navbar-toggler:focus{outline:none;border-width:0px;}
+    nav.navbar ul.navbar-nav{padding:0px;}
+    nav.navbar ul.navbar-nav li{padding:.5rem;}
+    #progressbar #account span,#progressbar #personal span{font-size:10px;}
+}
+@media screen and (max-width: 767px) {
+    .loginBg,.contentWrapper {padding: 0 15px;}
+    .login-box{width:100%;}
+    .login-wrapper{padding:15px 0;}
+    .cardUserWiseCampaignReport	.btn-default{/*margin-top:0px*/}
+    .widgets span{width:55px;height:55px;font-size:14px;line-height:55px;}
+}
+
+@media screen and (max-width: 480px) {
+    header img {width: 90px;}
+    .logoLeft{padding:5px 0}
+    header {background: url(/files/images/header-bg.jpg) no-repeat top right #013648; background-size: 78% 100%;
+    }
+}
+
+#video-grid {
+    display: flex;
+    justify-content: center;
+}
+
+video {
+    height:300px;
+    width:400px;
+    object-fit: cover;
+}
+
+.main{
+    height:100vh;
+    display:flex;
+}
+.main__left{
+    flex:0.8;
+    display: flex;
+    flex-direction: column;
+}
+.main__right{
+    flex:0.2;
+    display: flex;
+    flex-direction: column;
+    background-color: dimgrey;
+    border-left: 1px solid #3b393a;
+}
+
+.main__videos{
+    flex-grow: 1;
+    background-color: black;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.main__controls{
+    display: flex;
+    background-color: #212529;
+    color: #c8c8c8;
+    padding: 5px;
+    justify-content: space-between;
+}
+
+.main__controls__block{
+    display: flex;
+}
+
+.main__controls__button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 10px;
+    min-width: 80px;
+    cursor: pointer;
+}
+
+.main__controls__button i {
+    font-size: 24px;
+}
+
+.main__controls__button:hover {
+    background-color: brown;
+    border-radius: 5px;
+}
+
+.leave_meeting {
+    color: #ff0000;
+}
+
+.main__header {
+    color: #c8c8c8;
+    text-align: center;
+}
+
+.main__chat_window {
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+
+.main__messages_container {
+    padding: 22px 12px;
+    display: flex;
+}
+
+.main__messages_container input {
+    flex-grow: 1;
+    /*background-color: transparent;*/
+    background-color: #a6a9a0;
+    border: none;
+    color: #f5f5f5;
+}
+
+.messages{
+    color: white;
+    list-style: none;
+}
+
+.unmute, .stop {
+    color: #ff0000;
+}
