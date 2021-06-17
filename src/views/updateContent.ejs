@@ -1,16 +1,28 @@
 <script>
     function validateForm() {
+        let titlePattern = /^[ A-Za-z0-9_.\/,]*$/
+        let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/
         let title = document.forms["myForm"]["title"].value;
+        // console.log("pattern check", title.match(titlePattern))
         let description = document.forms["myForm"]["description"].value;
-        // console.log(title, description)
+
         if (title == "") {
             alert("Title must be filled out");
+            return false;
+        }
+        if (title.match(titlePattern) == null) {
+            alert("Please enter alphanumeric title only");
             return false;
         }
         if (description == "") {
             alert("Description must be filled out");
             return false;
         }
+        if (description.match(descriptionPattern) == null) {
+            alert("Please enter alphanumeric description only");
+            return false;
+        }
+        return true
     }
 
 </script>

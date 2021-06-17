@@ -10,7 +10,6 @@ exports.addContent = async (req, res) => {
   try {
     let content = new Content(data);
     let saveContent = await content.save();
-    console.log(saveContent);
     res.redirect("all");
   } catch (error) {
     res.render("addContent", { error: "Error while adding content" });
