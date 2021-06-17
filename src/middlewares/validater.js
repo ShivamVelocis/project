@@ -1,8 +1,10 @@
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
-const mongoose = require("mongoose");
+
 let titlePattern = /^[ A-Za-z0-9_.\/,]*$/;
 let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/;
+
+// content request body validater
 const contentValidationRules = () => {
   return [
     body("title").custom((value, { req }) => {
@@ -26,6 +28,8 @@ const contentValidationRules = () => {
   ];
 };
 
+
+// mongodb id validater for get request
 const mongoIDValidationRules = () => {
   return param("id").custom((value) => {
     if (!ObjectId(value)) {
@@ -35,6 +39,7 @@ const mongoIDValidationRules = () => {
   });
 };
 
+// middleware to check if any error encouter during validation
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -42,9 +47,13 @@ const validate = (req, res, next) => {
   }
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push(err.msg));
+  
   //   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   //   console.log({ error: extractedErrors });
   return res.status(422).render("ErrorPage", { error: extractedErrors });
+
+
+  //response for postmon 
   //   return res.status(422).json({
   //     errors: extractedErrors,
   //   });

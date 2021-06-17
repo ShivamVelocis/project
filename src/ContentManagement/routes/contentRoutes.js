@@ -8,7 +8,7 @@ router.post("/", contentValidationRules(), validate, controller.addContent);
 router.get("/all", controller.getContents);
 router.get("/:id", mongoIDValidationRules(),validate,controller.getContent);
 router.get("/update/:id", controller.contentToUpdate);
-router.post("/updateContent/:id",mongoIDValidationRules(),validate,contentValidationRules(), validate, controller.updateContent);
+router.post("/updateContent/:id",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateContent);
 router.get("/remove/:id", mongoIDValidationRules(),validate,controller.removeContent);
 
 module.exports = router;

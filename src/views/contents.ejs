@@ -1,11 +1,13 @@
-
 <div class="container">
+
+    <!-- header menu -->
     <%- include('partials/NavBar.ejs') %>
 
 
         <div class="row justify-content-center mt-5">
             <div class="col">
                 <% if(contents.length>0) {%>
+                    <!-- Table to list content items -->
                     <table class="table">
                         <!-- Table header -->
                         <thead>
@@ -41,6 +43,7 @@
                                         <!-- <button class="btn" onclick="editContent('<%= content._id%>')">
                                             <i class="fa fa-edit"></i>
                                         </button> -->
+                                        <!-- Model trigger button -->
                                         <button class="btn" type="button" data-toggle="modal" data-target='#<%=i %>'>
                                             <i class="fa fa-trash"></i>
                                         </button>
@@ -85,6 +88,7 @@
                     <% } %>
             </div>
         </div>
+        <!-- redirect to add new content button -->
         <a href='/content/' class="btn btn-info">Add Content</i></a>
         <!-- <button type="button" class="btn btn-info" onclick="window.location =`/content/`"> Add Content </button> -->
 </div>
