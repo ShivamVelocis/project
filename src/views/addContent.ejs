@@ -1,56 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<script>
+    function validateForm() {
+        let title = document.forms["myForm"]["title"].value;
+        console.log(document.getElementById("title"));
+        let description = document.forms["myForm"]["description"].value;
+        if (title == "") {
+            alert("Title must be filled out");
+            return false;
+        }
+        if (description == "") {
+            alert("Description must be filled out");
+            return false;
+        }
+        return true
+    }
+</script>
 
-<head>
-    <%- include('partials/head.ejs') %>
-        <script>
-            function validateForm() {
-                let title = document.forms["myForm"]["title"].value;
-                console.log(document.getElementById("title"));
-                let description = document.forms["myForm"]["description"].value;
-                if (title == "") {
-                    alert("Title must be filled out");
-                    return false;
-                }
-                if (description == "") {
-                    alert("Description must be filled out");
-                    return false;
-                }
-                return true
-            }
 
-        </script>
-        <title>Content Mangement</title>
-</head>
 
-<body>
 
-    <div class="container">
-        <%- include('partials/NavBar.ejs') %>
-            <div class="row justify-content-center mt-5">
-                <% if(error){ %>
-                    <div class="alert alert-danger" role="alert">
-                        <%= error %>
+<div class="container">
+    <%- include('partials/NavBar.ejs') %>
+        <div class="row justify-content-center mt-5">
+            <% if(error){ %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+                <% } %>
+                    <div class="col-6 jumbotron">
+                        <form name="myForm" action="/content/" method="post" onsubmit="return validateForm()">
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control" id="title" name='title'>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3" name="description"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
                     </div>
-                    <% } %>
-                        <div class="col-6 jumbotron">
-                            <form name="myForm" action="/content/" method="post" onsubmit="return validateForm()">
-                                <div class="form-group">
-                                    <label for="title">Title</label>
-                                    <input type="text" class="form-control" id="title" name='title'>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" id="description" rows="3"
-                                        name="description"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </div>
-            </div>
-    </div>
+        </div>
+</div>
 
-
-</body>
-
-</html>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#description'))
+        .then(editor => {
+            console.log(editor);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>

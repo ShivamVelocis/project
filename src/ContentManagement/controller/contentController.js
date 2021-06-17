@@ -10,6 +10,7 @@ exports.addContent = async (req, res) => {
   try {
     let content = new Content(data);
     let saveContent = await content.save();
+    console.log(saveContent);
     res.redirect("all");
   } catch (error) {
     res.render("addContent", { error: "Error while adding content" });
@@ -49,7 +50,6 @@ exports.removeContent = async (req, res) => {
   let id = req.params.id;
   try {
     let result = await Content.findOneAndRemove({ _id: id });
-    console.log(result);
     if (result !== undefined && result !== null) {
       let title = result.title.toUpperCase();
       return res.render("deleteContent", {
