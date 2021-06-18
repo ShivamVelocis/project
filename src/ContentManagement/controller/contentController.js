@@ -29,7 +29,7 @@ exports.getContent = async (req, res) => {
 };
 
 exports.getContents = async (req, res) => {
-  console.log("i am contents controller")
+  // console.log("i am contents controller")
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
@@ -89,7 +89,7 @@ exports.updateContent = async (req, res) => {
       { new: true, upsert: true }
     );
     if (result !== undefined && result !== null) {
-      return res.redirect("ContentManagement/views/content/all");
+      return res.redirect("/content/all");
     }
   } catch (error) {
     res.render("ContentManagement/views/ErrorPage", { error: "Error while updating content" });

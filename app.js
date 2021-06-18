@@ -8,6 +8,7 @@ const userRoutes = require("./src/users/routes/userRouter");
 const session = require("express-session");
 const morgan = require("morgan");
 const flash = require("express-flash");
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 
@@ -45,9 +46,11 @@ app.use(
   })
 ); // session middleware
 app.use(flash());
+app.use(cookieParser());
 
 app.use("/content", contentRoutes);
 app.use("/user", userRoutes);
+
 
 app.use((req, res, next) => {
   const error = new Error("URL not found");
