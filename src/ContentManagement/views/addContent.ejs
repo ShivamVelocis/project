@@ -30,12 +30,13 @@
 
 <script>
     // add ckeditor to text area field
+    // set Global variable to access later for validation
     let theEditor
     ClassicEditor
         .create(document.querySelector('#description'))
         .then(editor => {
             theEditor = editor;
-            console.log(editor.getData());
+            // editor is a model and getData fn use to reterive latest value
         })
         .catch(error => {
             console.error(error);
@@ -47,11 +48,9 @@
         let titlePattern = /^[ A-Za-z0-9_.\/,]*$/
         let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/
         let title = document.forms["myForm"]["title"].value;
-        // console.log("pattern check", title.match(titlePattern))
-        console.log(document.getElementById("description").value)
-        // let description = document.forms["myForm"]["description"].value;
+        // getData returns latest value of textarea 
         let description = theEditor.getData()
-        console.log(theEditor.getData())
+
         if (title == "") {
             alert("Title must be filled out");
             return false;
@@ -74,6 +73,3 @@
 
 
 
-<script>
-
-</script>
