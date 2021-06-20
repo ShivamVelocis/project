@@ -1,0 +1,79 @@
+<div class="container">
+    <%- include('partials/NavBar.ejs') %>
+        <div class="row justify-content-center mt-5">
+            <!-- partial view will display if any retruns in response -->
+            <% if(error){ %>
+                <%- include('partials/errorMessage.ejs',{message: error}) %>
+                    <% } %>
+                        <!-- Form to added new content -->
+                        <div class="col-6 jumbotron">
+                            <form name="myForm" action="/content/" method="post" onsubmit="return validateForm()">
+                                <div class="form-group">
+                                    <label for="title"><b>Title</b></label>
+                                    <input type="text" class="form-control" id="title" name='title'>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label"><b>Description</b></label>
+                                    <textarea class="form-control" id="description" rows="3"
+                                        name="description"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                        <!-- form end -->
+        </div>
+</div>
+
+
+
+
+
+<script>
+    // add ckeditor to text area field
+    let theEditor
+    ClassicEditor
+        .create(document.querySelector('#description'))
+        .then(editor => {
+            theEditor = editor;
+            console.log(editor.getData());
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    // javascript function to validate form data
+    function validateForm() {
+
+        let titlePattern = /^[ A-Za-z0-9_.\/,]*$/
+        let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/
+        let title = document.forms["myForm"]["title"].value;
+        // console.log("pattern check", title.match(titlePattern))
+        console.log(document.getElementById("description").value)
+        // let description = document.forms["myForm"]["description"].value;
+        let description = theEditor.getData()
+        console.log(theEditor.getData())
+        if (title == "") {
+            alert("Title must be filled out");
+            return false;
+        }
+        if (title.match(titlePattern) == null) {
+            alert("Please enter alphanumeric title only");
+            return false;
+        }
+        if (description == "") {
+            alert("Description must be filled out");
+            return false;
+        }
+        if (description.match(descriptionPattern) == null) {
+            alert("Please enter alphanumeric description only");
+            return false;
+        }
+        return true
+    }
+</script>
+
+
+
+<script>
+
+</script>
