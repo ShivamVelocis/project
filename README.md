@@ -4,23 +4,23 @@
 2. Content Management
 3. User Authentication
 
-## Common NPM Moduls
+## `Common NPM Moduls`
 
-1. expressJS
-2. Body-parser
-3. dotenv
-4. ejs
-5. express-ejs-layout
-6. express-flash
-7. express-valiadtor
-8. mongoose
+1. expressJS v4.17.1
+2. Body-parser v1.19.0
+3. dotenv v10.0.0
+4. ejs v3.1.6
+5. express-ejs-layout v2.5.1
+6. express-flash v0.0.2
+7. express-validator v6.12.0
+8. mongoose v5.7.1
+9> express-session v1.17.2
 
-## **Content Management Requirements**
+> ## **Content Management Requirements**
 
 &nbsp;
-&nbsp;
 
-### **Custom Modules**
+### `Custom Modules`
 
 FILE | PATH | VERSION
 ---------|----------|---------
@@ -33,13 +33,16 @@ FILE | PATH | VERSION
  [pooper.min.js](https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js) | ./public/js/ | V 1.12.9
  [ckeditor.js](https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js) | ./public/js/ |V 5.0
 
-## **User Management & Authentication Requirements**
-
 &nbsp;
 &nbsp;
 
-### NPM Modules
+> ## **User Management & Authentication Requirements**
 
-1. bcrypt
-2. jsonwebtoken
-3. moment
+&nbsp;
+
+### `NPM Modules`
+
+1. bcrypt v5.0.1
+2. jsonwebtoken v8.5.1
+3. moment v2.29.1
+4> jwt_decode v3.1.2
