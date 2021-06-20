@@ -1,7 +1,7 @@
 const Content = require("../models/contentModels.js");
 
 exports.contentForm = (req, res) => {
-  res.render("addContent", { error: null });
+  res.render("ContentManagement/views/addContent", { error: null });
 };
 
 exports.addContent = async (req, res) => {
@@ -12,7 +12,7 @@ exports.addContent = async (req, res) => {
     let saveContent = await content.save();
     res.redirect("all");
   } catch (error) {
-    res.render("addContent", { error: "Error while adding content" });
+    res.render("ContentManagement/views/addContent", { error: "Error while adding content" });
   }
 };
 
@@ -21,27 +21,28 @@ exports.getContent = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("content", { content: result });
+      return res.render("ContentManagement/views/content", { content: result });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Error while fecting content" });
+    res.render("ContentManagement/views/ErrorPage", { error: "Error while fecting content" });
   }
 };
 
 exports.getContents = async (req, res) => {
+  // console.log("i am contents controller")
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
-      res.render("contents", {
+      res.render("ContentManagement/views/contents", {
         contents: contents,
         error: null,
         success: null,
       });
     } else {
-      res.render("ErrorPage", { error: "No content added yet!" });
+      res.render("/ContentManagement/views/ErrorPage", { error: "No content added yet!" });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Unable to get any content." });
+    res.render("/ContentManagement/views/ErrorPage", { error: "Unable to get any content." });
   }
 };
 
@@ -51,18 +52,18 @@ exports.removeContent = async (req, res) => {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       let title = result.title.toUpperCase();
-      return res.render("deleteContent", {
+      return res.render("ContentManagement/views/deleteContent", {
         message: `Content with title ${title} deleted successfully.`,
       });
     } else {
       res.status(400);
-      res.render("ErrorPage", {
+      res.render("ContentManagement/views/ErrorPage", {
         error: `no content with id ${id} present for deletion`,
       });
     }
   } catch (error) {
     res.status(400);
-    res.render("ErrorPage", { error: "Error while deleting content" });
+    res.render("ContentManagement/views/ErrorPage", { error: "Error while deleting content" });
   }
 };
 
@@ -71,10 +72,10 @@ exports.contentToUpdate = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("updateContent", { oldCont: result });
+      return res.render("ContentManagement/views/updateContent", { oldCont: result });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Error while fetching content" });
+    res.render("ContentManagement/views/ErrorPage", { error: "Error while fetching content" });
   }
 };
 
@@ -91,6 +92,6 @@ exports.updateContent = async (req, res) => {
       return res.redirect("/content/all");
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Error while updating content" });
+    res.render("ContentManagement/views/ErrorPage", { error: "Error while updating content" });
   }
 };

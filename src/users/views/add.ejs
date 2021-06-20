@@ -1,0 +1,140 @@
+<script>
+    function validateForm() {
+        let title = document.forms["addUserFrm"]["username"].value;
+        let description = document.forms["addUserFrm"]["email"].value;
+        if (title == "") {
+            alert("Username must be filled out");
+            return false;
+        }
+        if (description == "") {
+            alert("Email must be filled out");
+            return false;
+        }
+        return true
+    }
+</script>
+   
+
+<h2><%= module_title %></h2>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            <%=title%>
+        </h5>
+
+        <% if (messages.success) { %>
+            <div class="alert alert-success" role="alert"><%- messages.success %></div>
+            <% } %>
+
+        <p class="card-text">
+
+            <% if(error){ %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+                <% } %>
+
+
+                <% if (messages.error) {%>
+                    <div class="alert alert-danger" role="alert">
+                        
+                        <% Object.keys(messages).forEach(function (type) { %>
+                            <ul class="<%= type %>">
+                            <% messages[type].forEach(function (message) { %>
+                              <li><%= message %></li>
+                            <% }) %>
+                            </ul>
+                          <% }) %>
+                    </div>
+                    <% } %>
+
+            <div class="">
+                <form name="addUserFrm" action="/user/add" method="POST">
+                
+                    <div class="row">
+                        <div class="col form-group">
+                            <label for="role" class="col col-form-label">Role Name</label>
+                            <div class="col">
+                                <select class="form-control" id="role_id" name="role_id">
+                                    <option value="">--Select--</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">Members</option>
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="col form-group">
+                            <label for="email" class="col col-form-label">Email</label>
+                            <div class="col">
+                                <input type="text" class="form-control" id="email" placeholder="Email ID" name="email" value="">
+                                
+                            </div>
+                        </div>
+                    </div>
+    
+    
+    
+                    <div class="row">
+                        <div class="col form-group">
+                            <label for="username" class="col col-form-label">User Name</label>
+                            <div class="col">
+                                <input type="text" class="form-control" id="username" placeholder="Enter Username" name="username" value="">
+                                
+                            </div>
+                        </div>
+    
+                        <div class="col form-group">
+                            <label for="password" class="col col-form-label">Password</label>
+                            <div class="col">
+                                <input type="password" class="form-control" id="password" placeholder="Password" name="password" value="" required>
+                               
+                            </div>
+                        </div>
+                    </div>
+    
+    
+                    
+                    <div class="row">
+                        <div class="col form-group">
+                            <label for="user_status" class="col col-form-label">Status</label>
+                            <div class="col">
+                                <select class="form-control" id="user_status" name="user_status">
+                                    <option value="">--Select--</option>
+                                    <option value="1">Publish</option>
+                                    <option value="2">Unpublish</option>
+                                   
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="col form-group">
+                            <label for="" class="col col-form-label"></label>
+                            <div class="col">
+                            
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col form-group">
+                            <label for="" class="col col-form-label"></label>
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+    
+                        <div class="col form-group">
+                            <label for="" class="col col-form-label"></label>
+                            <div class="col">
+                            
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </p>
+    </div>
+</div>
+
+
+
