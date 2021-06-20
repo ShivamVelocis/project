@@ -45,4 +45,4 @@ FILE | PATH | VERSION
 1. bcrypt v5.0.1
 2. jsonwebtoken v8.5.1
 3. moment v2.29.1
-4> jwt_decode v3.1.2
+4. jwt_decode v3.1.2
