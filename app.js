@@ -46,7 +46,7 @@ app.use(
   })
 ); // session middleware
 app.use(flash());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use("/content", contentRoutes);
 app.use("/user", userRoutes);

@@ -1,30 +1,24 @@
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
+const { genrateJWTToken } = require("../users/utils/auth");
 
 exports.validateUser = async (req, res, next) => {
   try {
-    if (req.cookies && req.cookies.token && validateToken(req.cookies.token)) {
-      console.log(req.cookies.token);
-      res.locals.user = decodeToken(req.cookies.token);
+    if (req.session && req.session.token && validateToken(req.session.token)) {
+      res.locals.user = decodeToken(req.session.token);
+      req.session.token = await generaterefreshToken(req.session.token);
       next();
     } else {
       res.redirect("/user/auth/login");
-      // res.render("views/error/ErrorPage", {
-      //   error: "You not authorised to access this resource",
-      // });
     }
   } catch (error) {
+    console.error(error);
     res.redirect("/user/auth/login");
-    // res.render("views/error/ErrorPage", {
-    //   error: "You not authorised to access this resource",
-    // });
   }
 };
 
 const validateToken = (token) => {
   try {
-    console.log("token verify");
-    console.log(jwt.verify(token, process.env.ACCESS_TOKEN_SECRET));
     return !!jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
   } catch (error) {
     console.log(error);
@@ -34,6 +28,15 @@ const validateToken = (token) => {
 
 const decodeToken = (token) => {
   let userData = jwt_decode(token);
-  // console.log(userData);
   return { id: userData.userId };
+};
+
+const generaterefreshToken = async (token) => {
+  let { id } = decodeToken(token);
+  let refreshtoken = await genrateJWTToken(
+    id,
+    process.env.ACCESS_TOKEN_SECRET,
+    process.env.ACCESS_TOKEN_LIFE
+  );
+  return refreshtoken;
 };
