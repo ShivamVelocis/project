@@ -1,8 +1,6 @@
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
-
-let titlePattern = /^[ A-Za-z0-9_.\/,]*$/;
-let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/;
+const CONFIG = require("../../configs/config");
 
 // content request body validater
 const contentValidationRules = () => {
@@ -11,7 +9,7 @@ const contentValidationRules = () => {
       if (value == "") {
         throw new Error("Title should not be empty");
       }
-      if (value.match(titlePattern) == null) {
+      if (value.match(CONFIG.TITLE_PATTERN) == null) {
         throw new Error("Please enter alphanumeric title only");
       }
       return true;
@@ -20,14 +18,16 @@ const contentValidationRules = () => {
       if (value == "") {
         throw new Error("Description should not be empty");
       }
-      if (value.match(descriptionPattern) == null) {
+      if (
+        value.match((CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/,<>]*$/)) ==
+        null
+      ) {
         throw new Error("Please enter alphanumeric description only");
       }
       return true;
     }),
   ];
 };
-
 
 // mongodb id validater for get request
 const mongoIDValidationRules = () => {
@@ -47,13 +47,12 @@ const validate = (req, res, next) => {
   }
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push(err.msg));
-  
+
   //   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   //   console.log({ error: extractedErrors });
   return res.status(422).render("ErrorPage", { error: extractedErrors });
 
-
-  //response for postmon 
+  //response for postmon
   //   return res.status(422).json({
   //     errors: extractedErrors,
   //   });

@@ -1,41 +1,47 @@
 <div class="container">
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%- messages.success %>
+        </div>
+        <% } %>
 
-
-    <!-- error display -->
-    <% if (messages.error) { %>
-        <% if(Array.isArray(messages.error)) { messages.error.map((error,i)=>{%>
-            <div class="alert alert-danger mt-3">
-                <%= error%>
-            </div>
-            <% })} else{ %>
-                <div class="alert alert-danger mt-3">
-                    <%= messages.error%>
-                </div>
-                <% } %>
-                    <% } %>
-
-                        <!-- error display ended  -->
-
-                        <!-- Login form start -->
-                        <div class="row justify-content-center mt-5">
-                            <!-- Form to added new content -->
-                            <div class="col-6 jumbotron">
-                                <form name="loginForm" action="/user/auth/login" method="post"
-                                    onsubmit="return validateLogin()">
-                                    <div class="form-group">
-                                        <label for="email"><b>Email</b></label>
-                                        <input type="text" class="form-control" id="email" name='email'>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password"><b>Password</b></label>
-                                        <input type="password" class="form-control" id="password" name='password'>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">login</button>
-                                </form>
-                            </div>
-                            <!-- form end -->
+            <!-- error display -->
+            <% if (messages.error) { %>
+                <% if(Array.isArray(messages.error)) { messages.error.map((error,i)=>{%>
+                    <div class="alert alert-danger mt-3">
+                        <%= error%>
+                    </div>
+                    <% })} else{ %>
+                        <div class="alert alert-danger mt-3">
+                            <%= messages.error%>
                         </div>
-                        <!-- Login form end -->
+                        <% } %>
+                            <% } %>
+
+                                <!-- error display ended  -->
+
+                                <!-- Login form start -->
+                                <div class="row justify-content-center mt-5">
+                                    <!-- Form to added new content -->
+                                    <div class="col-6 jumbotron">
+                                        <form name="loginForm" action="/user/auth/login" method="post"
+                                            onsubmit="return validateLogin()">
+                                            <div class="form-group">
+                                                <label for="email"><b>Email</b></label>
+                                                <input type="text" class="form-control" id="email" name='email'>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password"><b>Password</b></label>
+                                                <input type="password" class="form-control" id="password"
+                                                    name='password'>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">login</button>
+                                            <a href="/user/forgetpassword/" class="link-primary">Forget password</a>
+                                        </form>
+                                    </div>
+                                    <!-- form end -->
+                                </div>
+                                <!-- Login form end -->
 </div>
 
 

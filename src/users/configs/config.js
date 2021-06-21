@@ -17,5 +17,11 @@ CONFIG.LOGIN_SUCCESS_MESSAGE = 'Logged in success';
 
 CONFIG.LIMIT  = 5;
 
+CONFIG.TEXTAREA_PATTERN =/^[ A-Za-z0-9_.\/,<>]*$/
+CONFIG.TITLE_PATTERN =/^[ A-Za-z0-9_.\/,]*$/
+CONFIG.PASSWORD_PATTERN= /^[ A-Za-z0-9_.\/,<>]*$/
+CONFIG.EMAIL_PATTERN =/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+
+
 
 module.exports = CONFIG;

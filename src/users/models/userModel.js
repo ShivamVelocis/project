@@ -22,6 +22,9 @@ let userSchema = new mongoose.Schema({
     type: Number,
     max: [3, 'Must be either 0, 1 or 2: got {VALUE}'],
   },
+  otp:{
+    type: Number
+  },
   token: String
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

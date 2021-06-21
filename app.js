@@ -8,7 +8,7 @@ const userRoutes = require("./src/users/routes/userRouter");
 const session = require("express-session");
 const morgan = require("morgan");
 const flash = require("express-flash");
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 
 dotenv.config();
 
@@ -17,13 +17,14 @@ require("./src/configs/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
+
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
 
 app.use(expressLayouts);
 app.set("layout", path.join(__dirname, "src/views/layouts/layout"));
 
-app.use(morgan("dev"));
+app.use(morgan("tiny"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -46,18 +47,19 @@ app.use(
   })
 ); // session middleware
 app.use(flash());
-// app.use(cookieParser());
-
-app.use("/content", contentRoutes);
-app.use("/user", userRoutes);
 
 
+app.use("/content", contentRoutes); /*content management routes*/
+app.use("/user", userRoutes); /*user management and authentication routes*/
+
+/*middleware for 404 error */
 app.use((req, res, next) => {
   const error = new Error("URL not found");
   error.status = 404;
   next(error);
 });
 
+/*middleware handles all the error thrown anywhere in the application */
 app.use((error, req, res, next) => {
   res.status(error.status || 500);
   res.render("views/error/ErrorPage", { error: error.message });

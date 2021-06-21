@@ -1,0 +1,63 @@
+<div class="container">
+
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert"><%- messages.success %></div>
+        <% } %>
+
+    <!-- error display -->
+    <% if (messages.error) { %>
+        <% if(Array.isArray(messages.error)) { messages.error.map((error,i)=>{%>
+            <div class="alert alert-danger mt-3">
+                <%= error%>
+            </div>
+            <% })} else{ %>
+                <div class="alert alert-danger mt-3">
+                    <%= messages.error%>
+                </div>
+                <% } %>
+                    <% } %>
+
+                        <!-- error display ended  -->
+
+                        <!-- Login form start -->
+                        <div class="row justify-content-center mt-5">
+                            <!-- Form to added new content -->
+                            <div class="col-6 jumbotron">
+                                <form name="loginForm" action="/user/forgetpassword/" method="post"
+                                    onsubmit="return validateLogin()">
+                                    <div class="form-group">
+                                        <label for="email"><b>Email</b></label>
+                                        <input type="text" class="form-control" id="email" name='email'>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Forget</button>
+                                </form>
+                            </div>
+                            <!-- form end -->
+                        </div>
+                        <!-- Login form end -->
+</div>
+
+
+
+
+
+<script>
+
+    // javascript function to validate form data
+    function validateLogin() {
+
+        let emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        let email = document.forms["loginForm"]["email"].value;
+
+
+        if (email == "") {
+            alert("Email must be filled out");
+            return false;
+        }
+        if (email.match(emailPattern) == null) {
+            alert("Please enter valid email only");
+            return false;
+        }
+        return true
+    }
+</script>
