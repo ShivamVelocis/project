@@ -1,16 +1,28 @@
 <div class="container">
-    <%- include('partials/NavBar.ejs') %>
-        <h2 class="text-center mt-3">Content</h2>
-        <div class="card bg-light text-dark mt-3">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <b> Title: </b>
-                    <%=content.title%>
-                </h5>
-                <p class="card-text">
-                    <b>Description:</b>
-                    <%-content.description%>
-                </p>
-            </div>
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%- messages.success %>
         </div>
+        <% } %>
+            <% if (messages.error) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%- messages.error %>
+                </div>
+                <% } %>
+
+                    <% if(content){ %>
+                        <h2 class="text-center mt-3">Content</h2>
+                        <div class="card bg-light text-dark mt-3">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <b> Title: </b>
+                                    <%=content.title%>
+                                </h5>
+                                <p class="card-text">
+                                    <b>Description:</b>
+                                    <%-content.description%>
+                                </p>
+                            </div>
+                        </div>
+                        <% } %>
 </div>

@@ -1,8 +1,6 @@
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
-
-let emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-let passwordPattern = /^[ A-Za-z0-9_.\/,<>]*$/;
+const CONFIG = require("../configs/config");
 
 // login request body validater
 exports.loginValidationRules = () => {
@@ -11,7 +9,7 @@ exports.loginValidationRules = () => {
       if (value == "") {
         throw new Error("Email should not be empty");
       }
-      if (value.match(emailPattern) == null) {
+      if (value.match(CONFIG.EMAIL_PATTERN) == null) {
         throw new Error("Please enter valid email only");
       }
       return true;
@@ -20,7 +18,7 @@ exports.loginValidationRules = () => {
       if (value == "") {
         throw new Error("Password should not be empty");
       }
-      if (value.match(passwordPattern) == null) {
+      if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
         throw new Error("Please enter alphanumeric password only");
       }
       return true;
@@ -37,7 +35,7 @@ exports.addUserValidationRules = () => {
       if (value == "") {
         throw new Error("Password should not be empty");
       }
-      if (value.match(passwordPattern) == null) {
+      if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
         throw new Error("Please enter alphanumeric password only");
       }
       return true;
@@ -54,7 +52,7 @@ exports.addUserValidationRules = () => {
       if (value == "") {
         throw new Error("User Name should not be empty");
       }
-      if (value.match(passwordPattern) == null) {
+      if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
         throw new Error("User Name enter alphanumeric password only");
       }
       return true;
