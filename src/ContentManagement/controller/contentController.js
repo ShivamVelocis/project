@@ -1,10 +1,17 @@
 const Content = require("../models/contentModels.js");
+const Configs = require("../configs/config");
 
 exports.contentForm = (req, res) => {
-  res.render("addContent", { error: null });
+  res.render("ContentManagement/views/addContent", { error: null });
 };
 
 exports.addContent = async (req, res) => {
+  console.log(res.locals.validationError);
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("contentData", req.body);
+    return res.redirect("/content/");
+  }
   let data = req.body;
   data.status = 1;
   try {
@@ -12,7 +19,9 @@ exports.addContent = async (req, res) => {
     let saveContent = await content.save();
     res.redirect("all");
   } catch (error) {
-    res.render("addContent", { error: "Error while adding content" });
+    res.render("ContentManagement/views/addContent", {
+      error: Configs.ADD_CONTENT_FAILED,
+    });
   }
 };
 
@@ -21,27 +30,35 @@ exports.getContent = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("content", { content: result });
+      return res.render("ContentManagement/views/content", { content: result });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Error while fecting content" });
+    req.flash("error", Configs.FETCH_CONTENT_ERROR);
+    res.render("ContentManagement/views/content", { content: null });
   }
 };
 
 exports.getContents = async (req, res) => {
+  // console.log("i am contents controller")
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
-      res.render("contents", {
+      return res.render("ContentManagement/views/contents", {
         contents: contents,
         error: null,
         success: null,
       });
     } else {
-      res.render("ErrorPage", { error: "No content added yet!" });
+      req.flash("error", Configs.NO_CONTENT_FOUND);
+      return res.render("ContentManagement/views/contents", {
+        contents: [],
+      });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Unable to get any content." });
+    req.flash("error", Configs.DELETE_CONTENT_FAILED);
+    return res.render("ContentManagement/views/contents", {
+      contents: [],
+    });
   }
 };
 
@@ -51,18 +68,23 @@ exports.removeContent = async (req, res) => {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       let title = result.title.toUpperCase();
-      return res.render("deleteContent", {
-        message: `Content with title ${title} deleted successfully.`,
-      });
+      req.flash("success", `Content with title ${title} deleted successfully.`);
+      res.redirect("/content/all");
+      // return res.render("ContentManagement/views/deleteContent", {
+      //   message: `Content with title ${title} deleted successfully.`,
+      // });
     } else {
       res.status(400);
-      res.render("ErrorPage", {
-        error: `no content with id ${id} present for deletion`,
-      });
+      req.flash("success", `No content with id ${id} present for deletion`);
+      res.redirect("/content/all");
+      // res.render("ContentManagement/views/ErrorPage", {
+      //   error: `no content with id ${id} present for deletion`,
+      // });
     }
   } catch (error) {
     res.status(400);
-    res.render("ErrorPage", { error: "Error while deleting content" });
+    req.flash("success", Configs.DELETE_CONTENT_FAILED);
+    res.redirect("/content/all");
   }
 };
 
@@ -71,16 +93,25 @@ exports.contentToUpdate = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("updateContent", { oldCont: result });
+      return res.render("ContentManagement/views/updateContent", {
+        oldCont: result,
+      });
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Error while fetching content" });
+    res.render("ContentManagement/views/ErrorPage", {
+      error: Configs.FETCH_CONTENT_ERROR,
+    });
   }
 };
 
 exports.updateContent = async (req, res) => {
   let id = req.params.id;
   let updatedContent = req.body;
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("contentData", req.body);
+    return res.redirect(`/content/update/${id}`);
+  }
   try {
     let result = await Content.findOneAndUpdate(
       { _id: id },
@@ -88,9 +119,14 @@ exports.updateContent = async (req, res) => {
       { new: true, upsert: true }
     );
     if (result !== undefined && result !== null) {
+      req.flash(
+        "success",
+        `Content with Title ${req.body.title} updated successfully`
+      );
       return res.redirect("/content/all");
     }
   } catch (error) {
-    res.render("ErrorPage", { error: "Error while updating content" });
+    req.flash("error", Configs.UPDATE_CONTENT_FAILED);
+    return res.redirect(`/content/update/${id}`);
   }
 };

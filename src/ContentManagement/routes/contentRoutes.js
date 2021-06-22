@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controller/contentController");
-const {  contentValidationRules, mongoIDValidationRules, validate} = require("../../middlewares/validater");
+const {  contentValidationRules, mongoIDValidationRules, validate} = require("../middlewares/validater");
 
 router.get("/", controller.contentForm);
 router.post("/", contentValidationRules(), validate, controller.addContent);
