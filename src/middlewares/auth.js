@@ -18,3 +18,20 @@ exports.validateUser = async (req, res, next) => {
     res.redirect("/user/auth/login");
   }
 };
+
+exports.loginCheck = async (req, res, next) => {
+  res.locals.isAuth = true;
+  try {
+    if (req.session && req.session.token && validateToken(req.session.token)) {
+      res.locals.isAuth = true;
+      next();
+    } else {
+      res.locals.isAuth = false;
+      next();
+    }
+  } catch (error) {
+    console.error(error);
+    res.locals.isAuth = false;
+    next();
+  }
+};

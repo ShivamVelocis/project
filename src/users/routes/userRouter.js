@@ -16,6 +16,7 @@ router.get("/update/:id", userController.updateUser);
 router.post("/update/:id", userController.postUpdateUser);
 router.post("/delete/:id", userController.removeContent);
 router.get("/auth/login", authController.login);
+router.get("/auth/logout", authController.logOut);
 router.post("/auth/login", loginValidationRules(), validate, authController.postLogin);
 router.get("/forgetpassword/", authController.forgetPassword);
 router.post("/forgetpassword/", authController.postForgetPassword);
