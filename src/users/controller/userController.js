@@ -14,6 +14,11 @@ exports.addUser = function addUser(req, res, next){
 
 
 exports.postAddUser = async function addUser(req, res, next) {
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("userData", req.body);
+    return res.redirect(`/user/add`);
+  }
   try {
     var form_data = {
         username: req.body.username,
@@ -39,6 +44,7 @@ exports.postAddUser = async function addUser(req, res, next) {
     req.flash('success', CONFIG.INSERT_MESSAGE);
     res.redirect("/user/view");
   } catch (error) {
+    req.flash("userData", req.body);
     req.flash('error', error.errors);
      //console.log(error.message);
 
@@ -90,12 +96,14 @@ exports.removeContent = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   let id = req.params.id;
+ 
   try {
     let result = await userModel.findById(id);
     if (result !== undefined && result !== null) {
       return res.render("users/views/update", { title: CONFIG.UPDATE_TITLE, module_title: CONFIG.MODULE_TITLE, results: result });
     }
   } catch (error) {
+    
     res.render("views/error/ErrorPage", { error: "Error while fetching content" });
   }
 };
@@ -103,6 +111,11 @@ exports.updateUser = async (req, res) => {
 exports.postUpdateUser = async (req, res) => {
   // console.log(req.params.id);
   let id = req.params.id;
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("userData", req.body);
+    return res.redirect(`/user/update/${id}`);
+  }
   let updatedContent = req.body;
 
   var form_data = {
@@ -128,6 +141,7 @@ exports.postUpdateUser = async (req, res) => {
     }
   } catch (error) {
     req.flash('error', 'Something went wrong!!');
+    req.flash("userData", req.body);
     res.render("views/error/ErrorPage", { error: "Error while updating content" });
   }
 };

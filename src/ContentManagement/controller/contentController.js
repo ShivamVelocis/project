@@ -1,4 +1,5 @@
 const Content = require("../models/contentModels.js");
+const Configs = require("../configs/config");
 
 exports.contentForm = (req, res) => {
   res.render("ContentManagement/views/addContent", { error: null });
@@ -19,7 +20,7 @@ exports.addContent = async (req, res) => {
     res.redirect("all");
   } catch (error) {
     res.render("ContentManagement/views/addContent", {
-      error: "Error while adding content",
+      error: Configs.ADD_CONTENT_FAILED,
     });
   }
 };
@@ -32,7 +33,7 @@ exports.getContent = async (req, res) => {
       return res.render("ContentManagement/views/content", { content: result });
     }
   } catch (error) {
-    req.flash("error", "Error while fecting content");
+    req.flash("error", Configs.FETCH_CONTENT_ERROR);
     res.render("ContentManagement/views/content", { content: null });
   }
 };
@@ -48,13 +49,13 @@ exports.getContents = async (req, res) => {
         success: null,
       });
     } else {
-      req.flash("error", "No content added yet!");
+      req.flash("error", Configs.NO_CONTENT_FOUND);
       return res.render("ContentManagement/views/contents", {
         contents: [],
       });
     }
   } catch (error) {
-    req.flash("error", "Error encountered while fetching content");
+    req.flash("error", Configs.DELETE_CONTENT_FAILED);
     return res.render("ContentManagement/views/contents", {
       contents: [],
     });
@@ -82,7 +83,7 @@ exports.removeContent = async (req, res) => {
     }
   } catch (error) {
     res.status(400);
-    req.flash("success", `Error while deleting content`);
+    req.flash("success", Configs.DELETE_CONTENT_FAILED);
     res.redirect("/content/all");
   }
 };
@@ -98,7 +99,7 @@ exports.contentToUpdate = async (req, res) => {
     }
   } catch (error) {
     res.render("ContentManagement/views/ErrorPage", {
-      error: "Error while fetching content",
+      error: Configs.FETCH_CONTENT_ERROR,
     });
   }
 };
@@ -125,10 +126,7 @@ exports.updateContent = async (req, res) => {
       return res.redirect("/content/all");
     }
   } catch (error) {
-    req.flash("error", `Error encountered while updating content`);
+    req.flash("error", Configs.UPDATE_CONTENT_FAILED);
     return res.redirect(`/content/update/${id}`);
-    res.render("ContentManagement/views/ErrorPage", {
-      error: "Error while updating content",
-    });
   }
 };

@@ -12,12 +12,18 @@ exports.login = (req, res) => {
 
 exports.postLogin = async (req, res) => {
   let data = req.body;
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("loginData", req.body);
+    return res.redirect(`/user/auth/login`);
+  }
   try {
     let user = await userModel.findOne({ email: data.email });
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
         req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
+        req.flash("loginData", req.body);
         return res.redirect("/user/auth/login");
       }
       // console.log("test",process.env.ACCESS_TOKEN_SECRET);
@@ -38,11 +44,13 @@ exports.postLogin = async (req, res) => {
       }
     } else {
       req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
+      req.flash("loginData", req.body);
       return res.redirect("/user/auth/login");
     }
   } catch (error) {
     console.log(error);
     req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
+    req.flash("loginData", req.body);
     return res.redirect("/user/auth/login");
   }
 };

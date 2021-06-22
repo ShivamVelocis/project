@@ -90,7 +90,9 @@ exports.validate = (req, res, next) => {
   // beautify the error object
   //   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   // console.log(extractedErrors);
-  req.flash("error", extractedErrors);
-  res.status(422);
-  return res.redirect(req.originalUrl);
+  // req.flash("error", extractedErrors);
+  // res.status(422);
+  // return res.redirect(req.originalUrl);
+  res.locals.validationError = extractedErrors.length > 0?extractedErrors:null;
+  next();
 };

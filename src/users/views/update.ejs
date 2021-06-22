@@ -1,57 +1,62 @@
-
-    <h2><%= module_title %></h2>
-
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <%=title%>
-                        </h5>
+<h2></h2>
+<%= module_title %>
+    </h2>
+    <% if(messages.userData){ console.log(messages.userData);email=messages.userData[0].email; user_role=messages.userData[0].role_id;
+        userStatus=messages.userData[0].user_status }else{ console.log(results);email=results.email ; user_role=results.role_id ;
+        userStatus=results.user_status ; }%>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <%=title%>
+                </h5>
                 <form name="addUserFrm" action="/user/update/<%=results._id%>" method="POST">
-                
+
                     <div class="row">
                         <div class="col form-group">
                             <label for="role" class="col col-form-label">Role Name</label>
                             <div class="col">
-                                <select class="form-control" id="role_id" name="role_id">
-                                    <option value="">--Select--</option>
+                                <select class="form-control" id="role_id" name="role_id" value='<%= user_role %>'>
+                                    <option value=''>--Select--</option>
                                     <option value="1">Admin</option>
                                     <option value="2">Members</option>
                                 </select>
                             </div>
                         </div>
-    
+
                         <div class="col form-group">
                             <label for="email" class="col col-form-label">Email</label>
                             <div class="col">
-                                <input type="text" class="form-control" id="email" placeholder="Email ID" name="email" value="<%= results.email%>">
-                                
+                                <input type="text" class="form-control" id="email" placeholder="Email ID" name="email"
+                                    value="<%= email%>">
+
                             </div>
                         </div>
                     </div>
-    
-    
-                    
+
+
+
                     <div class="row">
                         <div class="col form-group">
                             <label for="user_status" class="col col-form-label">Status</label>
                             <div class="col">
-                                <select class="form-control" id="user_status" name="user_status">
+                                <select class="form-control" id="user_status" name="user_status"
+                                    value="<%=userStatus%>">
                                     <option value="">--Select--</option>
                                     <option value="1">Publish</option>
                                     <option value="2">Unpublish</option>
-                                   
+
                                 </select>
                             </div>
                         </div>
-    
+
                         <div class="col form-group">
                             <label for="" class="col col-form-label"></label>
                             <div class="col">
-                            
+
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col form-group">
                             <label for="" class="col col-form-label"></label>
@@ -59,11 +64,11 @@
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
-    
+
                         <div class="col form-group">
                             <label for="" class="col col-form-label"></label>
                             <div class="col">
-                            
+
                             </div>
                         </div>
                     </div>
@@ -71,4 +76,3 @@
 
             </div>
         </div>
-

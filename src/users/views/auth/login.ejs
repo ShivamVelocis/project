@@ -20,20 +20,24 @@
 
                                 <!-- error display ended  -->
 
+
+                                <% if(messages.loginData){ email=messages.loginData[0].email;
+                                    password=messages.loginData[0].password; }else{ email='' ; password='';} %>
+
                                 <!-- Login form start -->
                                 <div class="row justify-content-center mt-5">
                                     <!-- Form to added new content -->
                                     <div class="col-6 jumbotron">
-                                        <form name="loginForm" action="/user/auth/login" method="post"
-                                            onsubmit="return validateLogin()">
+                                        <form name="loginForm" action="/user/auth/login" method="post" onsubmit="return validateLogin()"
+                                            >
                                             <div class="form-group">
                                                 <label for="email"><b>Email</b></label>
-                                                <input type="text" class="form-control" id="email" name='email'>
+                                                <input type="text" class="form-control" id="email" name='email' value="<%=email %>">
                                             </div>
                                             <div class="form-group">
                                                 <label for="password"><b>Password</b></label>
                                                 <input type="password" class="form-control" id="password"
-                                                    name='password'>
+                                                    name='password' value="<%=password %>">
                                             </div>
                                             <button type="submit" class="btn btn-primary">login</button>
                                             <a href="/user/forgetpassword/" class="link-primary">Forget password</a>
