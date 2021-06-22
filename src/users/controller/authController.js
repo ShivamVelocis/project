@@ -64,20 +64,20 @@ exports.postForgetPassword = async (req, res) => {
       );
       if (result !== undefined && result !== null) {
         console.log(otp);
-        await mailOtp("shivamap20@gmail.com", otp);
+        await mailOtp(data.email, otp);
         // console.log(mailed);
 
-        req.flash("success", "OTP send to your registered email address");
+        req.flash("success", CONFIG.OTP_SUCCESS);
         // req.session.token = token;
         return res.redirect("/user/pwdreset/");
       }
     } else {
-      req.flash("error", "not registered user");
+      req.flash("error", CONFIG.NOT_REGISTER_USER);
       return res.redirect(req.originalUrl);
     }
   } catch (error) {
     console.log(error);
-    req.flash("error", "not registered user");
+    req.flash("error", CONFIG.NOT_REGISTER_USER);
     return res.redirect(req.originalUrl);
   }
 };
@@ -98,7 +98,7 @@ exports.postOtpVerification = async (req, res) => {
           { $set: { otp: null, password: passwordHash } },
           { upsert: true }
         );
-        req.flash("success", "Password changed successfully");
+        req.flash("success", CONFIG.PASSWORD_SUCCESS_CHANGE);
         return res.redirect("/user/auth/login");
       } else {
         req.flash("error", "Invalid OTP");
@@ -106,7 +106,7 @@ exports.postOtpVerification = async (req, res) => {
       }
     } else {
       console.error("email error");
-      req.flash("error", "Invalid email");
+      req.flash("error", CONFIG.INVALID_EMAIL);
       return res.redirect(req.originalUrl);
     }
   } catch (error) {
@@ -114,4 +114,3 @@ exports.postOtpVerification = async (req, res) => {
   }
 };
 
-exports.resetPassword = (req, res) => {};

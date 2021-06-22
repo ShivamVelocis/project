@@ -50,8 +50,9 @@ const validate = (req, res, next) => {
 
   //   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   //   console.log({ error: extractedErrors });
-  return res.status(422).render("ErrorPage", { error: extractedErrors });
-
+  // return res.status(422).render("ErrorPage", { error: extractedErrors });
+  res.locals.validationError = extractedErrors.length > 0?extractedErrors:null;
+  next();
   //response for postmon
   //   return res.status(422).json({
   //     errors: extractedErrors,
