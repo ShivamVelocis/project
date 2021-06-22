@@ -20,10 +20,6 @@
                 <!-- for updating preview data of user content -->
                 <% if(messages.contentData){ title=messages.contentData[0].title;
                     description=messages.contentData[0].description; }else{ title='' ; description='' ;} %>
-                    <!-- partial view will display if any retruns in response -->
-                    <% if(error){ %>
-                        <%- include('partials/errorMessage.ejs',{message: error}) %>
-                            <% } %>
                                 <!-- Form to added new content -->
                                 <div class="col-6 jumbotron">
                                     <form name="myForm" action="/content/" method="post"
