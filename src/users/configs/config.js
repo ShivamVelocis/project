@@ -17,7 +17,14 @@ CONFIG.LOGIN_SUCCESS_MESSAGE = "Logged in success";
 CONFIG.OTP_SUCCESS = "OTP send to your registered email address";
 CONFIG.NOT_REGISTER_USER = "Not a registered user";
 CONFIG.PASSWORD_SUCCESS_CHANGE = "Password changed successfully"
-CONFIG.INVALID_EMAIL="Invalid email"
+CONFIG.INVALID_NAME = "Please enter valid name";
+CONFIG.INVALID_EMAIL = "Please enter valid email";
+CONFIG.INVALID_ROLE = "Please enter valid role";
+CONFIG.INVALID_STATUS = "Please enter valid status";
+CONFIG.ALREADY_USED_USER_NAME = "Already used";
+CONFIG.INSERT_USER_NAME = "Invalid username";
+CONFIG.INVALID_PASSWORD = "Please enter valid password";
+CONFIG.INVALID_MONGO_ID = "Please enter valid Mongodb ID";
 
 CONFIG.LIMIT = 5;
 

@@ -20,7 +20,7 @@ router.get("/auth/logout", authController.logOut);
 router.post("/auth/login", loginValidationRules(), validate, authController.postLogin);
 router.get("/forgetpassword/", authController.forgetPassword);
 router.post("/forgetpassword/", authController.postForgetPassword);
-router.get("/pwdreset", authController.otpVerification);
-router.post("/pwdreset/", authController.postOtpVerification);
+router.get("/pwdreset/:token", authController.otpVerification);
+router.post("/pwdreset/:token", authController.postOtpVerification);
 
 module.exports = router;

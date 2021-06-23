@@ -2,7 +2,10 @@ const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
 
 exports.contentForm = (req, res) => {
-  res.render("ContentManagement/views/addContent", {module_title: CONFIG.MODULE_TITLE, });
+  res.render("ContentManagement/views/addContent", {
+    module_title: CONFIG.MODULE_TITLE,
+    title: CONFIG.ADD_TITLE,
+  });
 };
 
 exports.addContent = async (req, res) => {
@@ -13,13 +16,13 @@ exports.addContent = async (req, res) => {
     return res.redirect("/content/");
   }
   let data = req.body;
-  data.status = 1;
   try {
     let content = new Content(data);
     let saveContent = await content.save();
+    req.flash("success", CONFIG.ADD_CONTENT_SUCCESS);
     res.redirect("all");
   } catch (error) {
-    req.flash("error", CONFIG.ADD_CONTENT_FAILED)
+    req.flash("error", CONFIG.ADD_CONTENT_FAILED);
     res.render("ContentManagement/views/addContent", {
       module_title: CONFIG.MODULE_TITLE,
     });
@@ -31,11 +34,18 @@ exports.getContent = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("ContentManagement/views/content", { content: result ,module_title: CONFIG.MODULE_TITLE,});
+      return res.render("ContentManagement/views/content", {
+        content: result,
+        module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT,
+      });
     }
   } catch (error) {
     req.flash("error", CONFIG.FETCH_CONTENT_ERROR);
-    res.render("ContentManagement/views/content", { content: null,module_title: CONFIG.MODULE_TITLE, });
+    res.render("ContentManagement/views/content", {
+      content: null,
+      module_title: CONFIG.MODULE_TITLE,
+    });
   }
 };
 
@@ -92,10 +102,11 @@ exports.contentToUpdate = async (req, res) => {
       return res.render("ContentManagement/views/updateContent", {
         oldCont: result,
         module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.UPDATE_TITLE,
       });
     }
   } catch (error) {
-    req.flash("error", CONFIG.FETCH_CONTENT_ERROR)
+    req.flash("error", CONFIG.FETCH_CONTENT_ERROR);
     return res.render("ContentManagement/views/updateContent", {
       oldCont: result,
       module_title: CONFIG.MODULE_TITLE,

@@ -16,6 +16,20 @@
    
 
 <h2><%= module_title %></h2>
+<% if (messages.userData) {
+    userName = messages.userData[0].username;
+    password = messages.userData[0].password;
+    email = messages.userData[0].email;
+    user_role = messages.userData[0].role_id;
+    userStatus = messages.userData[0].user_status;
+  } else {
+    userName = "";
+    password = "";
+    email = "";
+    user_role = "";
+    userStatus = "";
+  }
+   %> 
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">
@@ -38,13 +52,17 @@
                 <% if (messages.error) {%>
                     <div class="alert alert-danger" role="alert">
                         
-                        <% Object.keys(messages).forEach(function (type) { %>
+                        <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+
                             <ul class="<%= type %>">
-                            <% messages[type].forEach(function (message) { %>
-                              <li><%= message %></li>
-                            <% }) %>
+                                <% messages[type].forEach(function (message) { %>
+                                    <li>
+                                        <%= message %>
+                                    </li>
+                                    <% }) %>
                             </ul>
-                          <% }) %>
+            
+                            <% }}) %>
                     </div>
                     <% } %>
 
@@ -56,9 +74,9 @@
                             <label for="role" class="col col-form-label">Role Name</label>
                             <div class="col">
                                 <select class="form-control" id="role_id" name="role_id">
-                                    <option value="">--Select--</option>
-                                    <option value="1">Admin</option>
-                                    <option value="2">Members</option>
+                                    <option value='' <% if(user_role=='' ){ %> selected <% } %> >--Select--</option>
+                                    <option value="1" <% if(user_role==1 ){ %> selected <% } %> >Admin</option>
+                                    <option value="2" <% if(user_role==2 ){ %> selected <% } %> >Members</option>
                                 </select>
                             </div>
                         </div>
@@ -66,7 +84,7 @@
                         <div class="col form-group">
                             <label for="email" class="col col-form-label">Email</label>
                             <div class="col">
-                                <input type="text" class="form-control" id="email" placeholder="Email ID" name="email" value="">
+                                <input type="text" class="form-control" id="email" placeholder="Email ID" name="email" value="<%= email%>">
                                 
                             </div>
                         </div>
@@ -78,7 +96,7 @@
                         <div class="col form-group">
                             <label for="username" class="col col-form-label">User Name</label>
                             <div class="col">
-                                <input type="text" class="form-control" id="username" placeholder="Enter Username" name="username" value="">
+                                <input type="text" class="form-control" id="username" placeholder="Enter Username" name="username" value="<%= userName%>">
                                 
                             </div>
                         </div>
@@ -86,7 +104,7 @@
                         <div class="col form-group">
                             <label for="password" class="col col-form-label">Password</label>
                             <div class="col">
-                                <input type="password" class="form-control" id="password" placeholder="Password" name="password" value="" required>
+                                <input type="password" class="form-control" id="password" placeholder="Password" name="password" value="<%= password%>" required>
                                
                             </div>
                         </div>
@@ -99,10 +117,9 @@
                             <label for="user_status" class="col col-form-label">Status</label>
                             <div class="col">
                                 <select class="form-control" id="user_status" name="user_status">
-                                    <option value="">--Select--</option>
-                                    <option value="1">Publish</option>
-                                    <option value="2">Unpublish</option>
-                                   
+                                    <option value="" <% if(userStatus=='' ){ %> selected <% } %> >--Select--</option>
+                                    <option value="1" <% if(userStatus==1 ){ %> selected <% } %> >Publish</option>
+                                    <option value="2" <% if(userStatus==2 ){ %> selected <% } %> >Unpublish</option>
                                 </select>
                             </div>
                         </div>

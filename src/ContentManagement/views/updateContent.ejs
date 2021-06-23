@@ -1,41 +1,68 @@
-<div class="container">
-    <h2><%= module_title %></h2>
-    <% if (messages.error) { console.log(messages.error)%>
+<h2>
+    <%= module_title %>
+</h2>
+<div class="row justify-content-center">
 
-        <div class="alert alert-danger" role="alert">
+    <div class="card col-6">
+        <div class="card-body">
+            <h5 class="card-title">
+                <%=title%>
+            </h5>
+            <p class="card-text">
+                <% if (messages.error) { %>
 
-            <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+                    <div class="alert alert-danger" role="alert">
 
-                <ul class="<%= type %>">
-                    <% messages[type].forEach(function (message) { %>
-                        <li>
-                            <%= message %>
-                        </li>
-                        <% }) %>
-                </ul>
+                        <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
 
-                <% }}) %>
-        </div>
-        <% } %>
-            <% if(messages.contentData){ title=messages.contentData[0].title;
-                description=messages.contentData[0].description; }else{ title=oldCont.title ;
-                description=oldCont.description ; ;} %>
-                <div class="row justify-content-center mt-3">
-                    <div class="col-6 jumbotron">
-                        <form name="myForm" action="/content/updateContent/<%=oldCont._id%>" method="post" onsubmit="return validateForm()">
-                            <div class="form-group">
-                                <label for="title">Title</label>
-                                <input type="text" class="form-control" id="title" name='title' value="<%= title%>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" rows="3"
-                                    name="description"><%= description%></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-secondary">Update</button>
-                        </form>
+                            <ul class="<%= type %>">
+                                <% messages[type].forEach(function (message) { %>
+                                    <li>
+                                        <%= message %>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+
+                            <% }}) %>
                     </div>
-                </div>
+                    <% } %>
+
+                        <% if(messages.contentData){ title=messages.contentData[0].title;
+                            description=messages.contentData[0].description;
+                            content_status=messages.contentData[0].content_status;}else{ title=oldCont.title ;
+                            description=oldCont.description ; content_status=oldCont.content_status;} %>
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <form name="myForm" action="/content/updateContent/<%=oldCont._id%>" method="post"
+                                        onsubmit="return validateForm()">
+                                        <div class="form-group">
+                                            <label for="title">Title</label>
+                                            <input type="text" class="form-control" id="title" name='title'
+                                                value="<%= title%>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea class="form-control" id="description" rows="3"
+                                                name="description"><%= description%></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="content_status" class="col col-form-label"><b>Status</b></label>
+                                            <select class="form-control" id="content_status" name="content_status">
+                                                <option value="" <% if(content_status=='' ){ %> selected <% } %>
+                                                        >--Select--</option>
+                                                <option value="1" <% if(content_status==1 ){ %> selected <% } %>
+                                                        >Publish</option>
+                                                <option value="2" <% if(content_status==2 ){ %> selected <% } %>
+                                                        >Unpublish</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-secondary">Update</button>
+                                    </form>
+                                </div>
+                            </div>
+            </p>
+        </div>
+    </div>
 </div>
 
 <script>
