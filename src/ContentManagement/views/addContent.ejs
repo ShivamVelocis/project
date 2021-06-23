@@ -1,6 +1,6 @@
 <div class="container">
     <h2><%= module_title %></h2>
-    <% if (messages.error) { console.log(messages.error)%>
+    <% if (messages.error) { %>
 
         <div class="alert alert-danger" role="alert">
 
@@ -18,7 +18,7 @@
         </div>
         <% } %>
             <div class="row justify-content-center mt-5">
-                <!-- for updating preview data of user content -->
+                <!-- for updating previous data of user content -->
                 <% if(messages.contentData){ title=messages.contentData[0].title;
                     description=messages.contentData[0].description; }else{ title='' ; description='' ;} %>
                                 <!-- Form to added new content -->
@@ -64,7 +64,7 @@
     function validateForm() {
 
         let titlePattern = /^[ A-Za-z0-9_.\/,]*$/
-        let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/
+        let descriptionPattern = /^[ A-Za-z0-9_.\/,<>&;]*$/
         let title = document.forms["myForm"]["title"].value;
         // getData returns latest value of textarea 
         let description = theEditor.getData()
@@ -82,6 +82,7 @@
             return false;
         }
         if (description.match(descriptionPattern) == null) {
+            console.log(description)
             alert("Please enter alphanumeric description only");
             return false;
         }

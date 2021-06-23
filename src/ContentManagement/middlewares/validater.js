@@ -15,13 +15,12 @@ const contentValidationRules = () => {
       return true;
     }),
     body("description").custom((value, { req }) => {
+      
       if (value == "") {
         throw new Error("Description should not be empty");
       }
-      if (
-        value.match((CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/,<>]*$/)) ==
-        null
-      ) {
+      if (value.match(CONFIG.TEXTAREA_PATTERN == null)) {
+        console.log(value)
         throw new Error("Please enter alphanumeric description only");
       }
       return true;
@@ -51,7 +50,8 @@ const validate = (req, res, next) => {
   //   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   //   console.log({ error: extractedErrors });
   // return res.status(422).render("ErrorPage", { error: extractedErrors });
-  res.locals.validationError = extractedErrors.length > 0?extractedErrors:null;
+  res.locals.validationError =
+    extractedErrors.length > 0 ? extractedErrors : null;
   next();
   //response for postmon
   //   return res.status(422).json({
