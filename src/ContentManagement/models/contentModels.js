@@ -4,7 +4,7 @@ let contentSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    status: Number,
+    content_status: Number,
   },
   { timestamps: true }
 );

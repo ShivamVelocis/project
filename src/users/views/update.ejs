@@ -1,9 +1,9 @@
 <h2></h2>
 <%= module_title %>
     </h2>
-    <% if(messages.userData){ console.log(messages.userData);email=messages.userData[0].email; user_role=messages.userData[0].role_id;
-        userStatus=messages.userData[0].user_status }else{ console.log(results);email=results.email ; user_role=results.role_id ;
-        userStatus=results.user_status ; }%>
+    <% if(messages.userData){ email=messages.userData[0].email; user_role=messages.userData[0].role_id;
+        userStatus=messages.userData[0].user_status }else{ console.log(results);email=results.email ;
+        user_role=results.role_id ; userStatus=results.user_status ; }%>
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">
@@ -15,10 +15,10 @@
                         <div class="col form-group">
                             <label for="role" class="col col-form-label">Role Name</label>
                             <div class="col">
-                                <select class="form-control" id="role_id" name="role_id" value='<%= user_role %>'>
-                                    <option value=''>--Select--</option>
-                                    <option value="1">Admin</option>
-                                    <option value="2">Members</option>
+                                <select class="form-control" id="role_id" name="role_id">
+                                    <option value='' <% if(user_role=='' ){ %> selected <% } %> >--Select--</option>
+                                    <option value="1" <% if(user_role==1 ){ %> selected <% } %> >Admin</option>
+                                    <option value="2" <% if(user_role==2 ){ %> selected <% } %> >Members</option>
                                 </select>
                             </div>
                         </div>
@@ -39,11 +39,10 @@
                         <div class="col form-group">
                             <label for="user_status" class="col col-form-label">Status</label>
                             <div class="col">
-                                <select class="form-control" id="user_status" name="user_status"
-                                    value="<%=userStatus%>">
-                                    <option value="">--Select--</option>
-                                    <option value="1">Publish</option>
-                                    <option value="2">Unpublish</option>
+                                <select class="form-control" id="user_status" name="user_status">
+                                    <option value="" <% if(userStatus=='' ){ %> selected <% } %> >--Select--</option>
+                                    <option value="1" <% if(userStatus==1 ){ %> selected <% } %> >Publish</option>
+                                    <option value="2" <% if(userStatus==2 ){ %> selected <% } %> >Unpublish</option>
 
                                 </select>
                             </div>

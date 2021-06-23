@@ -1,29 +1,56 @@
-<div class="container">
-    <h2><%= module_title %></h2>
-    <% if (messages.success) { %>
-        <div class="alert alert-success" role="alert">
-            <%- messages.success %>
-        </div>
-        <% } %>
-            <% if (messages.error) { %>
-                <div class="alert alert-danger" role="alert">
-                    <%- messages.error %>
-                </div>
-                <% } %>
+<h2>
+    <%= module_title %>
+</h2>
+<div class="row justify-content-center">
 
-                    <% if(content){ %>
-                        <h2 class="text-center mt-3">Content</h2>
-                        <div class="card bg-light text-dark mt-3">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <b> Title: </b>
-                                    <%=content.title%>
-                                </h5>
-                                <p class="card-text">
-                                    <b>Description:</b>
-                                    <%-content.description%>
-                                </p>
+    <div class="card col-6">
+        <div class="card-body">
+            <h3 class="card-title">
+                <%=title%>
+            </h3>
+            <p class="card-text">
+                <% if (messages.error) { %>
+
+                    <div class="alert alert-danger" role="alert">
+
+                        <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+
+                            <ul class="<%= type %>">
+                                <% messages[type].forEach(function (message) { %>
+                                    <li>
+                                        <%= message %>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+
+                            <% }}) %>
+                    </div>
+                    <% } %>
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <% if(content){ %>
+                                    <div class="card mt-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <b> Title: </b>
+                                                <%=content.title%>
+                                            </h5>
+                                            <p class="card-text">
+                                                <b>Description:</b>
+                                                <%-content.description%>
+                                            </p>
+                                            <h5 class="card-title">
+                                                <b> Status: </b>
+                                                <% if(content.content_status==1) {%> Publised<% }else {%>Unpublished <%
+                                                            } %>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <% } %>
                             </div>
                         </div>
-                        <% } %>
+            </p>
+        </div>
+    </div>
 </div>
+

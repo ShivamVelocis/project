@@ -25,6 +25,13 @@ const contentValidationRules = () => {
       }
       return true;
     }),
+    body("content_status").custom((value, { req }) => {
+      console.log(value)
+      if (value == 1 || value == 2) {
+        return true;
+      }
+      throw new Error(CONFIG.INVALID_STATUS);
+    }),
   ];
 };
 
