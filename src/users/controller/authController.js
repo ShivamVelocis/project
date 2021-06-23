@@ -7,7 +7,7 @@ const { genrateJWTToken } = require("../utils/auth");
 const { mailOtp } = require("../utils/nodemailer");
 
 exports.login = (req, res) => {
-  res.render("users/views/auth/login");
+  res.render("users/views/auth/login",{module_title: CONFIG.MODULE_TITLE});
 };
 
 exports.postLogin = async (req, res) => {
@@ -56,7 +56,7 @@ exports.postLogin = async (req, res) => {
 };
 
 exports.forgetPassword = (req, res) => {
-  res.render("users/views/auth/forgetPwd");
+  res.render("users/views/auth/forgetPwd",{module_title: CONFIG.MODULE_TITLE});
 };
 
 exports.postForgetPassword = async (req, res) => {
@@ -91,7 +91,7 @@ exports.postForgetPassword = async (req, res) => {
 };
 
 exports.otpVerification = (req, res) => {
-  return res.render("users/views/auth/otpValidation");
+  return res.render("users/views/auth/otpValidation",{module_title: CONFIG.MODULE_TITLE});
 };
 exports.postOtpVerification = async (req, res) => {
   // console.log("postOtpVerification");
@@ -122,3 +122,7 @@ exports.postOtpVerification = async (req, res) => {
   }
 };
 
+exports.logOut = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/user/auth/login");
+};

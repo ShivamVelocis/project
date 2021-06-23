@@ -3,12 +3,16 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">
-            <b> Title: </b>
+            <b> Username: </b>
             <%=results.username%>
         </h5>
         <p class="card-text">
-            <b>Description:</b>
+            <b>Email:</b>
             <%=results.email%>
+        </p>
+        <p class="card-text">
+            <b>Status:</b>
+            <%if(results.user_status ==1){ %>Published<% }else{ %> Unublished<% } %> 
         </p>
     </div>
 </div>

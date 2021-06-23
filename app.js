@@ -5,9 +5,11 @@ const dotenv = require("dotenv");
 const expressLayouts = require("express-ejs-layouts");
 const contentRoutes = require("./src/ContentManagement/routes/contentRoutes");
 const userRoutes = require("./src/users/routes/userRouter");
+const roleRoutes = require("./src/roleManagement/routes/roleRoute");
 const session = require("express-session");
 const morgan = require("morgan");
 const flash = require("express-flash");
+const { loginCheck } = require("./src/middlewares/auth");
 // const cookieParser = require('cookie-parser');
 
 dotenv.config();
@@ -16,7 +18,6 @@ require("./src/configs/db");
 
 const app = express();
 const port = process.env.PORT || 3000;
-
 
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
@@ -47,10 +48,10 @@ app.use(
   })
 ); // session middleware
 app.use(flash());
-
-
+app.use(loginCheck);
 app.use("/content", contentRoutes); /*content management routes*/
 app.use("/user", userRoutes); /*user management and authentication routes*/
+app.use("/role", roleRoutes); 
 
 /*middleware for 404 error */
 app.use((req, res, next) => {

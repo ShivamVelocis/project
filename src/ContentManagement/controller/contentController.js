@@ -1,8 +1,8 @@
 const Content = require("../models/contentModels.js");
-const Configs = require("../configs/config");
+const CONFIG = require("../configs/config");
 
 exports.contentForm = (req, res) => {
-  res.render("ContentManagement/views/addContent", { error: null });
+  res.render("ContentManagement/views/addContent", {module_title: CONFIG.MODULE_TITLE, });
 };
 
 exports.addContent = async (req, res) => {
@@ -19,8 +19,9 @@ exports.addContent = async (req, res) => {
     let saveContent = await content.save();
     res.redirect("all");
   } catch (error) {
+    req.flash("error", CONFIG.ADD_CONTENT_FAILED)
     res.render("ContentManagement/views/addContent", {
-      error: Configs.ADD_CONTENT_FAILED,
+      module_title: CONFIG.MODULE_TITLE,
     });
   }
 };
@@ -30,11 +31,11 @@ exports.getContent = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("ContentManagement/views/content", { content: result });
+      return res.render("ContentManagement/views/content", { content: result ,module_title: CONFIG.MODULE_TITLE,});
     }
   } catch (error) {
-    req.flash("error", Configs.FETCH_CONTENT_ERROR);
-    res.render("ContentManagement/views/content", { content: null });
+    req.flash("error", CONFIG.FETCH_CONTENT_ERROR);
+    res.render("ContentManagement/views/content", { content: null,module_title: CONFIG.MODULE_TITLE, });
   }
 };
 
@@ -45,19 +46,20 @@ exports.getContents = async (req, res) => {
     if (contents.length > 0) {
       return res.render("ContentManagement/views/contents", {
         contents: contents,
-        error: null,
-        success: null,
+        module_title: CONFIG.MODULE_TITLE,
       });
     } else {
-      req.flash("error", Configs.NO_CONTENT_FOUND);
+      req.flash("error", CONFIG.NO_CONTENT_FOUND);
       return res.render("ContentManagement/views/contents", {
         contents: [],
+        module_title: CONFIG.MODULE_TITLE,
       });
     }
   } catch (error) {
-    req.flash("error", Configs.DELETE_CONTENT_FAILED);
+    req.flash("error", CONFIG.DELETE_CONTENT_FAILED);
     return res.render("ContentManagement/views/contents", {
       contents: [],
+      module_title: CONFIG.MODULE_TITLE,
     });
   }
 };
@@ -70,20 +72,14 @@ exports.removeContent = async (req, res) => {
       let title = result.title.toUpperCase();
       req.flash("success", `Content with title ${title} deleted successfully.`);
       res.redirect("/content/all");
-      // return res.render("ContentManagement/views/deleteContent", {
-      //   message: `Content with title ${title} deleted successfully.`,
-      // });
     } else {
       res.status(400);
       req.flash("success", `No content with id ${id} present for deletion`);
       res.redirect("/content/all");
-      // res.render("ContentManagement/views/ErrorPage", {
-      //   error: `no content with id ${id} present for deletion`,
-      // });
     }
   } catch (error) {
     res.status(400);
-    req.flash("success", Configs.DELETE_CONTENT_FAILED);
+    req.flash("success", CONFIG.DELETE_CONTENT_FAILED);
     res.redirect("/content/all");
   }
 };
@@ -95,11 +91,14 @@ exports.contentToUpdate = async (req, res) => {
     if (result !== undefined && result !== null) {
       return res.render("ContentManagement/views/updateContent", {
         oldCont: result,
+        module_title: CONFIG.MODULE_TITLE,
       });
     }
   } catch (error) {
-    res.render("ContentManagement/views/ErrorPage", {
-      error: Configs.FETCH_CONTENT_ERROR,
+    req.flash("error", CONFIG.FETCH_CONTENT_ERROR)
+    return res.render("ContentManagement/views/updateContent", {
+      oldCont: result,
+      module_title: CONFIG.MODULE_TITLE,
     });
   }
 };
@@ -126,7 +125,7 @@ exports.updateContent = async (req, res) => {
       return res.redirect("/content/all");
     }
   } catch (error) {
-    req.flash("error", Configs.UPDATE_CONTENT_FAILED);
+    req.flash("error", CONFIG.UPDATE_CONTENT_FAILED);
     return res.redirect(`/content/update/${id}`);
   }
 };
