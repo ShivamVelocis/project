@@ -26,6 +26,7 @@ exports.adminRole = async (req, res, next) => {
     }
   } catch (error) {
     console.error(error);
+    req.flash("error", error);
     res.redirect("/user/auth/login");
   }
 };
