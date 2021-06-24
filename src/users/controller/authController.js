@@ -1,4 +1,3 @@
-const moment = require("moment");
 const bcrypt = require("bcrypt");
 
 const userModel = require("../models/userModel");
@@ -18,7 +17,6 @@ exports.login = (req, res, next) => {
 // post handler for login form and redirect to users after success login
 exports.postLogin = async (req, res, next) => {
   let data = req.body;
-  // console.log(data)
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
     req.flash("loginData", req.body);
@@ -30,12 +28,11 @@ exports.postLogin = async (req, res, next) => {
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
-        console.log(passwordVerified);
+        // console.log(passwordVerified);
         req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
         req.flash("loginData", req.body);
         return res.redirect("/user/auth/login");
       }
-      // console.log("test",process.env.ACCESS_TOKEN_SECRET);
       let token = await genrateJWTToken(
         user._id,
         process.env.ACCESS_TOKEN_SECRET,
@@ -57,10 +54,6 @@ exports.postLogin = async (req, res, next) => {
       return res.redirect("/user/auth/login");
     }
   } catch (error) {
-    // console.log(error);
-    // req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
-    // req.flash("loginData", req.body);
-    // return res.redirect("/user/auth/login");
     next(error);
   }
 };
@@ -90,14 +83,13 @@ exports.postForgetPassword = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        // console.log(result);
         await mailOtp(data.email, otp, token);
         req.flash("success", CONFIG.OTP_SUCCESS);
         return res.redirect("/user/auth/login");
       }
     } else {
-      req.flash("error", CONFIG.NOT_REGISTER_USER);
-      return res.redirect(req.originalUrl);
+      req.flash("success", CONFIG.OTP_SUCCESS);
+      return res.redirect("/user/auth/login");
     }
   } catch (error) {
     next(error);
@@ -113,8 +105,8 @@ exports.otpVerification = async (req, res, next) => {
       req.flash("error", "Link expired");
       return res.redirect("/user/forgetpassword");
     }
-    let tokenize = await validateToken(token);
-    if (!tokenize) {
+    let isUrlTokenVal = await validateToken(token);
+    if (!isUrlTokenVal) {
       req.flash("error", "Link expired");
       return res.redirect("/user/forgetpassword");
     }
@@ -131,14 +123,13 @@ exports.otpVerification = async (req, res, next) => {
 exports.postOtpVerification = async (req, res, next) => {
   let token = req.params.token;
   try {
-    let tokenize = await validateToken(token);
-    if (!tokenize) {
+    let isUrlTokenVal = await validateToken(token);
+    if (!isUrlTokenVal) {
       req.flash("error", "Link expired");
       return res.redirect("/user/forgetpassword");
     }
     let userData = await decodeToken(token);
-    // console.log(userData.userId);
-    const data = req.body;
+    let data = req.body;
     let user = await userModel.findOne({ email: userData.userId });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
@@ -146,11 +137,8 @@ exports.postOtpVerification = async (req, res, next) => {
       return res.redirect("/user/forgetpassword");
     }
     if (user !== null && user !== undefined) {
-      // console.log(user);
       if (user.otp == data.otp) {
-        // console.log(data);
         let passwordHash = bcrypt.hashSync(req.body.password, 10);
-        // console.log(passwordHash);
         await userModel.findOneAndUpdate(
           { email: userData.userId },
           { $set: { otp: null, password: passwordHash, otpToken: null } },
@@ -163,7 +151,6 @@ exports.postOtpVerification = async (req, res, next) => {
         return res.redirect(`/user/pwdreset/${token}`);
       }
     } else {
-      // console.error("email error");
       req.flash("error", CONFIG.INVALID_EMAIL);
       return res.redirect(req.originalUrl);
     }

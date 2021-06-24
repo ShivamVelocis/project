@@ -14,7 +14,7 @@ let mailOtp = async (mailTo, otp, token) => {
     },
   });
   let forgetPasswordUrl = `'http://localhost:3000/user/pwdreset/${token}'`;
-  console.log(forgetPasswordUrl)
+  // console.log(forgetPasswordUrl)
   let emailBody = `<div><a href=${forgetPasswordUrl} >Forget password</a></div>
     <div id="div2">OTP  ${otp} will expire in 10 min.</div>`;
 

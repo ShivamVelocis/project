@@ -9,7 +9,7 @@ exports.contentForm = (req, res) => {
 };
 
 exports.addContent = async (req, res) => {
-  console.log(res.locals.validationError);
+  // console.log(res.locals.validationError);
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
     req.flash("contentData", req.body);

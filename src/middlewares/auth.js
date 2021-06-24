@@ -2,7 +2,7 @@ const {
   validateToken,
   decodeToken,
   generaterefreshToken,
-} = require("../utils/authHelper");
+} = require("../users/utils/auth");
 
 exports.validateUser = async (req, res, next) => {
   try {

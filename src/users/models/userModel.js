@@ -1,4 +1,5 @@
-let mongoose = require("mongoose");
+const  mongoose = require("mongoose");
+const uniqueValidator = require('mongoose-unique-validator');
 
 let userSchema = new mongoose.Schema(
   {
@@ -7,12 +8,13 @@ let userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       index: true,
-      unique: true,
+      unique: [true, "Username already taken"],
       required: [true, "Username required"],
     },
     password: String,
     email: {
       type: String,
+      unique: [true, "Username already token"],
       required: [true, "Email required"],
     },
     role_id: Number,
@@ -32,5 +34,5 @@ let userSchema = new mongoose.Schema(
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
-
+userSchema.plugin(uniqueValidator);
 module.exports = mongoose.model("User", userSchema);
