@@ -6,6 +6,10 @@ const {
 const userModel = require("../users/models/userModel");
 const CONFIG = require("../configs/config");
 
+
+
+
+// validates if user is admin or not
 exports.adminRole = async (req, res, next) => {
   try {
     if (req.session && req.session.token && validateToken(req.session.token)) {

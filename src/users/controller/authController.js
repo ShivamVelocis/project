@@ -11,7 +11,10 @@ const { mailOtp } = require("../utils/nodemailer");
 
 // render login page
 exports.login = (req, res, next) => {
-  res.render("users/views/auth/login", { module_title: CONFIG.MODULE_TITLE });
+  res.render("users/views/auth/login", {
+    title: CONFIG.LOGIN_TITLE,
+    module_title: CONFIG.MODULE_TITLE,
+  });
 };
 
 // post handler for login form and redirect to users after success login
@@ -61,6 +64,7 @@ exports.postLogin = async (req, res, next) => {
 // render forget password page for user email
 exports.forgetPassword = (req, res, next) => {
   res.render("users/views/auth/forgetPwd", {
+    title: CONFIG.FORGET_PASSWORD_TITLE,
     module_title: CONFIG.MODULE_TITLE,
   });
 };
@@ -112,6 +116,7 @@ exports.otpVerification = async (req, res, next) => {
     }
     return res.render("users/views/auth/otpValidation", {
       data: token,
+      title: CONFIG.RESET_PASSWORD_TITLE,
       module_title: CONFIG.MODULE_TITLE,
     });
   } catch (error) {
