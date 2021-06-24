@@ -17,4 +17,12 @@ CONFIG.INVALID_USER_NAME = "Already used";
 CONFIG.INVALID_PASSWORD = "Please enter valid password";
 CONFIG.INVALID_MONGO_ID = "Please enter valid Mongodb ID";
 
+CONFIG.EMPTY_NAME = "Name should not be empty";
+CONFIG.EMPTY_EMAIL = "Email should not be empty";
+CONFIG.EMPTY_USER_ROLE = "User role should not be empty";
+CONFIG.EMPTY_USER_STATUS = "User status should not be empty";
+CONFIG.EMPTY_USER_NAME = "User name should not be empty";
+CONFIG.EMPTY_PASSWORD = "Password should not be empty";
+CONFIG.EMPTY_MONGO_ID = "MongoID should not be empty";
+
 module.exports = CONFIG;

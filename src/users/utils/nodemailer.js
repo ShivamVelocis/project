@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 
 let mailOtp = async (mailTo, otp, token) => {
+
   // Generate test SMTP service account from ethereal.email
   let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -13,8 +14,9 @@ let mailOtp = async (mailTo, otp, token) => {
       refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
     },
   });
+
   let forgetPasswordUrl = `'http://localhost:3000/user/pwdreset/${token}'`;
-  console.log(forgetPasswordUrl)
+
   let emailBody = `<div><a href=${forgetPasswordUrl} >Forget password</a></div>
     <div id="div2">OTP  ${otp} will expire in 10 min.</div>`;
 
@@ -23,7 +25,6 @@ let mailOtp = async (mailTo, otp, token) => {
     from: "test@mail.com", // sender address
     to: mailTo, // list of receivers
     subject: "OTP for password recovery", // Subject line
-    // text: `Link  ${forgetPasswordUrl}   and  otp is ${otp}`, // plain text body
     html: emailBody, // html body
   });
 };

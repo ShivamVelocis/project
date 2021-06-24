@@ -1,6 +1,3 @@
-var moment = require('moment');
-const { check, validationResult } = require('express-validator');
-//const userValidaton = require('../validations/users.validator');
 const bcrypt = require('bcrypt');
 
 const userModel = require("../models/userModel");
@@ -15,6 +12,7 @@ exports.addUser = function addUser(req, res, next){
 
 exports.postAddUser = async function addUser(req, res, next) {
   if (res.locals.validationError) {
+    // console.log(res.locals.validationError)
     req.flash("error", res.locals.validationError);
     req.flash("userData", req.body);
     return res.redirect(`/user/add`);
@@ -30,30 +28,36 @@ exports.postAddUser = async function addUser(req, res, next) {
           last: 'Kumar'
         },
         user_status: req.body.user_status,
-        //created_at: moment().format()
     }
+    let uniqueEmail = await userModel.find({ email: req.body.email})
 
+    let uniqueUserName = await userModel.find({username: req.body.username})
+    if(uniqueUserName.length>0 || uniqueEmail.length>0){
+      let errorMessage=[]
+      uniqueUserName.length>0 && errorMessage.push("Username already taken");
+      uniqueEmail.length>0 && errorMessage.push("Email already taken")
+      throw errorMessage
+    }
     let User = new userModel(form_data);
     let saveUser = await User.save();
-    /*
-      User.validate(function (err) {
-        if (err) handleError(err);
-        //else // validation passed
-      });
-    */
+    
     req.flash('success', CONFIG.INSERT_MESSAGE);
     res.redirect("/user/view");
   } catch (error) {
+    console.log(error.errors)
     req.flash("userData", req.body);
-    req.flash('error', error.errors);
-     //console.log(error.message);
-
+    req.flash('error', error.errors?error.errors:error);
     res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, error: error });
   }
 };
 
 
 exports.getUser = async function getUser(req, res, next) {
+  if (res.locals.validationError) {
+    // console.log(res.locals.validationError)
+    req.flash("error", res.locals.validationError);
+    return res.render("views/error/ErrorPage", { error: res.locals.validationError });
+  }
   let id = req.params.id;
   try {
     let result = await userModel.findById(id);
@@ -81,7 +85,10 @@ exports.getUsers = async function getUsers(req, res, next) {
 
 
 exports.removeContent = async (req, res) => {
-  
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    return res.render("views/error/ErrorPage", { error: res.locals.validationError });
+  }
   let id = req.body.uid;
   try {
     let result = await userModel.findOneAndRemove({ _id: id });
@@ -95,8 +102,12 @@ exports.removeContent = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    return res.render("views/error/ErrorPage", { error: res.locals.validationError });
+  }
   let id = req.params.id;
- 
+
   try {
     let result = await userModel.findById(id);
     if (result !== undefined && result !== null) {
@@ -109,7 +120,6 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.postUpdateUser = async (req, res) => {
-  // console.log(req.params.id);
   let id = req.params.id;
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
@@ -130,6 +140,13 @@ exports.postUpdateUser = async (req, res) => {
   }
 
   try {
+    let uniqueEmail = await userModel.find({ email: req.body.email})
+
+    if(uniqueEmail.length>0){
+      let errorMessage=[]
+      uniqueEmail.length>0 && errorMessage.push("Email already taken")
+      throw errorMessage
+    }
     let result = await userModel.findOneAndUpdate(
       { _id: id },
       { $set: form_data },
@@ -140,7 +157,7 @@ exports.postUpdateUser = async (req, res) => {
       return res.redirect("/user/view");
     }
   } catch (error) {
-    req.flash('error', 'Something went wrong!!');
+    req.flash('error', error.errors?error.errors:error);
     req.flash("userData", req.body);
     res.render("views/error/ErrorPage", { error: "Error while updating content" });
   }
