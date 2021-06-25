@@ -17,7 +17,7 @@ CONFIG.NO_RECORDS = "No Record(s) Found";
 
 CONFIG.LOGIN_FAIL_MESSAGE = "Invalid Username or Password";
 CONFIG.LOGIN_SUCCESS_MESSAGE = "Logged in success";
-CONFIG.OTP_SUCCESS = "OTP send to your registered email address,If you are registered user";
+CONFIG.OTP_SUCCESS = "OTP send to your registered email address,If you are a registered user";
 CONFIG.NOT_REGISTER_USER = "Not a registered user";
 CONFIG.PASSWORD_SUCCESS_CHANGE = "Password changed successfully";
 CONFIG.INVALID_NAME = "Please enter valid name";

@@ -1,9 +1,9 @@
-const {
-  validateToken,
-  decodeToken,
-  generaterefreshToken,
-} = require("../users/utils/auth");
+const {validateToken, decodeToken, generaterefreshToken} = require("../users/utils/auth");
 
+
+
+
+// middleware to allow logged users and refresh tokens
 exports.validateUser = async (req, res, next) => {
   try {
     if (req.session && req.session.token && validateToken(req.session.token)) {
@@ -19,6 +19,9 @@ exports.validateUser = async (req, res, next) => {
   }
 };
 
+
+
+// check wheather user is loged in or not 
 exports.loginCheck = async (req, res, next) => {
   res.locals.isAuth = true;
   try {
