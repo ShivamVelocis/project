@@ -22,4 +22,7 @@ router.post("/forgetpassword/", authController.postForgetPassword); //add otp an
 router.get("/pwdreset/:token", authController.otpVerification);//render page to reset password provide otp 
 router.post("/pwdreset/:token", authController.postOtpVerification); // reset user password if url not expired and redirect to login page
 
+router.get('/changepwd/:id', authController.changePassword)
+router.post('/changepwd/:id', authController.postChangePassword)
+
 module.exports = router;

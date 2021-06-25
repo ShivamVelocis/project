@@ -168,3 +168,54 @@ exports.logOut = (req, res, next) => {
   req.session.destroy();
   return res.redirect("/user/auth/login");
 };
+
+// render change password page of logged in page
+exports.changePassword = async (req, res, next) => {
+  let userId = req.params.id;
+  try {
+    let user = await userModel.findOne({ _id: userId });
+    if (user != null && user != undefined) {
+      res.render("users/views/auth/changePassword", {
+        title: "Change Password",
+        module_title: CONFIG.MODULE_TITLE,
+        userData: user._id,
+      });
+    }else{
+      req.flash("error","Some error encounter during data fetching")
+      res.redirect(`/user/view/${userId}`);
+    }
+  } catch (error) {
+    console.log(error)
+  }
+};
+
+//change password after user provide current and new password
+exports.postChangePassword = async (req, res, next) => {
+  let userId = req.params.id;
+  let userData = req.body;
+  try {
+    let user = await userModel.findOne({ _id: userId });
+    // console.log(user)
+    if (user != null && user != undefined) {
+      let oldPasswordVerified = await bcrypt.compare(
+        userData.currentPassword,
+        user.password
+      );
+      // console.log(oldPasswordVerified)
+      if (oldPasswordVerified) {
+        let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
+        await userModel.findOneAndUpdate(
+          { _id: userId },
+          { $set: { password: newPasswordHash } },
+          { upsert: true }
+        );
+        req.flash("success", "Your password update with new password");
+        return res.redirect(`/user/view/${userId}`);
+      }
+      req.flash("error", "Password update failed");
+      return res.redirect(`/user/view/${userId}`);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};

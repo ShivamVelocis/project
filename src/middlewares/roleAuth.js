@@ -1,8 +1,4 @@
-const {
-  validateToken,
-  decodeToken,
-  generaterefreshToken,
-} = require("../users/utils/auth");
+const {validateToken, decodeToken, generaterefreshToken,} = require("../users/utils/auth");
 const userModel = require("../users/models/userModel");
 const CONFIG = require("../configs/config");
 

@@ -36,20 +36,15 @@
                                             <% if(content.description.length>=20) {%>...<% } %>
                                     </td>
                                     <td>
+                                        <!-- view button -->
                                         <a href='/content/<%=content._id%>' class="btn"><i
                                                 class="fa fa-location-arrow"></i></a>
-                                        <!-- <button class="btn" onclick="viewContent('<%= content._id%>')">
-                                            <i class="fa fa-location-arrow"></i>
-                                        </button> -->
+                                       
+                                                <!-- edit button -->
                                         <a href='/content/update/<%=content._id%>' class="btn"><i
                                                 class="fa fa-edit"></i></a>
-                                        <!-- <button class="btn" onclick="editContent('<%= content._id%>')">
-                                            <i class="fa fa-edit"></i>
-                                        </button> -->
-                                        <!-- confirm  trigger button -->
-                                        <!-- <button class="btn" type="button" >
-                                            <i class="fa fa-trash"></i>
-                                        </button> -->
+                                   
+                                                <!-- delete button -->
                                         <a href="" onclick="if(confirm('Do you want to delete this record?')) event.preventDefault(); document.getElementById('delete-<%=content._id%>').submit();"  class="btn btn-danger"> <i class="fa fa-trash"></i></a>
                                             <form id="delete-<%=content._id%>" method="get" action="/content/remove/<%=content._id%>" style="display: none;">
                                                 <input type="hidden" name="uid" value="<%=content._id%>"/>
