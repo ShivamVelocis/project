@@ -6,7 +6,7 @@ const CONFIG = require("../configs/config");
 
 
 // validates if user is admin or not
-exports.adminRole = async (req, res, next) => {
+exports.isAdmin = async (req, res, next) => {
   try {
     if (req.session && req.session.token && validateToken(req.session.token)) {
       let user = decodeToken(req.session.token);

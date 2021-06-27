@@ -112,7 +112,7 @@ exports.mongoIDValidationRules = () => {
 };
 
 // middleware to check if any error encouter during validation
-exports.validate = (req, res, next) => {
+exports.isRequestValid = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     return next();

@@ -1,5 +1,7 @@
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
+
+
 const CONFIG = require("../configs/config");
 
 // content request body validater
@@ -58,7 +60,7 @@ const mongoIDValidationRules = () => {
 };
 
 // middleware to check if any error encouter during validation
-const validate = (req, res, next) => {
+const isRequestValid = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     return next();
@@ -73,5 +75,5 @@ const validate = (req, res, next) => {
 module.exports = {
   contentValidationRules,
   mongoIDValidationRules,
-  validate,
+  isRequestValid,
 };

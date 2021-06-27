@@ -25,4 +25,6 @@ CONFIG.EMPTY_USER_NAME = "User name should not be empty";
 CONFIG.EMPTY_PASSWORD = "Password should not be empty";
 CONFIG.EMPTY_MONGO_ID = "MongoID should not be empty";
 
+CONFIG.LOGIN_FIRST_MESSAGE = "Please login first";
+
 module.exports = CONFIG;
