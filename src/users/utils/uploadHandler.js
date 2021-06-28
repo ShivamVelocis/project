@@ -26,7 +26,7 @@ let uploadProfilePicture = (req, res, next) => {
       req.flash("oldUserData", "uploadfailed");
       return res.redirect(`/user/upload/profile/${req.params.id}`);
     }
-    req.flash("success", "Profile picture updated successfully");
+    // req.flash("success", "Profile picture updated successfully");
     next();
   });
 };

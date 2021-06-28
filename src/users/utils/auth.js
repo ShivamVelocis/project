@@ -26,6 +26,8 @@ const validateToken = (token) => {
     return false;
   }
 };
+
+
 const decodeToken = (token) => {
   return (userData = jwt_decode(token));
   // return { id: userData.userId };

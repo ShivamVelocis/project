@@ -214,6 +214,7 @@ exports.postUploadProfilePicture = async (req, res) => {
     .png()
     .toBuffer();;
     await userModel.findByIdAndUpdate(userId, { $set: { profilePicture: file } });
+    req.flash("success", CONFIG.PROFILE_PICTURE_SUCCESS);
     res.redirect(`/user/view/${userId}`)
   } catch (error) {
     console.log(error)

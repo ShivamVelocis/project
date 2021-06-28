@@ -21,7 +21,7 @@ let mailOtp = async (mailTo, otp, token) => {
     <div id="div2">OTP  ${otp} will expire in 10 min.</div>`;
 
   // send mail with defined transport object
-  let info = await transporter.sendMail({
+    transporter.sendMail({
     from: "test@mail.com", // sender address
     to: mailTo, // list of receivers
     subject: "OTP for password recovery", // Subject line
