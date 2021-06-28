@@ -14,7 +14,6 @@ exports.addUser = function addUser(req, res, next) {
 
 exports.postAddUser = async function addUser(req, res, next) {
   if (res.locals.validationError) {
-    // console.log(res.locals.validationError)
     req.flash("error", res.locals.validationError);
     req.flash("userData", req.body);
     return res.redirect(`/user/add`);
@@ -36,8 +35,8 @@ exports.postAddUser = async function addUser(req, res, next) {
     let uniqueUserName = await userModel.find({ username: req.body.username });
     if (uniqueUserName.length > 0 || uniqueEmail.length > 0) {
       let errorMessage = [];
-      uniqueUserName.length > 0 && errorMessage.push("Username already taken");
-      uniqueEmail.length > 0 && errorMessage.push("Email already taken");
+      uniqueUserName.length > 0 && errorMessage.push(USERNAME_ALREADY_EXIST);
+      uniqueEmail.length > 0 && errorMessage.push(CONFIG.EMAIL_ALREADY_EXIST);
       throw errorMessage;
     }
     let User = new userModel(form_data);
@@ -166,12 +165,14 @@ exports.postUpdateUser = async (req, res) => {
   };
 
   try {
-    let uniqueEmail = await userModel.find({ email: req.body.email });
-
-    if (uniqueEmail.length > 0) {
-      let errorMessage = [];
-      uniqueEmail.length > 0 && errorMessage.push("Email already taken");
-      throw errorMessage;
+    let user = await userModel.findOne({ _id:id });
+    if(user.email != req.body.email){
+      let uniqueEmail = await userModel.find({ email:req.body.email });
+      if (uniqueEmail.length > 0) {
+        let errorMessage = [];
+        uniqueEmail.length > 0 && errorMessage.push(CONFIG.EMAIL_ALREADY_EXIST);
+        throw errorMessage;
+      }
     }
     let result = await userModel.findOneAndUpdate(
       { _id: id },

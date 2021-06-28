@@ -9,7 +9,6 @@ exports.contentForm = (req, res) => {
 };
 
 exports.addContent = async (req, res) => {
-  // console.log(res.locals.validationError);
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
     req.flash("contentData", req.body);
@@ -18,7 +17,7 @@ exports.addContent = async (req, res) => {
   let data = req.body;
   try {
     let content = new Content(data);
-    let saveContent = await content.save();
+    await content.save();
     req.flash("success", CONFIG.ADD_CONTENT_SUCCESS);
     res.redirect("all");
   } catch (error) {
@@ -50,7 +49,6 @@ exports.getContent = async (req, res) => {
 };
 
 exports.getContents = async (req, res) => {
-  // console.log("i am contents controller")
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
@@ -79,8 +77,7 @@ exports.removeContent = async (req, res) => {
   try {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
-      let title = result.title.toUpperCase();
-      req.flash("success", process.env.DELETE_CONTENT_SUCCESS);
+      req.flash("success", CONFIG.DELETE_CONTENT_SUCCESS);
       res.redirect("/content/all");
     } else {
       res.status(400);
@@ -131,7 +128,7 @@ exports.updateContent = async (req, res) => {
     if (result !== undefined && result !== null) {
       req.flash(
         "success",
-        process.env.UPDATE_CONTENT_SUCCESS
+        CONFIG.UPDATE_CONTENT_SUCCESS
       );
       return res.redirect("/content/all");
     }

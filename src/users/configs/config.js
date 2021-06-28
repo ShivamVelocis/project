@@ -1,9 +1,11 @@
 require("dotenv").config(); //instatiate environment variables
 
 let CONFIG = {}; //Make this global to use all over the application
+let GLOBAL_CONFIG = require("../utils/requiredWrapper").requireF('../../configs/config')
+
 
 CONFIG.MODULE_TITLE = process.env.USER_TITLE || "User Management";
-CONFIG.USER = "User";
+CONFIG.USER = GLOBAL_CONFIG.USER || "User";
 CONFIG.ADD_TITLE = "Add User";
 CONFIG.UPDATE_TITLE = "Update User";
 CONFIG.DELETE_TITLE = "Delete User";
@@ -34,13 +36,14 @@ CONFIG.INVALID_PASSWORD = "Please enter valid password";
 CONFIG.INVALID_MONGO_ID = "Please enter valid Mongodb ID";
 CONFIG.EMPTY_USER_NAME = "User name is empty should not be empty";
 CONFIG.INVALID_USER_NAME = "Invalid username";
+CONFIG.EMAIL_ALREADY_EXIST = "Email already in use"
+CONFIG.USERNAME_ALREADY_EXIST = "Username already in use"
 
 CONFIG.LIMIT = 5;
 
-CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
-CONFIG.TITLE_PATTERN = /^[ A-Za-z0-9_.\/,\?]*$/;
-CONFIG.PASSWORD_PATTERN = /^[ A-Za-z0-9_.\/,<>]*$/;
-CONFIG.EMAIL_PATTERN =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+CONFIG.TEXTAREA_PATTERN = GLOBAL_CONFIG.TEXTAREA_PATTERN ||/^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
+CONFIG.TITLE_PATTERN = GLOBAL_CONFIG.TITLE_PATTERN ||/^[ A-Za-z0-9_.\/,\?]*$/;
+CONFIG.PASSWORD_PATTERN = GLOBAL_CONFIG.PASSWORD_PATTERN || /^[ A-Za-z0-9_.\/,<>]*$/;
+CONFIG.EMAIL_PATTERN =GLOBAL_CONFIG.EMAIL_PATTERN ||  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 module.exports = CONFIG;
