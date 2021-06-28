@@ -21,7 +21,7 @@ const upload = multer({
 let uploadProfilePicture = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
-      console.log(error.message);
+      // console.log(error.message);
       req.flash("error", error.message);
       req.flash("oldUserData", "uploadfailed");
       return res.redirect(`/user/upload/profile/${req.params.id}`);

@@ -16,7 +16,7 @@ exports.isUserLoggedIn = async (req, res, next) => {
       res.redirect("/user/auth/login");
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     req.flash("error",CONFIG.LOGIN_FIRST_MESSAGE);
     res.redirect("/user/auth/login");
   }
@@ -36,7 +36,7 @@ exports.loginCheck = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.locals.isAuth = false;
     next();
   }

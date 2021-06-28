@@ -184,7 +184,7 @@ exports.changePassword = async (req, res, next) => {
       res.redirect(`/user/view/${userId}`);
     }
   } catch (error) {
-    console.log(error)
+    next(error)
   }
 };
 

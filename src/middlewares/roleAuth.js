@@ -21,7 +21,7 @@ exports.isAdmin = async (req, res, next) => {
       res.redirect("/user/auth/login");
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     req.flash("error", error);
     res.redirect("/user/auth/login");
   }

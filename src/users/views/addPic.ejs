@@ -1,10 +1,8 @@
-<% console.log(messages);if (messages.oldUserData == 'uploadfailed') {
+<% if (messages.oldUserData == 'uploadfailed') {
    
     imgLink = null;
     } else {
-     console.log("i am in else")
      imgLink =`/user/profile/${result._id}`;
-     console.log(imgLink)
     } %> 
 
 

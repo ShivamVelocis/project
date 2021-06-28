@@ -45,7 +45,7 @@ exports.postAddUser = async function addUser(req, res, next) {
     req.flash("success", CONFIG.INSERT_MESSAGE);
     res.redirect("/user/view");
   } catch (error) {
-    console.log(error.errors);
+    // console.log(error.errors);
     req.flash("userData", req.body);
     req.flash("error", error.errors ? error.errors : error);
     res.render("users/views/add", {
@@ -184,7 +184,7 @@ exports.postUpdateUser = async (req, res) => {
       return res.redirect("/user/view");
     }
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     req.flash("error", error.errors ? error.errors : error);
     req.flash("userData", req.body);
     res.redirect(`/user/update/${id}`);
@@ -217,7 +217,7 @@ exports.postUploadProfilePicture = async (req, res) => {
     req.flash("success", CONFIG.PROFILE_PICTURE_SUCCESS);
     res.redirect(`/user/view/${userId}`)
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     req.flash('error', error)
     req.flash('oldUserData', req.file.buffer)
     res.redirect(`/upload/profile/${userId}`)
@@ -227,7 +227,7 @@ exports.postUploadProfilePicture = async (req, res) => {
 
 exports.getProfilePicture = async (req, res) => {
   let userId = req.params.id;
-  console.log(userId)
+  // console.log(userId)
   try {
     let user = await userModel.findOne({ _id: userId });
     if (user != null && user != undefined) {
