@@ -1,4 +1,5 @@
 const multer = require("multer");
+const CONFIG = require("../configs/config")
 
 const upload = multer({
   fileFilter: (req, file, cb) => {
@@ -22,7 +23,7 @@ let uploadProfilePicture = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
       // console.log(error.message);
-      req.flash("error", error.message);
+      req.flash("error", error.message =="File too large"?CONFIG.TOO_LARGE_IMAGE:error.message);
       req.flash("oldUserData", "uploadfailed");
       return res.redirect(`/user/upload/profile/${req.params.id}`);
     }

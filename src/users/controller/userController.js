@@ -210,8 +210,8 @@ exports.postUploadProfilePicture = async (req, res) => {
   let userId = req.params.id;
   try {
     let file = await sharp(req.file.buffer)
-    .resize(320, 240)
-    .png()
+    .resize(200, 200)
+    .png({quality:100})
     .toBuffer();;
     await userModel.findByIdAndUpdate(userId, { $set: { profilePicture: file } });
     req.flash("success", CONFIG.PROFILE_PICTURE_SUCCESS);

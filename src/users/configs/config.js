@@ -40,6 +40,7 @@ CONFIG.EMPTY_USER_NAME = "User name is empty should not be empty";
 CONFIG.INVALID_USER_NAME = "Invalid username";
 CONFIG.EMAIL_ALREADY_EXIST = "Email already in use"
 CONFIG.USERNAME_ALREADY_EXIST = "Username already in use"
+CONFIG.TOO_LARGE_IMAGE = "Image should be smaller than 2mb"
 
 
 CONFIG.LIMIT = 5;

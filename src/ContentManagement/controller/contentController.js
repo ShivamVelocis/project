@@ -4,7 +4,7 @@ const CONFIG = require("../configs/config");
 exports.contentForm = (req, res) => {
   res.render("ContentManagement/views/addContent", {
     module_title: CONFIG.MODULE_TITLE,
-    title: CONFIG.ADD_TITLE,
+    title1: CONFIG.ADD_TITLE,
   });
 };
 
