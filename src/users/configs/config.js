@@ -9,11 +9,15 @@ CONFIG.UPDATE_TITLE = "Update User";
 CONFIG.DELETE_TITLE = "Delete User";
 CONFIG.LOGIN_TITLE = "Login User";
 CONFIG.FORGET_PASSWORD_TITLE = "Forget password";
-CONFIG.RESET_PASSWORD_TITLE = "Reset Password"
+CONFIG.RESET_PASSWORD_TITLE = "Reset Password";
 CONFIG.INSERT_MESSAGE = "User Inserted Successfully";
 CONFIG.UPDATE_MESSAGE = "User Updated Successfully";
 CONFIG.DELETE_MESSAGE = "User Deleted Successfully";
 CONFIG.NO_RECORDS = "No Record(s) Found";
+CONFIG.FORGET_PASSWORD_LINK_EXPIRATED = "Link expired";
+CONFIG.INVALID_OTP = "Invalid OTP"
+CONFIG.CHANGE_PASSWORD_ERROR ="Some error encounter during data fetching"
+CONFIG.CHANGE_PASSWORD_SUCCESS = "Your password update with new password"
 
 CONFIG.LOGIN_FAIL_MESSAGE = "Invalid Username or Password";
 CONFIG.LOGIN_SUCCESS_MESSAGE = "Logged in success";
@@ -29,12 +33,12 @@ CONFIG.INSERT_USER_NAME = "Invalid username";
 CONFIG.INVALID_PASSWORD = "Please enter valid password";
 CONFIG.INVALID_MONGO_ID = "Please enter valid Mongodb ID";
 CONFIG.EMPTY_USER_NAME = "User name is empty should not be empty";
-CONFIG.INVALID_USER_NAME ="Invalid username"
+CONFIG.INVALID_USER_NAME = "Invalid username";
 
 CONFIG.LIMIT = 5;
 
-CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/,<>]*$/;
-CONFIG.TITLE_PATTERN = /^[ A-Za-z0-9_.\/,]*$/;
+CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
+CONFIG.TITLE_PATTERN = /^[ A-Za-z0-9_.\/,\?]*$/;
 CONFIG.PASSWORD_PATTERN = /^[ A-Za-z0-9_.\/,<>]*$/;
 CONFIG.EMAIL_PATTERN =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

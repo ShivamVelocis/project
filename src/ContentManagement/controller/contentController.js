@@ -80,7 +80,7 @@ exports.removeContent = async (req, res) => {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       let title = result.title.toUpperCase();
-      req.flash("success", `Content with title ${title} deleted successfully.`);
+      req.flash("success", process.env.DELETE_CONTENT_SUCCESS);
       res.redirect("/content/all");
     } else {
       res.status(400);
@@ -131,7 +131,7 @@ exports.updateContent = async (req, res) => {
     if (result !== undefined && result !== null) {
       req.flash(
         "success",
-        `Content with Title ${req.body.title} updated successfully`
+        process.env.UPDATE_CONTENT_SUCCESS
       );
       return res.redirect("/content/all");
     }

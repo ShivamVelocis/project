@@ -14,6 +14,8 @@ CONFIG.NO_CONTENT_FOUND = "No content added yet!";
 CONFIG.FETCH_CONTENT_ERROR = "Error encountered while fetching content";
 CONFIG.DELETE_CONTENT_FAILED = "Error while deleting content";
 CONFIG.UPDATE_CONTENT_FAILED = "Error while updating content";
+CONFIG.DELETE_CONTENT_SUCCESS = "Content deleted successfully";
+CONFIG.UPDATE_CONTENT_SUCCESS = "Content updated successfully";
 
 CONFIG.EMPTY_TITLE = "Title should not be empty";
 CONFIG.EMPTY_DESCRIPTION = "Description should not be empty";

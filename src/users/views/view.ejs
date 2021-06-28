@@ -5,8 +5,14 @@
     <div class="card" style="width: 20rem;">
         <div class="card-header text-center">
             <%=title%>
-          </div>
-        <img class="card-img-top" src="/images/userImage.jpg" alt="Card image cap">
+        </div>
+        <% if (messages.success) { %>
+            <div class="alert alert-success" role="alert">
+                <%- messages.success %>
+            </div>
+            <% } %>
+        <a href="/user/upload/profile/<%=results._id%> ">
+            <img class="card-img-top" src="/user/profile/<%=results._id%> " alt="Card image cap"></a>
         <div class="card-body">
             <h5 class="card-title">
                 Username: <%=results.username%>
@@ -18,7 +24,8 @@
                 <b>Role</b>: <%if(results.role_id==1){%> Admin<% } if(results.role_id==2){ %>Member<% } %>
             </div>
             <div>
-                <b>Status</b>: <%if(results.user_status==1){%> Published<% } if(results.user_status==2){ %>Unpublished<% } %>
+                <b>Status</b>: <%if(results.user_status==1){%> Published<% } if(results.user_status==2){ %>Unpublished<%
+                            } %>
             </div>
             </p>
             <a href="/user/update/<%=results._id%>" class="btn btn-primary ">Edit</a>

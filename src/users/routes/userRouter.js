@@ -5,6 +5,7 @@ const authController = require("./../controller/authController");
 const { isUserLoggedIn } = require("../../middlewares/auth");
 const {isAdmin} = require("../../middlewares/roleAuth")
 const { addUserValidationRules, updateUserValidationRules, mongoIDValidationRules,isRequestValid } = require("../middlewares/validater");
+const { uploadProfilePicture } = require("../utils/uploadHandler");
 
 
 router.get("/add",isAdmin, userController.addUser); //render add user page 
@@ -26,5 +27,12 @@ router.post("/pwdreset/:token", authController.postOtpVerification); // reset us
 //change user password
 router.get('/changepwd/:id',isUserLoggedIn, authController.changePassword)
 router.post('/changepwd/:id', isUserLoggedIn,authController.postChangePassword)
+
+
+
+//upload profile Picture
+router.get('/upload/profile/:id',isUserLoggedIn,userController.uploadProfilePicture)
+router.post('/upload/profile/:id',isUserLoggedIn,uploadProfilePicture,userController.postUploadProfilePicture)
+router.get('/profile/:id',isUserLoggedIn,userController.getProfilePicture)
 
 module.exports = router;

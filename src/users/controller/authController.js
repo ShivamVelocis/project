@@ -31,7 +31,6 @@ exports.postLogin = async (req, res, next) => {
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
-        // console.log(passwordVerified);
         req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
         req.flash("loginData", req.body);
         return res.redirect("/user/auth/login");
@@ -106,12 +105,12 @@ exports.otpVerification = async (req, res, next) => {
     let token = req.params.token;
     let userData = await userModel.findOne({ otpToken: token });
     if (!userData) {
-      req.flash("error", "Link expired");
+      req.flash("error", CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
       return res.redirect("/user/forgetpassword");
     }
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
-      req.flash("error", "Link expired");
+      req.flash("error", CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
       return res.redirect("/user/forgetpassword");
     }
     return res.render("users/views/auth/otpValidation", {
@@ -130,7 +129,7 @@ exports.postOtpVerification = async (req, res, next) => {
   try {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
-      req.flash("error", "Link expired");
+      req.flash("error", CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
       return res.redirect("/user/forgetpassword");
     }
     let userData = await decodeToken(token);
@@ -138,7 +137,7 @@ exports.postOtpVerification = async (req, res, next) => {
     let user = await userModel.findOne({ email: userData.userId });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
-      req.flash("error", "Link expired");
+      req.flash("error",  CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
       return res.redirect("/user/forgetpassword");
     }
     if (user !== null && user !== undefined) {
@@ -152,7 +151,7 @@ exports.postOtpVerification = async (req, res, next) => {
         req.flash("success", CONFIG.PASSWORD_SUCCESS_CHANGE);
         return res.redirect("/user/auth/login");
       } else {
-        req.flash("error", "Invalid OTP");
+        req.flash("error", CONFIG.INVALID_OTP);
         return res.redirect(`/user/pwdreset/${token}`);
       }
     } else {
@@ -181,7 +180,7 @@ exports.changePassword = async (req, res, next) => {
         userData: user._id,
       });
     }else{
-      req.flash("error","Some error encounter during data fetching")
+      req.flash("error",CONFIG.CHANGE_PASSWORD_ERROR )
       res.redirect(`/user/view/${userId}`);
     }
   } catch (error) {
@@ -209,10 +208,10 @@ exports.postChangePassword = async (req, res, next) => {
           { $set: { password: newPasswordHash } },
           { upsert: true }
         );
-        req.flash("success", "Your password update with new password");
+        req.flash("success", CONFIG.CHANGE_PASSWORD_SUCCESS);
         return res.redirect(`/user/view/${userId}`);
       }
-      req.flash("error", "Password update failed");
+      req.flash("error", CONFIG.CHANGE_PASSWORD_ERROR);
       return res.redirect(`/user/view/${userId}`);
     }
   } catch (err) {

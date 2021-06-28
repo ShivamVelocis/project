@@ -1,5 +1,5 @@
-const  mongoose = require("mongoose");
-const uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 let userSchema = new mongoose.Schema(
   {
@@ -31,6 +31,7 @@ let userSchema = new mongoose.Schema(
     },
     token: String,
     otpToken: String,
+    profilePicture: Buffer,
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
