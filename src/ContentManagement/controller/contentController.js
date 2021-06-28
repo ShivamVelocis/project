@@ -55,12 +55,14 @@ exports.getContents = async (req, res) => {
       return res.render("ContentManagement/views/contents", {
         contents: contents,
         module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT_LIST_TITLE,
       });
     } else {
       req.flash("error", CONFIG.NO_CONTENT_FOUND);
       return res.render("ContentManagement/views/contents", {
         contents: [],
         module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT_LIST_TITLE,
       });
     }
   } catch (error) {
@@ -68,6 +70,7 @@ exports.getContents = async (req, res) => {
     return res.render("ContentManagement/views/contents", {
       contents: [],
       module_title: CONFIG.MODULE_TITLE,
+      title: CONFIG.CONTENT_LIST_TITLE,
     });
   }
 };

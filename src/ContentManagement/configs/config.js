@@ -7,6 +7,7 @@ CONFIG.CONTENT = "Content";
 CONFIG.ADD_TITLE = "Add Content";
 CONFIG.UPDATE_TITLE = "Edit Content";
 CONFIG.DELETE_TITLE = "Delete Content";
+CONFIG.CONTENT_LIST_TITLE = "Content List";
 CONFIG.ADD_CONTENT_FAILED = "Error while adding content";
 CONFIG.ADD_CONTENT_SUCCESS = "Content added successfully";
 CONFIG.FETCH_CONTENT_FAILED = "Error while fecting content";

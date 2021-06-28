@@ -86,7 +86,7 @@ exports.getUsers = async function getUsers(req, res, next) {
     let contents = await userModel.find({});
     if (contents.length > 0) {
       res.render("users/views/list", {
-        title: CONFIG.USER,
+        title: CONFIG.USER_LIST_TITLE,
         module_title: CONFIG.MODULE_TITLE,
         results: contents,
       });
