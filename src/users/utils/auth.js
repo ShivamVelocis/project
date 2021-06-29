@@ -27,7 +27,7 @@ const validateToken = (token) => {
   }
 };
 
-
+//extract user data from token for later use
 const decodeToken = (token) => {
   return (userData = jwt_decode(token));
   // return { id: userData.userId };
@@ -40,7 +40,7 @@ const generaterefreshToken = async (token) => {
   let refreshtoken = await genrateJWTToken(
     user.userId,
     process.env.ACCESS_TOKEN_SECRET,
-    process.env.ACCESS_TOKEN_LIFE
+    process.env.REFRESH_TOKEN_LIFE
   );
   return refreshtoken;
 };

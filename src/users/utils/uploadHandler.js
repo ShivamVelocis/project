@@ -1,6 +1,7 @@
 const multer = require("multer");
 const CONFIG = require("../configs/config")
 
+// multer middleware parse request and validate request
 const upload = multer({
   fileFilter: (req, file, cb) => {
     if (
@@ -19,15 +20,14 @@ const upload = multer({
   },
 }).single("profilepic");
 
+// wrapper middleware to handle error thrown by multer 
 let uploadProfilePicture = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
-      // console.log(error.message);
       req.flash("error", error.message =="File too large"?CONFIG.TOO_LARGE_IMAGE:error.message);
       req.flash("oldUserData", "uploadfailed");
       return res.redirect(`/user/upload/profile/${req.params.id}`);
     }
-    // req.flash("success", "Profile picture updated successfully");
     next();
   });
 };

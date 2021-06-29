@@ -30,12 +30,12 @@
 
                                             <!-- error display ended  -->
 
-                                            <!-- Login form start -->
+                                            <!-- OTP varificatiob and password reset form start -->
                                             <div class="row justify-content-center mt-5">
                                                 <!-- Form to added new content -->
                                                 <div class="col-12">
-                                                    <form name="loginForm" action="/user/pwdreset/<%=data%> "
-                                                        method="post">
+                                                    <form name="otpForm" action="/user/pwdreset/<%=data%> "
+                                                        method="post"  onsubmit="return otpValidate()">
                                                         <div class="form-group">
                                                             <label for="otp"><b>OTP</b></label>
                                                             <input type="text" class="form-control" id="otp" name='otp'>
@@ -54,6 +54,24 @@
         </div>
     </div>
 
+
+    <script>
+        function otpValidate(){
+        let password = document.forms["otpForm"]["password"].value;
+        let otp = document.forms["otpForm"]["otp"].value;
+        
+        if(password == ""){
+            alert("Password must be filled out");
+            return false;
+        }
+        if(otp == ""){
+            alert("OTP must be filled out");
+            return false;
+        }
+        return true
+        }
+        
+        </script>
 
 
 

@@ -9,7 +9,7 @@ const session = require("express-session");
 const morgan = require("morgan");
 const flash = require("express-flash");
 const { loginCheck } = require("./src/middlewares/auth");
-const roleRouter = require('./src/roleManagement/routes/roleRoute')
+// const roleRouter = require('./src/roleManagement/routes/roleRoute')
 
 
 dotenv.config();
@@ -51,7 +51,7 @@ app.use(flash());
 app.use(loginCheck);
 app.use("/content", contentRoutes); /*content management routes*/
 app.use("/user", userRoutes); /*user management and authentication routes*/
-app.use("/role", roleRouter);
+// app.use("/role", roleRouter);
 
 /*middleware for 404 error */
 app.use((req, res, next) => {

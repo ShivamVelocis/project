@@ -27,10 +27,10 @@
                                     <% } %>
                                         <% } %>
                                             <div class="row justify-content-center mt-5">
-                                                <!-- Form to added new content -->
+                                                <!-- Form to sned otp to email -->
                                                 <div class="col-12">
-                                                    <form name="loginForm" action="/user/forgetpassword/" method="post"
-                                                        onsubmit="return validateLogin()">
+                                                    <form name="forgetPwdForm" action="/user/forgetpassword/" method="post"
+                                                        onsubmit="return validateForgetPwd()">
                                                         <div class="form-group">
                                                             <label for="email"><b>Email</b></label>
                                                             <input type="text" class="form-control" id="email"
@@ -52,10 +52,10 @@
     <script>
 
         // javascript function to validate form data
-        function validateLogin() {
+        function validateForgetPwd() {
 
             let emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-            let email = document.forms["loginForm"]["email"].value;
+            let email = document.forms["forgetPwdForm"]["email"].value;
 
 
             if (email == "") {

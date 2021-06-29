@@ -71,6 +71,11 @@ exports.forgetPassword = (req, res, next) => {
 // email OTP and URL for user for password reset
 exports.postForgetPassword = async (req, res, next) => {
   let data = req.body;
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("loginData", req.body);
+    return res.redirect(`/user/forgetpassword/`);
+  }
   try {
     let user = await userModel.findOne({ email: data.email });
     if (user !== null && user !== undefined) {
@@ -101,7 +106,11 @@ exports.postForgetPassword = async (req, res, next) => {
 //render form for user OTP and new password after validating URL
 
 exports.otpVerification = async (req, res, next) => {
+  
+
+
   try {
+
     let token = req.params.token;
     let userData = await userModel.findOne({ otpToken: token });
     if (!userData) {
@@ -126,6 +135,11 @@ exports.otpVerification = async (req, res, next) => {
 // reset user password after valid OTP and URL
 exports.postOtpVerification = async (req, res, next) => {
   let token = req.params.token;
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("loginData", req.body);
+    return res.redirect(`/user/pwdreset/${token}`);
+  }
   try {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
@@ -142,7 +156,7 @@ exports.postOtpVerification = async (req, res, next) => {
     }
     if (user !== null && user !== undefined) {
       if (user.otp == data.otp) {
-        let passwordHash = bcrypt.hashSync(req.body.password, 10);
+        let passwordHash = await bcrypt.hashSync(data.password, 10);
         await userModel.findOneAndUpdate(
           { email: userData.userId },
           { $set: { otp: null, password: passwordHash, otpToken: null } },
@@ -192,6 +206,11 @@ exports.changePassword = async (req, res, next) => {
 exports.postChangePassword = async (req, res, next) => {
   let userId = req.params.id;
   let userData = req.body;
+  if (res.locals.validationError) {
+    req.flash("error", res.locals.validationError);
+    req.flash("loginData", req.body);
+    return res.redirect(`/user/changepwd/${userId}`);
+  }
   try {
     let user = await userModel.findOne({ _id: userId });
     // console.log(user)
@@ -200,7 +219,6 @@ exports.postChangePassword = async (req, res, next) => {
         userData.currentPassword,
         user.password
       );
-      // console.log(oldPasswordVerified)
       if (oldPasswordVerified) {
         let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
         await userModel.findOneAndUpdate(
@@ -212,7 +230,7 @@ exports.postChangePassword = async (req, res, next) => {
         return res.redirect(`/user/view/${userId}`);
       }
       req.flash("error", CONFIG.CHANGE_PASSWORD_ERROR);
-      return res.redirect(`/user/view/${userId}`);
+      return res.redirect(`/user/changepwd/${userId}`);
     }
   } catch (err) {
     console.log(err);

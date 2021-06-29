@@ -1,6 +1,5 @@
 <h2><%= module_title %></h2>
 <div class="container">
-    
     <h5 class="card-title">
         <%=title%>
     </h5>
@@ -53,7 +52,7 @@
                                             <form id="delete-<%=content._id%>" method="get" action="/content/remove/<%=content._id%>" style="display: none;">
                                                 <input type="hidden" name="uid" value="<%=content._id%>"/>
                                             </form>    
-                                   
+                    <!-- form end here-->
                                     </td>
                                 </tr>
                                 <%}) %>
@@ -64,5 +63,4 @@
         </div>
         <!-- redirect to add new content button -->
         <a href='/content/' class="btn btn-info">Add Content</i></a>
-        <!-- <button type="button" class="btn btn-info" onclick="window.location =`/content/`"> Add Content </button> -->
 </div>
