@@ -34,7 +34,6 @@ exports.postAddUser = async function addUser(req, res, next) {
       user_status: req.body.user_status,
     };
     let uniqueEmail = await userModel.find({ email: req.body.email });
-
     let uniqueUserName = await userModel.find({ username: req.body.username });
     if (uniqueUserName.length > 0 || uniqueEmail.length > 0) {
       let errorMessage = [];

@@ -1,3 +1,15 @@
+<% 
+if (messages.userData) {
+  otp = messages.userData[0].otp;
+  password = messages.userData[0].password;
+} else {
+  otp = "";
+  password = "";
+}
+
+%> 
+
+
 <h2>
     <%= module_title %>
 </h2>
@@ -34,16 +46,16 @@
                                             <div class="row justify-content-center mt-5">
                                                 <!-- Form to added new content -->
                                                 <div class="col-12">
-                                                    <form name="otpForm" action="/user/pwdreset/<%=data%> "
+                                                    <form name="otpForm" action="/user/pwdreset/<%=data%>"
                                                         method="post"  onsubmit="return otpValidate()">
                                                         <div class="form-group">
                                                             <label for="otp"><b>OTP</b></label>
-                                                            <input type="text" class="form-control" id="otp" name='otp'>
+                                                            <input type="text" class="form-control" id="otp" name='otp' value="<%=otp%>">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="password"><b>New Password</b></label>
                                                             <input type="password" class="form-control" id="password"
-                                                                name='password'>
+                                                                name='password' value="<%=password%>">
                                                         </div>
                                                         <button type="submit" class="btn btn-primary">Submit</button>
                                                     </form>

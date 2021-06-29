@@ -155,6 +155,7 @@ exports.otpPasswordValidationRule = () => {
           throw new Error(CONFIG.EMPTY_OTP);
         }
         if (value.length !== 4) {
+          console.log(value.length)
           throw new Error(CONFIG.INVALID_OTP);
         }
         return true;

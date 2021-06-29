@@ -1,3 +1,11 @@
+<% 
+if(messages.userData) {
+    email = messages.userData[0].email;
+  } else {
+    email = "";
+  }
+%>
+
 <h2>
     <%= module_title %>
 </h2>
@@ -34,7 +42,7 @@
                                                         <div class="form-group">
                                                             <label for="email"><b>Email</b></label>
                                                             <input type="text" class="form-control" id="email"
-                                                                name='email'>
+                                                                name='email' value="<%=email%>">
                                                         </div>
                                                         <button type="submit" class="btn btn-primary">Forget</button>
                                                     </form>
