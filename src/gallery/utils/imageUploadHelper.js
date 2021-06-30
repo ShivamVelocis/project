@@ -7,10 +7,11 @@ const storage = multer.diskStorage({
   },
 
   filename: function (req, file, cb) {
+    console.log(file.originalname.replace(/\.[^/.]+$/, ""))
     let randomnumber = Math.floor(Math.random() * 10);
     cb(
       null,
-      file.fieldname +
+      file.originalname.replace(/\.[^/.]+$/, "") +
         "-" +
         Date.now() +
         "-" +
