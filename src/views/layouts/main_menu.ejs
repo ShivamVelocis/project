@@ -3,14 +3,21 @@
         <a class="navbar-brand" href="#">
             <img src="/files/images/logo1.png" />
         </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03"
-                aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03"
+            aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="main-menu__navbar collapse navbar-collapse" id="navbarsExample03">
-                <ul class="main-menu__item-list navbar-nav mr-auto">
-                    <li class="main-menu__item nav-item active">
+        <div class="main-menu__navbar collapse navbar-collapse" id="navbarsExample03">
+            <ul class="main-menu__item-list navbar-nav mr-auto">
+                <% main_menu.map(menu=>{%>
+                    <li class="main-menu__item nav-item">
+                        <a class="nav-link" href="<%=menu.link %>">
+                            <%=menu.menu_title %>
+                        </a>
+                    </li>
+                    <%}) %>
+                        <!-- <li class="main-menu__item nav-item active">
                         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
 
@@ -19,8 +26,8 @@
                     </li>
                     <li class="main-menu__item nav-item">
                         <a class="nav-link" href="/content/all">Content</a>
-                    </li>
-                    <% if(isAuth){ %>
+                    </li> -->
+                        <!-- <% if(isAuth){ %>
                         <li class="main-menu__item nav-item">
                             <a class="nav-link" href="/user/auth/logout">Logout</a>
                         </li>
@@ -28,14 +35,14 @@
                             <li class="main-menu__item nav-item">
                                 <a class="nav-link" href="/user/auth/login">Login</a>
                             </li>
-                            <% } %>
+                            <% } %> -->
 
-                </ul>
+            </ul>
 
 
-                <form class="form-inline my-2 my-md-0">
-                    <input class="form-control" type="text" placeholder="Search">
-                </form>
-            </div>
+            <form class="form-inline my-2 my-md-0">
+                <input class="form-control" type="text" placeholder="Search">
+            </form>
+        </div>
     </nav>
 </div>

@@ -173,6 +173,22 @@ exports.otpPasswordValidationRule = () => {
         }
         return true;
       }),
+      body("confirmPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        if(value !== req.body.password){
+          throw new Error("New password and confirm password should match");
+        }
+        return true;
+      }),
   ];
 };
 

@@ -17,7 +17,7 @@ let mailOtp = async (mailTo, otp, token) => {
 
   let forgetPasswordUrl = `'http://localhost:3000/user/pwdreset/${token}'`;
 
-  let emailBody = `<div><a href=${forgetPasswordUrl} >Forget password</a></div>
+  let emailBody = `<div><a href=${forgetPasswordUrl} >Reset password</a></div>
     <div id="div2">OTP  ${otp} will expire in 10 min.</div>`;
 
   // send mail with defined transport object

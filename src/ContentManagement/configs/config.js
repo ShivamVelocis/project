@@ -26,4 +26,12 @@ CONFIG.INVALID_DESCRIPTION = "Please enter alphanumeric description only";
 CONFIG.INVALID_STATUS = "Please select  content status";
 CONFIG.INVALID_MONGO_ID = "Please enter valid  MongoDB ID";
 
+
+
+CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
+CONFIG.TITLE_PATTERN = /^[ A-Za-z0-9_.\/,\?]*$/;
+CONFIG.PASSWORD_PATTERN = /^[ A-Za-z0-9_.\/,<>]*$/;
+CONFIG.EMAIL_PATTERN =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+
 module.exports = CONFIG;

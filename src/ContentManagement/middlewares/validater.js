@@ -12,10 +12,10 @@ const contentValidationRules = () => {
       .withMessage(CONFIG.EMPTY_TITLE)
       .bail()
       .custom((value, { req }) => {
-        // console.log("tile", value);
         if (value == "") {
           throw new Error(CONFIG.EMPTY_TITLE);
         }
+        console.log(value.match(CONFIG.TITLE_PATTERN))
         if (value.match(CONFIG.TITLE_PATTERN) == null) {
           throw new Error(CONFIG.INVALID_TITLE);
         }
