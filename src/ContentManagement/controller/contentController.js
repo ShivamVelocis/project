@@ -4,12 +4,11 @@ const CONFIG = require("../configs/config");
 exports.contentForm = (req, res) => {
   res.render("ContentManagement/views/addContent", {
     module_title: CONFIG.MODULE_TITLE,
-    title: CONFIG.ADD_TITLE,
+    title1: CONFIG.ADD_TITLE,
   });
 };
 
 exports.addContent = async (req, res) => {
-  // console.log(res.locals.validationError);
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
     req.flash("contentData", req.body);
@@ -18,7 +17,7 @@ exports.addContent = async (req, res) => {
   let data = req.body;
   try {
     let content = new Content(data);
-    let saveContent = await content.save();
+    await content.save();
     req.flash("success", CONFIG.ADD_CONTENT_SUCCESS);
     res.redirect("all");
   } catch (error) {
@@ -50,19 +49,20 @@ exports.getContent = async (req, res) => {
 };
 
 exports.getContents = async (req, res) => {
-  // console.log("i am contents controller")
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
       return res.render("ContentManagement/views/contents", {
         contents: contents,
         module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT_LIST_TITLE,
       });
     } else {
       req.flash("error", CONFIG.NO_CONTENT_FOUND);
       return res.render("ContentManagement/views/contents", {
         contents: [],
         module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT_LIST_TITLE,
       });
     }
   } catch (error) {
@@ -70,6 +70,7 @@ exports.getContents = async (req, res) => {
     return res.render("ContentManagement/views/contents", {
       contents: [],
       module_title: CONFIG.MODULE_TITLE,
+      title: CONFIG.CONTENT_LIST_TITLE,
     });
   }
 };
@@ -79,8 +80,7 @@ exports.removeContent = async (req, res) => {
   try {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
-      let title = result.title.toUpperCase();
-      req.flash("success", `Content with title ${title} deleted successfully.`);
+      req.flash("success", CONFIG.DELETE_CONTENT_SUCCESS);
       res.redirect("/content/all");
     } else {
       res.status(400);
@@ -131,7 +131,7 @@ exports.updateContent = async (req, res) => {
     if (result !== undefined && result !== null) {
       req.flash(
         "success",
-        `Content with Title ${req.body.title} updated successfully`
+        CONFIG.UPDATE_CONTENT_SUCCESS
       );
       return res.redirect("/content/all");
     }

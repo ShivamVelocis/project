@@ -1,3 +1,11 @@
+<% 
+if(messages.userData) {
+    email = messages.userData[0].email;
+  } else {
+    email = "";
+  }
+%>
+
 <h2>
     <%= module_title %>
 </h2>
@@ -27,16 +35,16 @@
                                     <% } %>
                                         <% } %>
                                             <div class="row justify-content-center mt-5">
-                                                <!-- Form to added new content -->
+                                                <!-- Form to sned otp to email -->
                                                 <div class="col-12">
-                                                    <form name="loginForm" action="/user/forgetpassword/" method="post"
-                                                        onsubmit="return validateLogin()">
+                                                    <form name="forgetPwdForm" action="/user/forgetpassword/" method="post"
+                                                        onsubmit="return validateForgetPwd()">
                                                         <div class="form-group">
                                                             <label for="email"><b>Email</b></label>
                                                             <input type="text" class="form-control" id="email"
-                                                                name='email'>
+                                                                name='email' value="<%=email%>">
                                                         </div>
-                                                        <button type="submit" class="btn btn-primary">Forget</button>
+                                                        <button type="submit" class="btn btn-primary">Send</button>
                                                     </form>
                                                 </div>
                                                 <!-- form end -->
@@ -52,10 +60,10 @@
     <script>
 
         // javascript function to validate form data
-        function validateLogin() {
+        function validateForgetPwd() {
 
             let emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-            let email = document.forms["loginForm"]["email"].value;
+            let email = document.forms["forgetPwdForm"]["email"].value;
 
 
             if (email == "") {

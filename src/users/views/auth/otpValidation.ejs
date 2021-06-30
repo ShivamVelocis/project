@@ -1,3 +1,17 @@
+<% 
+if (messages.userData) {
+  otp = messages.userData[0].otp;
+  password = messages.userData[0].password;
+  confirmPassword = messages.userData[0].confirmPassword;
+} else {
+  otp = "";
+  password = "";
+  confirmPassword=""
+}
+
+%> 
+
+
 <h2>
     <%= module_title %>
 </h2>
@@ -30,20 +44,25 @@
 
                                             <!-- error display ended  -->
 
-                                            <!-- Login form start -->
+                                            <!-- OTP varificatiob and password reset form start -->
                                             <div class="row justify-content-center mt-5">
                                                 <!-- Form to added new content -->
                                                 <div class="col-12">
-                                                    <form name="loginForm" action="/user/pwdreset/<%=data%> "
-                                                        method="post">
+                                                    <form name="otpForm" action="/user/pwdreset/<%=data%>"
+                                                        method="post"  onsubmit="return otpValidate()">
                                                         <div class="form-group">
                                                             <label for="otp"><b>OTP</b></label>
-                                                            <input type="text" class="form-control" id="otp" name='otp'>
+                                                            <input type="text" class="form-control" id="otp" name='otp' value="<%=otp%>">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="password"><b>New Password</b></label>
                                                             <input type="password" class="form-control" id="password"
-                                                                name='password'>
+                                                                name='password' value="<%=password%>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="confirmPassword"><b>Confirm Password</b></label>
+                                                            <input type="password" class="form-control" id="confirmPassword"
+                                                                name='confirmPassword' value="<%=confirmPassword%>">
                                                         </div>
                                                         <button type="submit" class="btn btn-primary">Submit</button>
                                                     </form>
@@ -54,6 +73,24 @@
         </div>
     </div>
 
+
+    <script>
+        function otpValidate(){
+        let password = document.forms["otpForm"]["password"].value;
+        let otp = document.forms["otpForm"]["otp"].value;
+        
+        if(password == ""){
+            alert("Password must be filled out");
+            return false;
+        }
+        if(otp == ""){
+            alert("OTP must be filled out");
+            return false;
+        }
+        return true
+        }
+        
+        </script>
 
 
 

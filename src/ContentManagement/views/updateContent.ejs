@@ -82,8 +82,8 @@
     // javascript function to validate form data
     function validateForm() {
 
-        let titlePattern = /^[ A-Za-z0-9_.\/,]*$/
-        let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/
+        let titlePattern = /^[ A-Za-z0-9_.\/,\?]*$/;
+        let descriptionPattern = /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
         let title = document.forms["myForm"]["title"].value;
         // getData returns latest value of textarea 
         let description = theEditor.getData()

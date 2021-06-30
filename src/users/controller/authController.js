@@ -7,7 +7,8 @@ const {
   validateToken,
   decodeToken,
 } = require("../utils/auth");
-const { mailOtp } = require("../utils/nodemailer");
+// const { mailOtp } = require("../utils/nodemailer");
+const { mailOtp } = require("../utils/nodemailertest");
 
 // render login page
 exports.login = (req, res, next) => {
@@ -134,7 +135,7 @@ exports.postOtpVerification = async (req, res, next) => {
       return res.redirect("/user/forgetpassword");
     }
     let userData = await decodeToken(token);
-    let data = req.body;
+    //  let data = req.body;
     let user = await userModel.findOne({ email: userData.userId });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
@@ -142,7 +143,7 @@ exports.postOtpVerification = async (req, res, next) => {
       return res.redirect("/user/forgetpassword");
     }
     if (user !== null && user !== undefined) {
-      if (user.otp == data.otp) {
+      if (user.otp == req.body.otp) {
         let passwordHash = bcrypt.hashSync(req.body.password, 10);
         await userModel.findOneAndUpdate(
           { email: userData.userId },

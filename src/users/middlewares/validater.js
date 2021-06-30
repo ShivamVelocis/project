@@ -1,6 +1,6 @@
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
-const CONFIG = require('../configs/config');
+const CONFIG = require("../configs/config");
 
 // add new user request body validater
 exports.addUserValidationRules = () => {
@@ -9,7 +9,7 @@ exports.addUserValidationRules = () => {
       .exists()
       .withMessage(CONFIG.INVALID_EMAIL)
       .isEmail()
-      .withMessage("Please enter valid email"),
+      .withMessage(CONFIG.INVALID_EMAIL),
 
     body("password")
       .exists()
@@ -42,7 +42,7 @@ exports.addUserValidationRules = () => {
       .bail()
       .custom((value, { req }) => {
         if (value == "") {
-          throw new Error(CONFIG.EMPTY_USER_NAME );
+          throw new Error(CONFIG.EMPTY_USER_NAME);
         }
         if (value.match(CONFIG.TITLE_PATTERN) == null) {
           throw new Error(CONFIG.INVALID_USER_NAME);
@@ -70,7 +70,7 @@ exports.updateUserValidationRules = () => {
       .exists()
       .withMessage(CONFIG.INVALID_EMAIL)
       .isEmail()
-      .withMessage("Please enter valid email"),
+      .withMessage(CONFIG.INVALID_EMAIL),
 
     body("role_id")
       .exists()
@@ -93,6 +93,113 @@ exports.updateUserValidationRules = () => {
         }
         throw new Error(CONFIG.INVALID_STATUS);
       }),
+  ];
+};
+
+//change password request body validator
+exports.changePasswordValidationRule = () => {
+  return [
+    body("currentPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        return true;
+      }),
+    body("newPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_NEW_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_NEW_PASSWORD);
+        }
+        return true;
+      }),
+    body("confirmPassword")
+      .exists()
+      .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_CONFIRM_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_CONFIRM_PASSWORD);
+        }
+        if (value !== req.body.newPassword) {
+          throw new Error(CONFIG.NEW_CONFIRM_ERROR);
+        }
+        return true;
+      }),
+  ];
+};
+//change password request body validator
+exports.otpPasswordValidationRule = () => {
+  return [
+    body("otp")
+      .exists()
+      .withMessage(CONFIG.EMPTY_OTP)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_OTP);
+        }
+        if (value.length !== 4) {
+          console.log(value.length)
+          throw new Error(CONFIG.INVALID_OTP);
+        }
+        return true;
+      }),
+    body("password")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        return true;
+      }),
+      body("confirmPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        if(value !== req.body.password){
+          throw new Error("New password and confirm password should match");
+        }
+        return true;
+      }),
+  ];
+};
+
+//forget password email validation in request body
+exports.forgetpasswordEmailValidation = () => {
+  return [
+    body("email")
+      .exists()
+      .withMessage(CONFIG.INVALID_EMAIL)
+      .isEmail()
+      .withMessage(CONFIG.INVALID_EMAIL),
   ];
 };
 

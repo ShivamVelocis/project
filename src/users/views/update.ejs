@@ -8,7 +8,29 @@
             <div class="card-body">
                 <h5 class="card-title">
                     <%=title%>
-                </h5>
+                </h5>  <% if (messages.success) { %>
+                    <div class="alert alert-success" role="alert">
+                        <%- messages.success %>
+                    </div>
+                    <% } %>
+        
+                        <p class="card-text">
+                            <% if (messages.error) {%>
+                                <div class="alert alert-danger" role="alert">
+        
+                                    <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+        
+                                        <ul class="<%= type %>">
+                                            <% messages[type].forEach(function (message) { %>
+                                                <li>
+                                                    <%= message %>
+                                                </li>
+                                                <% }) %>
+                                        </ul>
+        
+                                        <% }}) %>
+                                </div>
+                                <% } %>
                 <form name="addUserFrm" action="/user/update/<%=results._id%>" method="POST">
 
                     <div class="row">
