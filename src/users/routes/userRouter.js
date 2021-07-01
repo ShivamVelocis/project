@@ -24,7 +24,7 @@ router.get("/pwdreset/:token", authController.otpVerification);//render page to 
 router.post("/pwdreset/:token", otpPasswordValidationRule(),isRequestValid,authController.postOtpVerification); // reset user password if url not expired and redirect to login page
 
 
-//change user password
+//admin change user password 
 router.get('/changepwd/:id',isUserLoggedIn, authController.changePassword)
 router.post('/changepwd/:id', isUserLoggedIn,changePasswordValidationRule(),isRequestValid,authController.postChangePassword)
 

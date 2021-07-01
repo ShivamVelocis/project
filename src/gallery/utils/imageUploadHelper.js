@@ -41,4 +41,15 @@ let upload = multer({ storage, limits, fileFilter }).array(
   10
 );
 
-module.exports = { upload };
+// wrapper middleware to handle error thrown by multer 
+let uploadImages = (req, res, next) => {
+  upload(req, res, (error) => {
+    if (error) {
+      req.flash("error", error.message =="File too large"?CONFIG.TOO_LARGE_IMAGE:error.message);
+      return res.redirect(`/gallery/add`);
+    }
+    next();
+  });
+};
+
+module.exports = { uploadImages };

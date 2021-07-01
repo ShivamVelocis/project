@@ -1,25 +1,50 @@
-<div class="container">
-    <div class="card-group">
-        <%let itemFun=(item)=>{
-            let image_path = '/'+item.image_path.split('/')[2]+"/"+ item.image_path.split('/')[3]+"/thumbnails";
-            let imgLink = `${image_path}/${item.thumbnail.thumbnail_name}`;
-            %>
+<div class="card-group">
+    <%let itemFun=(item)=>{
+        let image_path = '/'+item.image_path.split('/')[2]+"/"+ item.image_path.split('/')[3]+"/thumbnails";
+        let imgLink = `${image_path}/${item.thumbnail.thumbnail_name}`;
+        %>
 
-           
-            <div class="card">
-                <img class="card-img-top" src="<%=imgLink%>" alt="image">
-                <div class="card-body">
-                    <h5 class="card-title"><%=item.image_original_name%></h5>
-                </div>
+
+        <div class="card">
+            <img class="card-img-top" src="<%=imgLink%>" alt="image">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <%=item.image_original_name%>
+                </h5>
             </div>
+        </div>
 
-            <% }%>
+        <% }%>
 
-                <% if(images && images.results){images.results.map(itemFun)}else{%>
-                    <h2>No record found</h2>
+            <% if(images && images.results){images.results.map(itemFun)}else{%>
+                <h2>No record found</h2>
                 <%}%>
-    </div>
-    <a href='/gallery/add' class="btn btn-info mt-3">Add image</a>
 </div>
+<a href='/gallery/add' class="btn btn-info mt-3">Add image</a>
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li class="page-item" id="1"><a class="page-link" href="#">1</a></li>
+        <li class="page-item" id="3"><a class="page-link" href="#">2</a></li>
+        <li class="page-item" id="4"><a class="page-link" href="#">3</a></li>
+        <li class="page-item" id="5">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
 
+<script>
+    $(document).ready(function () {
+        $("button").click(function () {
+            $.ajax({
+                url: "demo_test.txt", success: function (result) {
+                    $("#div1").html(result);
+                }
+            });
+        });
+    });
+
+</script>

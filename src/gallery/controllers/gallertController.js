@@ -24,7 +24,7 @@ const postAddImages = async (req, res, next) => {
         image_type: image.mimetype.split("/")[1],
         image_original_name: image.originalname,
         thumbnail: {
-          thumbnail_name: image.originalname,
+          thumbnail_name: "thumbnail_" + image.filename,
           thumbnail_status: image_status,
           thumbnail_path: image.destination + "/thumbnails/",
           thumbnail_type: image.mimetype.split("/")[1],
