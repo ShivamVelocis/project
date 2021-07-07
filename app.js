@@ -20,6 +20,7 @@ const userRoute = require("./src/users/routes/userRouter");
 const roleRoute = require("./src/roleManagement/routes/roleRoute");
 const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
+const main_menuModel = require("./src/middlewares/main_menu/models/main_menuModel");
 
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
@@ -52,7 +53,7 @@ app.use(session({
 
 app.use(flash());
 app.use(loginCheck);
-
+app.use(main_menuModel)
 app.use("/content", contentRoutes);
 app.use("/user", userRoute);
 //app.use("/auth", authRoute);
