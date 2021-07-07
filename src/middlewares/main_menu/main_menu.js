@@ -1,6 +1,6 @@
 const main_meuModel = require("./models/main_menuModel");
 
-exports.main_menu = async (req, res, next) => {
+exports.main_menu = async (_req, res, next) => {
   try {
     if (res.locals.isAuth) {
       let menuData = await main_meuModel.find({}, null, {

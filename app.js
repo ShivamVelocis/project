@@ -16,11 +16,10 @@ const { loginCheck } = require("./src/middlewares/auth");
 
 const contentRoutes = require("./src/ContentManagement/routes/contentRoutes");
 const userRoute = require("./src/users/routes/userRouter");
-//const authRoute = require("./src/users/routes/authRouter");
 const roleRoute = require("./src/roleManagement/routes/roleRoute");
 const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
-const main_menuModel = require("./src/middlewares/main_menu/models/main_menuModel");
+const { main_menu } = require("./src/middlewares/main_menu/main_menu");
 
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
@@ -53,10 +52,9 @@ app.use(session({
 
 app.use(flash());
 app.use(loginCheck);
-app.use(main_menuModel)
+app.use(main_menu)
 app.use("/content", contentRoutes);
 app.use("/user", userRoute);
-//app.use("/auth", authRoute);
 app.use("/role", roleRoute);
 app.use("/contactus", contactusRoute);
 app.use("/feedback", feedbackRoute);
@@ -73,4 +71,4 @@ app.use((error, req, res, next) => {
   res.render("views/error/ErrorPage", { error: error.message });
 });
 
-app.listen(process.env.PORT || 5000, () => console.log(`Example app listening on port port!`));
+app.listen(process.env.PORT || 5000, () => console.log(`Example app listening on port ${process.env.PORT}!`));
