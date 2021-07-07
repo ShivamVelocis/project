@@ -1,10 +1,10 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-var flash = require('express-flash');
-var session = require('express-session');
+const flash = require('express-flash');
+const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
-
+const MongoStore = require("connect-mongo");
 const app = express();
 
 const dotenv = require('dotenv');
@@ -12,8 +12,6 @@ dotenv.config();
 
 require("./src/configs/db");
 
-
-const port = process.env.APP_PORT;
 const { loginCheck } = require("./src/middlewares/auth");
 
 const contentRoutes = require("./src/ContentManagement/routes/contentRoutes");
@@ -36,9 +34,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+const sessionDB =`${process.env.DB_HOST}//${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cbzag.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 
 app.use(session({ 
-  store: new session.MemoryStore,
+  store: MongoStore.create({ mongoUrl: sessionDB }),
   saveUninitialized: true,
   resave: 'false',
   secret: 'secret',
