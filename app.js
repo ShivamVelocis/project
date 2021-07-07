@@ -73,4 +73,4 @@ app.use((error, req, res, next) => {
   res.render("views/error/ErrorPage", { error: error.message });
 });
 
-app.listen(port, () => console.log(`Example app listening on port port!`));
+app.listen(process.env.PORT || 5000, () => console.log(`Example app listening on port port!`));
