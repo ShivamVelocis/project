@@ -9,6 +9,7 @@ const {
 } = require("../utils/auth");
 const { mailOtp } = require("../utils/nodemailer");
 const UserValidation = require("../validations/UserValidation");
+const { sendOtpMail } = require("../utils/sendGridMailer");
 
 // render login page
 exports.login = (req, res, next) => {
@@ -92,7 +93,8 @@ exports.postForgetPassword = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        await mailOtp(data.email, otp, token);
+        // await mailOtp(data.email, otp, token);
+        await sendOtpMail(data.email, otp, token)
         req.flash("success", CONFIG.OTP_SUCCESS);
         return res.redirect("/user/auth/login");
       }
