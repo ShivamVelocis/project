@@ -56,7 +56,7 @@ CONFIG.LIMIT = 5;
 //Regex Patterns
 CONFIG.TEXTAREA_PATTERN = GLOBAL_CONFIG.TEXTAREA_PATTERN ||/^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
 CONFIG.TITLE_PATTERN = GLOBAL_CONFIG.TITLE_PATTERN ||/^[ A-Za-z0-9_.\/,\?]*$/;
-CONFIG.PASSWORD_PATTERN = GLOBAL_CONFIG.PASSWORD_PATTERN || /^[ A-Za-z0-9_.\/,<>]*$/;
+CONFIG.PASSWORD_PATTERN = GLOBAL_CONFIG.PASSWORD_PATTERN || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/;
 CONFIG.EMAIL_PATTERN =GLOBAL_CONFIG.EMAIL_PATTERN ||  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 module.exports = CONFIG;

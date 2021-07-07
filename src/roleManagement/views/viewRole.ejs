@@ -1,0 +1,39 @@
+
+
+<div class="container">
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%- messages.success %>
+        </div>
+        <% } %>
+            <% if (messages.error) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%- messages.error %>
+                </div>
+                <% } %>
+             <div class="row justify-content-center">
+                   <div class="col-12">
+				   
+                    <% if(role){ %>
+					
+                        <h2 class="text-center mt-3">Role Management</h2>
+                      <div class="card bg-light text-dark mt-3">
+                    <h5 class="card-title">
+					<h6>Role</h6>
+                        <b> Title: </b>
+                        <%=role.title%>
+                    </h5>
+                    <p class="card-text">
+                        <b>Status:</b>
+						 <% if(role.status=="1") {%>
+                        <p>Active</p>
+                    </p>
+					<% } else{ %> 
+					<p>Inactive</p>
+                    <% } %>					
+                  </div>
+				  
+                        <% } %>
+						</div>
+				  </div>
+</div>

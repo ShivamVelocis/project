@@ -1,0 +1,67 @@
+<div class="container">
+    <% if (messages.error) { console.log(messages.error)%>
+
+        <div class="alert alert-danger" role="alert">
+
+            <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+
+                <ul class="<%= type %>">
+                    <% messages[type].forEach(function (message) { %>
+                        <li>
+                            <%= message %>
+                        </li>
+                        <% }) %>
+                </ul>
+
+                <% }}) %>
+        </div>
+        <% } %>
+		<h4>Feedback Management</h4>
+            <div class="row justify-content-center mt-5">
+                <!-- for updating preview data of user content -->
+                <% if(messages.feedbackData){ title=messages.feedbackData[0].title;
+                    description=messages.feedbackData[0].description; email=messages.feedbackData[0].email; }else{ title='' ; description='' ; email='' ;} %>
+                                <!-- Form to added new content -->
+                                <div class="col-6 jumbotron">
+                                    <form name="myForm" action="/feedback/addfeedback" method="post">
+									<h6>Add Feedback</h6>
+                                        <div class="form-group">
+                                            <label for="title"><b>Title</b></label>
+                                            <input type="text" class="form-control" id="title" name='title'
+                                                value="<%= title %>">
+                                        </div>
+										<div class="form-group">
+                                            <label for="email"><b>Email</b></label>
+                                            <input type="text" class="form-control" id="email" name='email'
+                                                value="<%= email %>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label"><b>Description</b></label>
+                                            <textarea class="form-control" id="description" rows="3"
+                                                name="description"><%= description %></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                                <!-- form end -->
+            </div>
+</div>
+
+
+
+
+
+<script>
+    // add ckeditor to text area field
+    // set Global variable to access later for validation
+    let theEditor
+    ClassicEditor
+        .create(document.querySelector('#description'))
+        .then(editor => {
+            theEditor = editor;
+            // editor is a model and getData fn use to reterive latest value
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>

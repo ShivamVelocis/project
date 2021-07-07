@@ -1,36 +1,46 @@
-<h2>
-    <%= module_title %>
-</h2>
-<div class="row justify-content-center">
-    <div class="card" style="width: 20rem;">
-        <div class="card-header text-center">
-            <%=title%>
+
+<h2><%= module_title %></h2>
+
+<div class="card">
+
+
+
+
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%- messages.success %>
         </div>
-        <% if (messages.success) { %>
-            <div class="alert alert-success" role="alert">
-                <%- messages.success %>
-            </div>
-            <% } %>
-        <a href="/user/upload/profile/<%=results._id%> ">
-            <img class="card-img-top" src="/user/profile/<%=results._id%> " alt="Profile picture"></a>
-        <div class="card-body">
-            <h5 class="card-title">
-                Username: <%=results.username%>
-            </h5>
-            <p class="card-text">
-            <div><b>Email</b>: <%=results.email%>
-            </div>
-            <div>
-                <b>Role</b>: <%if(results.role_id==1){%> Admin<% } if(results.role_id==2){ %>Member<% } %>
-            </div>
-            <div>
-                <b>Status</b>: <%if(results.user_status==1){%> Published<% } if(results.user_status==2){ %>Unpublished<%
-                            } %>
-            </div>
-            </p>
-            <a href="/user/update/<%=results._id%>" class="btn btn-primary ">Edit</a>
+        <% } %>
+    <a href="/user/upload/profile/<%=results._id%> ">
+        <img class="ml-3 mt-3 rounded-circle" style="width:60px;" src="/user/profile/<%=results._id%> " alt="Profile picture"></a>
+
+
+
+
+
+
+    <div class="card-body">
+        <h5 class="card-title">
+            <b> Username: </b>
+            <%=results.username%>
+        </h5>
+        <p class="card-text">
+            <b>Email:</b>
+            <%=results.email%>
+        </p>
+        <p class="card-text">
+            <b>Full Name:</b>
+            <%=results.name.first_name%> <%=results.name.last_name%>
+        </p>
+
+        <a href="/user/update/<%=results._id%>" class="btn btn-primary ">Edit</a>
             <a href="/user/changepwd/<%=results._id%>" class="btn btn-primary float-right">Change Password</a>
 
-        </div>
+
     </div>
 </div>
+    
+
+
+
+

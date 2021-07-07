@@ -1,0 +1,42 @@
+
+    <div class="container">
+    <% if (messages.error) { console.log(messages.error)%>
+
+        <div class="alert alert-danger" role="alert">
+
+            <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+
+                <ul class="<%= type %>">
+                    <% messages[type].forEach(function (message) { %>
+                        <li>
+                            <%= message %>
+                        </li>
+                        <% }) %>
+                </ul>
+
+                <% }}) %>
+        </div>
+        <% } %>
+		<h4>Role Management</h4>
+        <div class="row justify-content-center mt-5">
+            <div class="col-6 jumbotron">
+			<h6>Edit Role</h6>
+                <form name="myForm" action="/Role/updateRole/<%=oldCont._id%>"
+                    method="post">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name='title' value="<%= oldCont.title%>">
+                    </div>
+					 <div class="col">
+					            <label for="title">Status</label>
+                                <select class="form-control" id="user_status" name="status">
+                                    <option value="1"<% if(oldCont.status=='1' ) { %>selected <% }%> >Active</option>
+									<option value="2"<% if(oldCont.status=='2') { %>selected <% }%> >Inactive</option>
+                                </select>
+                            </div>
+                    <button type="submit" class="btn btn-light">Update</button>
+                </form>
+            </div>
+        
+    </div>
+	
