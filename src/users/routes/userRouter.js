@@ -9,14 +9,14 @@ const userValidationRules = require('./../validations/UserValidation');
 const { uploadProfilePicture } = require("../utils/uploadHandler");
 
 
-router.get("/add",roleAuthv1("admin"), userController.addUser); //render add user page 
+router.get("/add",roleAuthv1(process.env.ADMIN_TITLE), userController.addUser); //render add user page 
 //router.post("/add",isAdmin, addUserValidationRules(), isRequestValid , userController.postAddUser); // add user to database if valid
-router.post("/add", roleAuth("admin"), userValidationRules.validateUserAdd, userController.postAddUser);
+router.post("/add", roleAuth(process.env.ADMIN_TITLE), userValidationRules.validateUserAdd, userController.postAddUser);
 
 router.get("/view", isUserLoggedIn, userController.getUsers); // renders all users
 router.get("/view/:id", isUserLoggedIn, mongoIDValidationRules(),userController.getUser); //render user with id given in url
 
-router.get("/update/:id",roleAuthv1("member"),isUserLoggedIn,mongoIDValidationRules(),isRequestValid , userController.updateUser); //render update/edit user page 
+router.get("/update/:id",isUserLoggedIn,mongoIDValidationRules(),isRequestValid , userController.updateUser); //render update/edit user page 
 //router.post("/update/:id",isUserLoggedIn,updateUserValidationRules(),isRequestValid , userController.postUpdateUser); //updates user eith new data in db
 router.post("/update/:id",updateUserValidationRules(),isRequestValid,isUserLoggedIn,userValidationRules.validateUserUpdate, userController.postUpdateUser);
 
@@ -45,5 +45,9 @@ router.post('/change-my-password/', isUserLoggedIn,changeMyPasswordValidationRul
 router.get('/upload/profile/:id',isUserLoggedIn,userController.uploadProfilePicture)
 router.post('/upload/profile/:id',isUserLoggedIn,uploadProfilePicture,userController.postUploadProfilePicture)
 router.get('/profile/:id',isUserLoggedIn,userController.getProfilePicture)
+
+
+//myprofile
+router.get('/profile',isUserLoggedIn,authController.myprofile)
 
 module.exports = router;

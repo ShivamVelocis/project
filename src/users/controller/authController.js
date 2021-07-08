@@ -7,8 +7,6 @@ const {
   validateToken,
   decodeToken,
 } = require("../utils/auth");
-// const { mailOtp } = require("../utils/nodemailer");
-// const UserValidation = require("../validations/UserValidation");
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 // render login page
@@ -284,4 +282,25 @@ exports.postChangeMyPassword =async (req,res,next)=>{
   } catch (err) {
     console.log("errors",err);
   }
+}
+
+
+
+exports.myprofile =async (req,res,next)=>{
+  let user_Id = res.locals.user.userId;
+  try {
+    let result = await userModel.findById(user_Id);
+    if (result !== undefined && result !== null) {
+      return res.render("users/views/view", {
+        title: CONFIG.USER,
+        module_title: CONFIG.MODULE_TITLE,
+        results: result,
+      });
+    }
+  } catch (error) {
+    res.render("views/error/ErrorPage", {
+      error: "Error while fecting content",
+    });
+  }
+  
 }
