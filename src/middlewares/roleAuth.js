@@ -68,18 +68,29 @@ exports.roleAuthv1 = (userRole) => {
         let user = decodeToken(req.session.token);
         let userData = await userModel.findOne({ _id: user.userId });
         req.session.token = await generaterefreshToken(req.session.token);
-        let adminrole = await roldeModel.findOne({ title: "admin" });
+
+        // user can access own data
+        let userId = req.params.id;
+        if (user.userId == userId) return next() 
+
+        // admin can access any data
+        let adminrole = await roldeModel.findOne({ title:process.env.ADMIN_TITLE });
         if(userData.role_id == adminrole._id) return next()
+
+        // access for user with pass role in route 
         let role = await roldeModel.findOne({ title: userRole });
         if (userData.role_id == role._id) return next();
+        // when user not authorized
         else {
           req.flash("error", CONFIG.NOT_AUTHORIZED);
           return res.redirect("/user/auth/login");
         }
       } else {
+        // when user dont have valid token
         res.redirect("/user/auth/login");
       }
     } catch (error) {
+      // unknown error encounter
       console.error(error);
       req.flash("error", error);
       res.redirect("/user/auth/login");
@@ -88,3 +99,4 @@ exports.roleAuthv1 = (userRole) => {
 
   return isAuthenticated;
 };
+
