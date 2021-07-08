@@ -2,97 +2,232 @@ const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
 const CONFIG = require("../configs/config");
 
-// login request body validater
-exports.loginValidationRules = () => {
-  return [
-    body("email").custom((value, { req }) => {
-      if (value == "") {
-        throw new Error("Email should not be empty");
-      }
-      if (value.match(CONFIG.EMAIL_PATTERN) == null) {
-        throw new Error("Please enter valid email only");
-      }
-      return true;
-    }),
-    body("password").custom((value, { req }) => {
-      if (value == "") {
-        throw new Error("Password should not be empty");
-      }
-      if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-        throw new Error("Please enter alphanumeric password only");
-      }
-      return true;
-    }),
-  ];
-};
-
 // add new user request body validater
 exports.addUserValidationRules = () => {
   return [
-    body("email").isEmail().withMessage("Please enter valid email"),
-    body("password").custom((value, { req }) => {
-      // console.log("password", value);
-      if (value == "") {
-        throw new Error("Password should not be empty");
-      }
-      if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-        throw new Error("Please enter alphanumeric password only");
-      }
-      return true;
-    }),
-    body("role_id").custom((value, { req }) => {
-      // console.log("role_id", value);
-      if (value == 1 || value == 2) {
+    body("email")
+      .exists()
+      .withMessage(CONFIG.INVALID_EMAIL)
+      .isEmail()
+      .withMessage(CONFIG.INVALID_EMAIL),
+
+    body("password")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
         return true;
-      }
-      throw new Error("Please selecte role");
-    }),
-    body("username").custom((value, { req }) => {
-      // console.log("username", value);
-      if (value == "") {
-        throw new Error("User Name should not be empty");
-      }
-      if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-        throw new Error("User Name enter alphanumeric password only");
-      }
-      return true;
-    }),
-    body("user_status").custom((value, { req }) => {
-      // console.log("Status", value);
-      if (value == 1 || value == 2) {
+      }),
+
+    body("role_id")
+      .exists()
+      .withMessage(CONFIG.INVALID_ROLE)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == 1 || value == 2) {
+          return true;
+        }
+        throw new Error(CONFIG.INVALID_ROLE);
+      }),
+
+    body("username")
+      .exists()
+      .withMessage(CONFIG.EMPTY_USER_NAME)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_USER_NAME);
+        }
+        if (value.match(CONFIG.TITLE_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_USER_NAME);
+        }
         return true;
-      }
-      throw new Error("Please selecte status");
-    }),
+      }),
+
+    body("user_status")
+      .exists()
+      .withMessage(CONFIG.INVALID_STATUS)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == 1 || value == 2) {
+          return true;
+        }
+        throw new Error(CONFIG.INVALID_STATUS);
+      }),
+  ];
+};
+
+// updating user request body validater
+exports.updateUserValidationRules = () => {
+  return [
+    body("email")
+      .exists()
+      .withMessage(CONFIG.INVALID_EMAIL)
+      .isEmail()
+      .withMessage(CONFIG.INVALID_EMAIL),
+
+    body("role_id")
+      .exists()
+      .withMessage(CONFIG.INVALID_ROLE)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == 1 || value == 2) {
+          return true;
+        }
+        throw new Error(CONFIG.INVALID_ROLE);
+      }),
+
+    body("user_status")
+      .exists()
+      .withMessage(CONFIG.INVALID_STATUS)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == 1 || value == 2) {
+          return true;
+        }
+        throw new Error(CONFIG.INVALID_STATUS);
+      }),
+  ];
+};
+
+//change password request body validator
+exports.changePasswordValidationRule = () => {
+  return [
+    body("currentPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        return true;
+      }),
+    body("newPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_NEW_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_NEW_PASSWORD);
+        }
+        return true;
+      }),
+    body("confirmPassword")
+      .exists()
+      .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_CONFIRM_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_CONFIRM_PASSWORD);
+        }
+        if (value !== req.body.newPassword) {
+          throw new Error(CONFIG.NEW_CONFIRM_ERROR);
+        }
+        return true;
+      }),
+  ];
+};
+//change password request body validator
+exports.otpPasswordValidationRule = () => {
+  return [
+    body("otp")
+      .exists()
+      .withMessage(CONFIG.EMPTY_OTP)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_OTP);
+        }
+        if (value.length !== 4) {
+          console.log(value.length)
+          throw new Error(CONFIG.INVALID_OTP);
+        }
+        return true;
+      }),
+    body("password")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        return true;
+      }),
+      body("confirmPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
+      .custom((value, { req }) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_PASSWORD);
+        }
+        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_PASSWORD);
+        }
+        if(value !== req.body.password){
+          throw new Error("New password and confirm password should match");
+        }
+        return true;
+      }),
+  ];
+};
+
+//forget password email validation in request body
+exports.forgetpasswordEmailValidation = () => {
+  return [
+    body("email")
+      .exists()
+      .withMessage(CONFIG.INVALID_EMAIL)
+      .isEmail()
+      .withMessage(CONFIG.INVALID_EMAIL),
   ];
 };
 
 // mongodb id validater for get request
 exports.mongoIDValidationRules = () => {
-  return param("id").custom((value) => {
-    if (!ObjectId(value)) {
-      throw new Error("Please enter valid  MongoDB ID");
-    }
-    return true;
-  });
+  return param("id")
+    .exists()
+    .withMessage(CONFIG.INVALID_MONGO_ID)
+    .bail()
+    .custom((value) => {
+      // console.log(value);
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    });
 };
 
 // middleware to check if any error encouter during validation
-exports.validate = (req, res, next) => {
-  // console.log(req.originalUrl);
+exports.isRequestValid = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     return next();
   }
   const extractedErrors = [];
+  // console.log(errors)
   errors.array().map((err) => extractedErrors.push(err.msg));
-
-  // beautify the error object
-  //   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-  // console.log(extractedErrors);
-  // req.flash("error", extractedErrors);
-  // res.status(422);
-  // return res.redirect(req.originalUrl);
-  res.locals.validationError = extractedErrors.length > 0?extractedErrors:null;
+  res.locals.validationError =
+    extractedErrors.length > 0 ? extractedErrors : null;
   next();
 };

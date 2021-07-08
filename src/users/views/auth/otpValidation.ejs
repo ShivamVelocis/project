@@ -1,85 +1,96 @@
-<div class="container">
-    <% if (messages.success) { %>
-        <div class="alert alert-success" role="alert"><%- messages.success %></div>
-        <% } %>
+<% 
+if (messages.userData) {
+  otp = messages.userData[0].otp;
+  password = messages.userData[0].password;
+  confirmPassword = messages.userData[0].confirmPassword;
+} else {
+  otp = "";
+  password = "";
+  confirmPassword=""
+}
 
-    <!-- error display -->
-    <% if (messages.error) { %>
-        <% if(Array.isArray(messages.error)) { messages.error.map((error,i)=>{%>
-            <div class="alert alert-danger mt-3">
-                <%= error%>
-            </div>
-            <% })} else{ %>
-                <div class="alert alert-danger mt-3">
-                    <%= messages.error%>
-                </div>
-                <% } %>
+%> 
+
+
+<h2>
+    <%= module_title %>
+</h2>
+<div class="row justify-content-center">
+    <div class="card col-5 ">
+        <div class="card-body">
+            <h5 class="card-title">
+                <%=title%>
+            </h5>
+
+            <p class="card-text">
+                <% if (messages.success) { %>
+                    <div class="alert alert-success" role="alert">
+                        <%- messages.success %>
+                    </div>
                     <% } %>
 
-                        <!-- error display ended  -->
-
-                        <!-- Login form start -->
-                        <div class="row justify-content-center mt-5">
-                            <!-- Form to added new content -->
-                            <div class="col-6 jumbotron">
-                                <form name="loginForm" action="/user/pwdreset" method="post"
-                                    onsubmit="return validateLogin()">
-                                    <div class="form-group">
-                                        <label for="email"><b>Email</b></label>
-                                        <input type="text" class="form-control" id="email" name='email'>
+                        <!-- error display -->
+                        <% if (messages.error) { %>
+                            <% if(Array.isArray(messages.error)) { messages.error.map((error,i)=>{%>
+                                <div class="alert alert-danger mt-3">
+                                    <%= error%>
+                                </div>
+                                <% })} else{ %>
+                                    <div class="alert alert-danger mt-3">
+                                        <%= messages.error%>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="otp"><b>OTP</b></label>
-                                        <input type="text" class="form-control" id="otp" name='otp'>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password"><b>Password</b></label>
-                                        <input type="password" class="form-control" id="password" name='password'>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">login</button>
-                                </form>
-                            </div>
-                            <!-- form end -->
-                        </div>
-                        <!-- Login form end -->
-</div>
+                                    <% } %>
+                                        <% } %>
+
+                                            <!-- error display ended  -->
+
+                                            <!-- OTP varificatiob and password reset form start -->
+                                            <div class="row justify-content-center mt-5">
+                                                <!-- Form to added new content -->
+                                                <div class="col-12">
+                                                    <form name="otpForm" action="/user/pwdreset/<%=data%>"
+                                                        method="post"  onsubmit="return otpValidate()">
+                                                        <div class="form-group">
+                                                            <label for="otp"><b>OTP</b></label>
+                                                            <input type="text" class="form-control" id="otp" name='otp' value="<%=otp%>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="password"><b>New Password</b></label>
+                                                            <input type="password" class="form-control" id="password"
+                                                                name='password' value="<%=password%>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="confirmPassword"><b>Confirm Password</b></label>
+                                                            <input type="password" class="form-control" id="confirmPassword"
+                                                                name='confirmPassword' value="<%=confirmPassword%>">
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </form>
+                                                </div>
+                                                <!-- form end -->
+                                            </div>
+            </p>
+        </div>
+    </div>
 
 
-
-
-
-<script>
-
-    // javascript function to validate form data
-    function validateLogin() {
-
-        let emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-        let passwordPattern = /^[ A-Za-z0-9_.\/,<>]*$/
-        let email = document.forms["loginForm"]["email"].value;
-        let password = document.forms["loginForm"]["password"].value;
-        let otp = document.forms["loginForm"]["otp"].value;
-        // getData returns latest value of textarea 
-
-        if (email == "") {
-            alert("Email must be filled out");
-            return false;
-        }
-        if (email.match(emailPattern) == null) {
-            alert("Please enter valid email only");
-            return false;
-        }
-        if (password == "") {
+    <script>
+        function otpValidate(){
+        let password = document.forms["otpForm"]["password"].value;
+        let otp = document.forms["otpForm"]["otp"].value;
+        
+        if(password == ""){
             alert("Password must be filled out");
             return false;
         }
-        if (password.match(passwordPattern) == null) {
-            alert("Please enter alphanumeric password only");
-            return false;
-        }
-        if (otp == "") {
+        if(otp == ""){
             alert("OTP must be filled out");
             return false;
         }
         return true
-    }
-</script>
+        }
+        
+        </script>
+
+
+

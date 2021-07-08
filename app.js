@@ -8,7 +8,10 @@ const userRoutes = require("./src/users/routes/userRouter");
 const session = require("express-session");
 const morgan = require("morgan");
 const flash = require("express-flash");
-// const cookieParser = require('cookie-parser');
+const { loginCheck } = require("./src/middlewares/auth");
+const galleryRoutes = require("./src/gallery/routes/galleryRoutes")
+const {main_menu} = require("./src/middlewares/main_menu/main_menu")
+
 
 dotenv.config();
 
@@ -17,14 +20,13 @@ require("./src/configs/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
-
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
 
 app.use(expressLayouts);
 app.set("layout", path.join(__dirname, "src/views/layouts/layout"));
 
-app.use(morgan("tiny"));
+// app.use(morgan("tiny"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -47,10 +49,11 @@ app.use(
   })
 ); // session middleware
 app.use(flash());
-
-
+app.use(loginCheck);
+app.use(main_menu)
 app.use("/content", contentRoutes); /*content management routes*/
 app.use("/user", userRoutes); /*user management and authentication routes*/
+app.use("/gallery", galleryRoutes);
 
 /*middleware for 404 error */
 app.use((req, res, next) => {

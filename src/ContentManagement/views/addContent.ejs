@@ -1,27 +1,39 @@
-<div class="container">
-    <% if (messages.error) { console.log(messages.error)%>
+<h2>
+    <%= module_title %>
+</h2>
+<div class="row justify-content-center">
+    <!-- for updating previous data of user content -->
+    <% if(messages.contentData){ title=messages.contentData[0].title;
+        description=messages.contentData[0].description;content_status=messages.contentData[0].content_status;}else{
+        title='' ; description='' ;content_status='' ;} %>
+        <div class="card col-6 ">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <%=title1%> 
+                </h5>
 
-        <div class="alert alert-danger" role="alert">
+                <p class="card-text">
+                    <% if (messages.error) { %>
 
-            <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+                        <div class="alert alert-danger" role="alert">
 
-                <ul class="<%= type %>">
-                    <% messages[type].forEach(function (message) { %>
-                        <li>
-                            <%= message %>
-                        </li>
-                        <% }) %>
-                </ul>
+                            <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
 
-                <% }}) %>
-        </div>
-        <% } %>
-            <div class="row justify-content-center mt-5">
-                <!-- for updating preview data of user content -->
-                <% if(messages.contentData){ title=messages.contentData[0].title;
-                    description=messages.contentData[0].description; }else{ title='' ; description='' ;} %>
-                                <!-- Form to added new content -->
-                                <div class="col-6 jumbotron">
+                                <ul class="<%= type %>">
+                                    <% messages[type].forEach(function (message) { %>
+                                        <li>
+                                            <%= message %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+
+                                <% }}) %>
+                        </div>
+                        <% } %>
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <!-- Form to added new content -->
+
                                     <form name="myForm" action="/content/" method="post"
                                         onsubmit="return validateForm()">
                                         <div class="form-group">
@@ -34,13 +46,30 @@
                                             <textarea class="form-control" id="description" rows="3"
                                                 name="description"><%= description %></textarea>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="content_status" class="col col-form-label"><b>Status</b></label>
+                                            <select class="form-control" id="content_status" name="content_status">
+                                                <option value="" <% if(content_status=='' ){ %> selected <% } %>
+                                                        >--Select--
+                                                </option>
+                                                <option value="1" <% if(content_status==1 ){ %> selected <% } %>
+                                                        >Publish
+                                                </option>
+                                                <option value="2" <% if(content_status==2 ){ %> selected <% } %>
+                                                        >Unpublish
+                                                </option>
+                                            </select>
+                                        </div>
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </form>
                                 </div>
-                                <!-- form end -->
-            </div>
-</div>
+                            </div>
+                            <!-- form end -->
 
+                </p>
+            </div>
+        </div>
+</div>
 
 
 
@@ -62,8 +91,8 @@
     // javascript function to validate form data
     function validateForm() {
 
-        let titlePattern = /^[ A-Za-z0-9_.\/,]*$/
-        let descriptionPattern = /^[ A-Za-z0-9_.\/,<>]*$/
+        let titlePattern = /^[ A-Za-z0-9_.\/,\?]*$/
+        let descriptionPattern =  /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/
         let title = document.forms["myForm"]["title"].value;
         // getData returns latest value of textarea 
         let description = theEditor.getData()
@@ -81,6 +110,7 @@
             return false;
         }
         if (description.match(descriptionPattern) == null) {
+            // console.log(description)
             alert("Please enter alphanumeric description only");
             return false;
         }

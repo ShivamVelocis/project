@@ -1,26 +1,29 @@
 const Content = require("../models/contentModels.js");
-const Configs = require("../configs/config");
+const CONFIG = require("../configs/config");
 
 exports.contentForm = (req, res) => {
-  res.render("ContentManagement/views/addContent", { error: null });
+  res.render("ContentManagement/views/addContent", {
+    module_title: CONFIG.MODULE_TITLE,
+    title1: CONFIG.ADD_TITLE,
+  });
 };
 
 exports.addContent = async (req, res) => {
-  console.log(res.locals.validationError);
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
     req.flash("contentData", req.body);
     return res.redirect("/content/");
   }
   let data = req.body;
-  data.status = 1;
   try {
     let content = new Content(data);
-    let saveContent = await content.save();
+    await content.save();
+    req.flash("success", CONFIG.ADD_CONTENT_SUCCESS);
     res.redirect("all");
   } catch (error) {
+    req.flash("error", CONFIG.ADD_CONTENT_FAILED);
     res.render("ContentManagement/views/addContent", {
-      error: Configs.ADD_CONTENT_FAILED,
+      module_title: CONFIG.MODULE_TITLE,
     });
   }
 };
@@ -30,34 +33,44 @@ exports.getContent = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.render("ContentManagement/views/content", { content: result });
+      return res.render("ContentManagement/views/content", {
+        content: result,
+        module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT,
+      });
     }
   } catch (error) {
-    req.flash("error", Configs.FETCH_CONTENT_ERROR);
-    res.render("ContentManagement/views/content", { content: null });
+    req.flash("error", CONFIG.FETCH_CONTENT_ERROR);
+    res.render("ContentManagement/views/content", {
+      content: null,
+      module_title: CONFIG.MODULE_TITLE,
+    });
   }
 };
 
 exports.getContents = async (req, res) => {
-  // console.log("i am contents controller")
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
       return res.render("ContentManagement/views/contents", {
         contents: contents,
-        error: null,
-        success: null,
+        module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT_LIST_TITLE,
       });
     } else {
-      req.flash("error", Configs.NO_CONTENT_FOUND);
+      req.flash("error", CONFIG.NO_CONTENT_FOUND);
       return res.render("ContentManagement/views/contents", {
         contents: [],
+        module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.CONTENT_LIST_TITLE,
       });
     }
   } catch (error) {
-    req.flash("error", Configs.DELETE_CONTENT_FAILED);
+    req.flash("error", CONFIG.DELETE_CONTENT_FAILED);
     return res.render("ContentManagement/views/contents", {
       contents: [],
+      module_title: CONFIG.MODULE_TITLE,
+      title: CONFIG.CONTENT_LIST_TITLE,
     });
   }
 };
@@ -67,23 +80,16 @@ exports.removeContent = async (req, res) => {
   try {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
-      let title = result.title.toUpperCase();
-      req.flash("success", `Content with title ${title} deleted successfully.`);
+      req.flash("success", CONFIG.DELETE_CONTENT_SUCCESS);
       res.redirect("/content/all");
-      // return res.render("ContentManagement/views/deleteContent", {
-      //   message: `Content with title ${title} deleted successfully.`,
-      // });
     } else {
       res.status(400);
       req.flash("success", `No content with id ${id} present for deletion`);
       res.redirect("/content/all");
-      // res.render("ContentManagement/views/ErrorPage", {
-      //   error: `no content with id ${id} present for deletion`,
-      // });
     }
   } catch (error) {
     res.status(400);
-    req.flash("success", Configs.DELETE_CONTENT_FAILED);
+    req.flash("success", CONFIG.DELETE_CONTENT_FAILED);
     res.redirect("/content/all");
   }
 };
@@ -95,11 +101,15 @@ exports.contentToUpdate = async (req, res) => {
     if (result !== undefined && result !== null) {
       return res.render("ContentManagement/views/updateContent", {
         oldCont: result,
+        module_title: CONFIG.MODULE_TITLE,
+        title: CONFIG.UPDATE_TITLE,
       });
     }
   } catch (error) {
-    res.render("ContentManagement/views/ErrorPage", {
-      error: Configs.FETCH_CONTENT_ERROR,
+    req.flash("error", CONFIG.FETCH_CONTENT_ERROR);
+    return res.render("ContentManagement/views/updateContent", {
+      oldCont: result,
+      module_title: CONFIG.MODULE_TITLE,
     });
   }
 };
@@ -121,12 +131,12 @@ exports.updateContent = async (req, res) => {
     if (result !== undefined && result !== null) {
       req.flash(
         "success",
-        `Content with Title ${req.body.title} updated successfully`
+        CONFIG.UPDATE_CONTENT_SUCCESS
       );
       return res.redirect("/content/all");
     }
   } catch (error) {
-    req.flash("error", Configs.UPDATE_CONTENT_FAILED);
+    req.flash("error", CONFIG.UPDATE_CONTENT_FAILED);
     return res.redirect(`/content/update/${id}`);
   }
 };

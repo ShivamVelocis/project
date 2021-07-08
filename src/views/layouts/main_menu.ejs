@@ -10,19 +10,32 @@
 
         <div class="main-menu__navbar collapse navbar-collapse" id="navbarsExample03">
             <ul class="main-menu__item-list navbar-nav mr-auto">
-                <li class="main-menu__item nav-item active">
-                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-                </li>
+                <% main_menu.map(menu=>{%>
+                    <li class="main-menu__item nav-item">
+                        <a class="nav-link" href="<%=menu.menu_link %>">
+                            <%=menu.menu_title %>
+                        </a>
+                    </li>
+                    <%}) %>
+                        <!-- <li class="main-menu__item nav-item active">
+                        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                    </li>
 
-                <li class="main-menu__item nav-item">
-                    <a class="nav-link" href="/user/view">User</a>
-                </li>
-                <li class="main-menu__item nav-item">
-                    <a class="nav-link" href="/content/all">Content</a>
-                </li>
-                <li class="main-menu__item nav-item">
-                    <a class="nav-link" href="/user/auth/login">Login</a>
-                </li>
+                    <li class="main-menu__item nav-item">
+                        <a class="nav-link" href="/user/view">User</a>
+                    </li>
+                    <li class="main-menu__item nav-item">
+                        <a class="nav-link" href="/content/all">Content</a>
+                    </li> -->
+                        <!-- <% if(isAuth){ %>
+                        <li class="main-menu__item nav-item">
+                            <a class="nav-link" href="/user/auth/logout">Logout</a>
+                        </li>
+                        <% }else{ %>
+                            <li class="main-menu__item nav-item">
+                                <a class="nav-link" href="/user/auth/login">Login</a>
+                            </li>
+                            <% } %> -->
 
             </ul>
 

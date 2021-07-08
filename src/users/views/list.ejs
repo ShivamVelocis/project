@@ -1,7 +1,9 @@
 
     <div class="container">
         <h2><%= module_title %></h2>
-
+        <h5 class="card-title">
+            <%=title%>
+        </h5>
         <% if (messages.success) { %>
             <div class="alert alert-success" role="alert"><%- messages.success %></div>
             <% } %>

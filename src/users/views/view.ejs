@@ -1,15 +1,36 @@
-<h2><%= module_title %></h2>
+<h2>
+    <%= module_title %>
+</h2>
+<div class="row justify-content-center">
+    <div class="card" style="width: 20rem;">
+        <div class="card-header text-center">
+            <%=title%>
+        </div>
+        <% if (messages.success) { %>
+            <div class="alert alert-success" role="alert">
+                <%- messages.success %>
+            </div>
+            <% } %>
+        <a href="/user/upload/profile/<%=results._id%> ">
+            <img class="card-img-top" src="/user/profile/<%=results._id%> " alt="Profile picture"></a>
+        <div class="card-body">
+            <h5 class="card-title">
+                Username: <%=results.username%>
+            </h5>
+            <p class="card-text">
+            <div><b>Email</b>: <%=results.email%>
+            </div>
+            <div>
+                <b>Role</b>: <%if(results.role_id==1){%> Admin<% } if(results.role_id==2){ %>Member<% } %>
+            </div>
+            <div>
+                <b>Status</b>: <%if(results.user_status==1){%> Published<% } if(results.user_status==2){ %>Unpublished<%
+                            } %>
+            </div>
+            </p>
+            <a href="/user/update/<%=results._id%>" class="btn btn-primary ">Edit</a>
+            <a href="/user/changepwd/<%=results._id%>" class="btn btn-primary float-right">Change Password</a>
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">
-            <b> Title: </b>
-            <%=results.username%>
-        </h5>
-        <p class="card-text">
-            <b>Description:</b>
-            <%=results.email%>
-        </p>
+        </div>
     </div>
 </div>
-    

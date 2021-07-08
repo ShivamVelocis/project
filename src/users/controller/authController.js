@@ -1,16 +1,25 @@
-const moment = require("moment");
 const bcrypt = require("bcrypt");
 
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
-const { genrateJWTToken } = require("../utils/auth");
-const { mailOtp } = require("../utils/nodemailer");
+const {
+  genrateJWTToken,
+  validateToken,
+  decodeToken,
+} = require("../utils/auth");
+// const { mailOtp } = require("../utils/nodemailer");
+const { mailOtp } = require("../utils/nodemailertest");
 
-exports.login = (req, res) => {
-  res.render("users/views/auth/login");
+// render login page
+exports.login = (req, res, next) => {
+  res.render("users/views/auth/login", {
+    title: CONFIG.LOGIN_TITLE,
+    module_title: CONFIG.MODULE_TITLE,
+  });
 };
 
-exports.postLogin = async (req, res) => {
+// post handler for login form and redirect to users after success login
+exports.postLogin = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
     req.flash("error", res.locals.validationError);
@@ -19,14 +28,15 @@ exports.postLogin = async (req, res) => {
   }
   try {
     let user = await userModel.findOne({ email: data.email });
+
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
+        // console.log(passwordVerified);
         req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
         req.flash("loginData", req.body);
         return res.redirect("/user/auth/login");
       }
-      // console.log("test",process.env.ACCESS_TOKEN_SECRET);
       let token = await genrateJWTToken(
         user._id,
         process.env.ACCESS_TOKEN_SECRET,
@@ -35,7 +45,7 @@ exports.postLogin = async (req, res) => {
       let result = await userModel.findOneAndUpdate(
         { email: data.email },
         { $set: { token: token } },
-        { new: true, upsert: true }
+        { upsert: true }
       );
       if (result !== undefined && result !== null) {
         req.flash("success", CONFIG.LOGIN_SUCCESS_MESSAGE);
@@ -48,77 +58,165 @@ exports.postLogin = async (req, res) => {
       return res.redirect("/user/auth/login");
     }
   } catch (error) {
-    console.log(error);
-    req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
-    req.flash("loginData", req.body);
-    return res.redirect("/user/auth/login");
+    next(error);
   }
 };
 
-exports.forgetPassword = (req, res) => {
-  res.render("users/views/auth/forgetPwd");
+// render forget password page for user email
+exports.forgetPassword = (req, res, next) => {
+  res.render("users/views/auth/forgetPwd", {
+    title: CONFIG.FORGET_PASSWORD_TITLE,
+    module_title: CONFIG.MODULE_TITLE,
+  });
 };
 
-exports.postForgetPassword = async (req, res) => {
+// email OTP and URL for user for password reset
+exports.postForgetPassword = async (req, res, next) => {
   let data = req.body;
   try {
     let user = await userModel.findOne({ email: data.email });
     if (user !== null && user !== undefined) {
       let otp = Math.floor(1000 + Math.random() * 9000);
+      let token = await genrateJWTToken(
+        user.email,
+        process.env.ACCESS_TOKEN_SECRET,
+        60 * 10
+      );
       let result = await userModel.findOneAndUpdate(
         { email: data.email },
-        { $set: { otp: otp } },
-        { new: true, upsert: true }
+        { $set: { otp: otp, otpToken: token } },
+        { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        console.log(otp);
-        await mailOtp(data.email, otp);
-        // console.log(mailed);
-
+        await mailOtp(data.email, otp, token);
         req.flash("success", CONFIG.OTP_SUCCESS);
-        // req.session.token = token;
-        return res.redirect("/user/pwdreset/");
+        return res.redirect("/user/auth/login");
       }
     } else {
-      req.flash("error", CONFIG.NOT_REGISTER_USER);
-      return res.redirect(req.originalUrl);
+      req.flash("success", CONFIG.OTP_SUCCESS);
+      return res.redirect("/user/auth/login");
     }
   } catch (error) {
-    console.log(error);
-    req.flash("error", CONFIG.NOT_REGISTER_USER);
-    return res.redirect(req.originalUrl);
+    next(error);
+  }
+};
+//render form for user OTP and new password after validating URL
+
+exports.otpVerification = async (req, res, next) => {
+  try {
+    let token = req.params.token;
+    let userData = await userModel.findOne({ otpToken: token });
+    if (!userData) {
+      req.flash("error", "Link expired");
+      return res.redirect("/user/forgetpassword");
+    }
+    let isUrlTokenVal = await validateToken(token);
+    if (!isUrlTokenVal) {
+      req.flash("error", "Link expired");
+      return res.redirect("/user/forgetpassword");
+    }
+    return res.render("users/views/auth/otpValidation", {
+      data: token,
+      title: CONFIG.RESET_PASSWORD_TITLE,
+      module_title: CONFIG.MODULE_TITLE,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
-exports.otpVerification = (req, res) => {
-  return res.render("users/views/auth/otpValidation");
-};
-exports.postOtpVerification = async (req, res) => {
-  // console.log("postOtpVerification");
+// reset user password after valid OTP and URL
+exports.postOtpVerification = async (req, res, next) => {
+  let token = req.params.token;
   try {
-    const data = req.body;
-    let user = await userModel.findOne({ email: data.email });
+    let isUrlTokenVal = await validateToken(token);
+    if (!isUrlTokenVal) {
+      req.flash("error", "Link expired");
+      return res.redirect("/user/forgetpassword");
+    }
+    let userData = await decodeToken(token);
+    //  let data = req.body;
+    let user = await userModel.findOne({ email: userData.userId });
+    let crossVerifyTOken = await validateToken(user.otpToken);
+    if (!crossVerifyTOken) {
+      req.flash("error", "Link expired");
+      return res.redirect("/user/forgetpassword");
+    }
     if (user !== null && user !== undefined) {
-      if (user.otp == data.otp) {
+      if (user.otp == req.body.otp) {
         let passwordHash = bcrypt.hashSync(req.body.password, 10);
         await userModel.findOneAndUpdate(
-          { email: data.email },
-          { $set: { otp: null, password: passwordHash } },
+          { email: userData.userId },
+          { $set: { otp: null, password: passwordHash, otpToken: null } },
           { upsert: true }
         );
         req.flash("success", CONFIG.PASSWORD_SUCCESS_CHANGE);
         return res.redirect("/user/auth/login");
       } else {
         req.flash("error", "Invalid OTP");
-        return res.redirect("/user/pwdreset");
+        return res.redirect(`/user/pwdreset/${token}`);
       }
     } else {
-      console.error("email error");
       req.flash("error", CONFIG.INVALID_EMAIL);
       return res.redirect(req.originalUrl);
     }
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
+exports.logOut = (req, res, next) => {
+  req.session.destroy();
+  return res.redirect("/user/auth/login");
+};
+
+// render change password page of logged in page
+exports.changePassword = async (req, res, next) => {
+  let userId = req.params.id;
+  try {
+    let user = await userModel.findOne({ _id: userId });
+    if (user != null && user != undefined) {
+      res.render("users/views/auth/changePassword", {
+        title: "Change Password",
+        module_title: CONFIG.MODULE_TITLE,
+        userData: user._id,
+      });
+    }else{
+      req.flash("error","Some error encounter during data fetching")
+      res.redirect(`/user/view/${userId}`);
+    }
+  } catch (error) {
+    console.log(error)
+  }
+};
+
+//change password after user provide current and new password
+exports.postChangePassword = async (req, res, next) => {
+  let userId = req.params.id;
+  let userData = req.body;
+  try {
+    let user = await userModel.findOne({ _id: userId });
+    // console.log(user)
+    if (user != null && user != undefined) {
+      let oldPasswordVerified = await bcrypt.compare(
+        userData.currentPassword,
+        user.password
+      );
+      // console.log(oldPasswordVerified)
+      if (oldPasswordVerified) {
+        let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
+        await userModel.findOneAndUpdate(
+          { _id: userId },
+          { $set: { password: newPasswordHash } },
+          { upsert: true }
+        );
+        req.flash("success", "Your password update with new password");
+        return res.redirect(`/user/view/${userId}`);
+      }
+      req.flash("error", "Password update failed");
+      return res.redirect(`/user/view/${userId}`);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
