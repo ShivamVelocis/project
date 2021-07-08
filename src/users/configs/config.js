@@ -25,7 +25,7 @@ CONFIG.CHANGE_PASSWORD_SUCCESS = "Your password update with new password"
 // Validaton messages
 CONFIG.LOGIN_FAIL_MESSAGE = "Invalid Username or Password";
 CONFIG.LOGIN_SUCCESS_MESSAGE = "Logged in success";
-CONFIG.OTP_SUCCESS = "OTP send to your registered email address,If you are a registered user";
+CONFIG.OTP_SUCCESS = "Check your inbox for the next steps. If you don't receive an email, and it's not in your spam folder this could mean you signed up with a different address.";
 CONFIG.NOT_REGISTER_USER = "Not a registered user";
 CONFIG.PASSWORD_SUCCESS_CHANGE = "Password changed successfully";
 CONFIG.FORGET_PASSWORD_LINK_EXPIRATED = "Link expired";
@@ -56,7 +56,7 @@ CONFIG.LIMIT = 5;
 //Regex Patterns
 CONFIG.TEXTAREA_PATTERN = GLOBAL_CONFIG.TEXTAREA_PATTERN ||/^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
 CONFIG.TITLE_PATTERN = GLOBAL_CONFIG.TITLE_PATTERN ||/^[ A-Za-z0-9_.\/,\?]*$/;
-CONFIG.PASSWORD_PATTERN = GLOBAL_CONFIG.PASSWORD_PATTERN || /^[ A-Za-z0-9_.\/,<>]*$/;
+CONFIG.PASSWORD_PATTERN = GLOBAL_CONFIG.PASSWORD_PATTERN || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/;
 CONFIG.EMAIL_PATTERN =GLOBAL_CONFIG.EMAIL_PATTERN ||  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 module.exports = CONFIG;

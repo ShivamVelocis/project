@@ -2,35 +2,36 @@
     "name": "task-job",
     "version": "1.0.0",
     "description": "",
-    "main": "contentMgment/src/app.js",
+    "main": "app.js",
     "scripts": {
-        "start": "node app.js",
-        "dev": "nodemon  --ext js,ejs --delay 1 app.js"
+        "start": "node ./app.js",
+        "dev": "nodemon  --ext js,ejs --delay 1 ./app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Shivam Chaudhry",
     "license": "ISC",
     "dependencies": {
+        "@sendgrid/mail": "^7.4.5",
         "bcrypt": "^5.0.1",
         "body-parser": "^1.19.0",
+        "connect-mongo": "^4.4.1",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "ejs": "^3.1.6",
         "express": "^4.17.1",
         "express-ejs-layouts": "^2.5.1",
-        "express-flash": "0.0.2",
+        "express-flash": "^0.0.2",
         "express-session": "^1.17.2",
         "express-validator": "^6.12.0",
         "jsonwebtoken": "^8.5.1",
         "jwt-decode": "^3.1.2",
         "moment": "^2.29.1",
         "mongoose": "^5.7.1",
-        "mongoose-unique-validator": "^2.0.3",
-        "morgan": "^1.10.0",
+        "morgan": "^1.9.1",
         "multer": "^1.4.2",
         "nodemailer": "^6.6.2",
-        "sharp": "^0.28.3"
-    },
-    "devDependencies": {
-        "nodemon": "^2.0.7"
+        "nodemon": "^2.0.7",
+        "sharp": "^0.28.3",
+        "uuid": "^8.3.2"
     }
 }

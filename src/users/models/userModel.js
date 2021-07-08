@@ -5,31 +5,29 @@ let userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      lowercase: true,
-      trim: true,
+      lowercase: true, trim: true,
       index: true,
-      unique: [true, "Username already taken"],
-      required: [true, "Username required"],
+      unique: true,
+      required: [true, 'Username required'],
     },
     password: String,
     email: {
       type: String,
-      unique: [true, "Username already taken"],
-      required: [true, "Email required"],
+      required: [true, 'Email required'],
     },
-    role_id: Number,
+    role_id: String,
     name: {
-      first: String,
-      last: String,
+      first_name: String,
+      last_name: String
     },
     user_status: {
       type: Number,
-      max: [3, "Must be either 0, 1 or 2: got {VALUE}"],
+      max: [3, 'Must be either 0, 1 or 2: got {VALUE}'],
     },
+    token: String,
     otp: {
       type: Number,
     },
-    token: String,
     otpToken: String,
     profilePicture: Buffer,
   },

@@ -1,15 +1,16 @@
 <% if(messages.loginData){ email=messages.loginData[0].email; password=messages.loginData[0].password; }else{ email='' ;
     password='' ; } %>
     <h2>
-        <%= module_title %>
+        <strong class="mr-auto"><%= module_title %></strong>
     </h2>
-    <div class="justify-content-center">
-        <div class="row justify-content-center">
-            <div class="card col-5 ">
+    
+   
+            <div class="card">
+                <div class="card-header">
+                    <strong class="mr-auto text-primary"><%=title%></strong>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">
-                        <%=title%>
-                    </h5>
+                    
                     <p class="card-text">
                         <% if (messages.success) { %>
                             <div class="alert alert-success" role="alert">
@@ -52,5 +53,4 @@
                     </p>
                 </div>
             </div>
-        </div>
-    </div>
+ 

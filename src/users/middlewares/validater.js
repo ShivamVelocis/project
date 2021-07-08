@@ -30,7 +30,7 @@ exports.addUserValidationRules = () => {
       .withMessage(CONFIG.INVALID_ROLE)
       .bail()
       .custom((value, { req }) => {
-        if (value == 1 || value == 2) {
+        if (value) {
           return true;
         }
         throw new Error(CONFIG.INVALID_ROLE);
@@ -77,7 +77,7 @@ exports.updateUserValidationRules = () => {
       .withMessage(CONFIG.INVALID_ROLE)
       .bail()
       .custom((value, { req }) => {
-        if (value == 1 || value == 2) {
+        if (value) {
           return true;
         }
         throw new Error(CONFIG.INVALID_ROLE);
@@ -96,46 +96,42 @@ exports.updateUserValidationRules = () => {
   ];
 };
 
-//change password request body validator
-exports.changePasswordValidationRule = () => {
+//change my password request body validator
+exports.changeMyPasswordValidationRule = () => {
   return [
     body("currentPassword")
       .exists()
       .withMessage(CONFIG.INVALID_PASSWORD)
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .custom((value, { req }) => {
-        if (value == "") {
-          throw new Error(CONFIG.EMPTY_PASSWORD);
-        }
-        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_PASSWORD);
-        }
-        return true;
-      }),
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      ),
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
       .bail()
-      .custom((value, { req }) => {
-        if (value == "") {
-          throw new Error(CONFIG.EMPTY_NEW_PASSWORD);
-        }
-        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_NEW_PASSWORD);
-        }
-        return true;
-      }),
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      ),
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
       .bail()
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      )
       .custom((value, { req }) => {
-        if (value == "") {
-          throw new Error(CONFIG.EMPTY_CONFIRM_PASSWORD);
-        }
-        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_CONFIRM_PASSWORD);
-        }
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -144,6 +140,40 @@ exports.changePasswordValidationRule = () => {
   ];
 };
 //change password request body validator
+exports.changePasswordValidationRule = () => {
+  return [
+    body("newPassword")
+      .exists()
+      .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      ),
+    body("confirmPassword")
+      .exists()
+      .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      )
+      .bail()
+      .custom((value, { req }) => {
+        if (value !== req.body.newPassword) {
+          throw new Error(CONFIG.NEW_CONFIRM_ERROR);
+        }
+        return true;
+      }),
+  ];
+};
+//change password request body validator with otp
 exports.otpPasswordValidationRule = () => {
   return [
     body("otp")
@@ -155,37 +185,37 @@ exports.otpPasswordValidationRule = () => {
           throw new Error(CONFIG.EMPTY_OTP);
         }
         if (value.length !== 4) {
-          console.log(value.length)
+          // console.log(value.length);
           throw new Error(CONFIG.INVALID_OTP);
         }
         return true;
       }),
     body("password")
       .exists()
-      .withMessage(CONFIG.INVALID_PASSWORD)
+      .withMessage(CONFIG.INVALID_NEW_PASSWORD)
       .bail()
-      .custom((value, { req }) => {
-        if (value == "") {
-          throw new Error(CONFIG.EMPTY_PASSWORD);
-        }
-        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_PASSWORD);
-        }
-        return true;
-      }),
-      body("confirmPassword")
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      ),
+    body("confirmPassword")
       .exists()
-      .withMessage(CONFIG.INVALID_PASSWORD)
+      .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
+      .notEmpty()
+      .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      )
       .bail()
       .custom((value, { req }) => {
-        if (value == "") {
-          throw new Error(CONFIG.EMPTY_PASSWORD);
-        }
-        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_PASSWORD);
-        }
-        if(value !== req.body.password){
-          throw new Error("New password and confirm password should match");
+        if (value !== req.body.newPassword) {
+          throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
         return true;
       }),
