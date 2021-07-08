@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-let mailOtp = async (mailTo, otp, token) => {
+let sendOtpMail = async (mailTo, otp, token) => {
 
   // Generate test SMTP service account from ethereal.email
   let transporter = nodemailer.createTransport({
@@ -29,4 +29,4 @@ let mailOtp = async (mailTo, otp, token) => {
   });
 };
 
-module.exports = { mailOtp };
+module.exports = { sendOtpMail };

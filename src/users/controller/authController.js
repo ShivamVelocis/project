@@ -7,9 +7,9 @@ const {
   validateToken,
   decodeToken,
 } = require("../utils/auth");
-const { mailOtp } = require("../utils/nodemailer");
-const UserValidation = require("../validations/UserValidation");
-const { sendOtpMail } = require("../utils/sendGridMailer");
+// const { mailOtp } = require("../utils/nodemailer");
+// const UserValidation = require("../validations/UserValidation");
+const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 // render login page
 exports.login = (req, res, next) => {
