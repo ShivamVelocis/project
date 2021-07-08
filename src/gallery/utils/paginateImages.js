@@ -1,6 +1,6 @@
 const imageModel = require("../models/galleryModel");
 
-let paginateFiles = async (page, limit) => {
+let paginateFiles = async (page = 1, limit = 10) => {
   try {
     let imagesCount = await imageModel.countDocuments({});
     const result = {};
@@ -15,8 +15,8 @@ let paginateFiles = async (page, limit) => {
     let imagesData = await imageModel
       .find()
       .sort("created_at")
-      .skip(page)
-      .limit(limit)
+      .skip(Number(startIndex))
+      .limit(Number(limit))
       .exec();
     result.results = imagesData;
     return result;

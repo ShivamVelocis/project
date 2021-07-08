@@ -7,10 +7,11 @@ const storage = multer.diskStorage({
   },
 
   filename: function (req, file, cb) {
+    console.log(file.originalname.replace(/\.[^/.]+$/, ""))
     let randomnumber = Math.floor(Math.random() * 10);
     cb(
       null,
-      file.fieldname +
+      file.originalname.replace(/\.[^/.]+$/, "") +
         "-" +
         Date.now() +
         "-" +
@@ -40,4 +41,15 @@ let upload = multer({ storage, limits, fileFilter }).array(
   10
 );
 
-module.exports = { upload };
+// wrapper middleware to handle error thrown by multer 
+let uploadImages = (req, res, next) => {
+  upload(req, res, (error) => {
+    if (error) {
+      req.flash("error", error.message =="File too large"?CONFIG.TOO_LARGE_IMAGE:error.message);
+      return res.redirect(`/gallery/add`);
+    }
+    next();
+  });
+};
+
+module.exports = { uploadImages };

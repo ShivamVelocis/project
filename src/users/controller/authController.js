@@ -7,8 +7,8 @@ const {
   validateToken,
   decodeToken,
 } = require("../utils/auth");
-// const { mailOtp } = require("../utils/nodemailer");
-const { mailOtp } = require("../utils/nodemailertest");
+const { mailOtp } = require("../utils/nodemailer");
+// const { mailOtp } = require("../utils/nodemailertest");
 
 // render login page
 exports.login = (req, res, next) => {
