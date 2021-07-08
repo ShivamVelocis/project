@@ -59,3 +59,32 @@ exports.roleAuth = (userRole) => {
 
   return isAuthenticated;
 };
+
+
+exports.roleAuthv1 = (userRole) => {
+  isAuthenticated = async (req, res, next) => {
+    try {
+      if (req.session && req.session.token && validateToken(req.session.token)) {
+        let user = decodeToken(req.session.token);
+        let userData = await userModel.findOne({ _id: user.userId });
+        req.session.token = await generaterefreshToken(req.session.token);
+        let adminrole = await roldeModel.findOne({ title: "admin" });
+        if(userData.role_id == adminrole._id) return next()
+        let role = await roldeModel.findOne({ title: userRole });
+        if (userData.role_id == role._id) return next();
+        else {
+          req.flash("error", CONFIG.NOT_AUTHORIZED);
+          return res.redirect("/user/auth/login");
+        }
+      } else {
+        res.redirect("/user/auth/login");
+      }
+    } catch (error) {
+      console.error(error);
+      req.flash("error", error);
+      res.redirect("/user/auth/login");
+    }
+  };
+
+  return isAuthenticated;
+};
