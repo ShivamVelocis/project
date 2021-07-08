@@ -1,62 +1,142 @@
 const bcrypt = require("bcrypt");
 const sharp = require('sharp');
 
+const { check, validationResult } = require('express-validator');
 const userModel = require("../models/userModel");
+const roleModel = require("./../../roleManagement/models/rolemodel");
 const CONFIG = require("./../configs/config");
 
-
-//render add user page
-exports.addUser = function addUser(req, res, next) {
-  res.render("users/views/add", {
-    title: CONFIG.ADD_TITLE,
-    module_title: CONFIG.MODULE_TITLE,
-    error: null,
-  });
+exports.addUser = async function addUser(req, res, next){
+  var form_data = {
+    username: '',
+    role_id: '',
+    email: '',
+    password: '',
+    name: {
+      first_name: '',
+      last_name: ''
+    },
+    user_status: '',
+    //created_at: moment().format()
+}
+  let roles = await roleModel.find({});
+  //console.log("-----------------------------------",roles);
+  res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, formData: form_data, roles: roles, error: null });
 };
 
-//add user to db if valid
+
 exports.postAddUser = async function addUser(req, res, next) {
-  if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("userData", req.body);
-    return res.redirect(`/user/add`);
-  }
   try {
     var form_data = {
-      username: req.body.username,
-      role_id: req.body.role_id,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10),
-      name: {
-        first: "Dilip",
-        last: "Kumar",
-      },
-      user_status: req.body.user_status,
-    };
-    let uniqueEmail = await userModel.find({ email: req.body.email });
-    let uniqueUserName = await userModel.find({ username: req.body.username });
-    if (uniqueUserName.length > 0 || uniqueEmail.length > 0) {
-      let errorMessage = [];
-      uniqueUserName.length > 0 && errorMessage.push(USERNAME_ALREADY_EXIST);
-      uniqueEmail.length > 0 && errorMessage.push(CONFIG.EMAIL_ALREADY_EXIST);
-      throw errorMessage;
+        username: req.body.username,
+        role_id: req.body.role_id,
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 10),
+        name: {
+          first_name: req.body.first_name,
+          last_name: req.body.last_name
+        },
+        user_status: req.body.user_status,
+        //created_at: moment().format()
     }
-    let User = new userModel(form_data);
-    let saveUser = await User.save();
+    //console.log(form_data);
+    let roles = await roleModel.find({});
 
-    req.flash("success", CONFIG.INSERT_MESSAGE);
-    res.redirect("/user/view");
+    //Validation
+    let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if(!validationErrors.isEmpty()){
+       let errors= Object.values(validationErrors.mapped());
+       errors.forEach((item) =>{
+          errorsExtract.push(item.msg);
+        })
+        req.flash('error',errorsExtract);
+        res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, formData: form_data, roles: roles });
+      }else{
+
+          let User = new userModel(form_data);
+          let saveUser = await User.save();
+          /*
+            User.validate(function (err) {
+              if (err) handleError(err);
+              //else // validation passed
+            });
+          */
+        req.flash('success', CONFIG.INSERT_MESSAGE);
+        res.redirect("/user/view");
+      }
   } catch (error) {
-    // console.log(error.errors);
-    req.flash("userData", req.body);
-    req.flash("error", error.errors ? error.errors : error);
-    res.render("users/views/add", {
-      title: CONFIG.ADD_TITLE,
-      module_title: CONFIG.MODULE_TITLE,
-      error: error,
-    });
+      req.flash('error', error.errors);
+      console.log(error.message);
+      res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, error: error });
   }
 };
+
+
+
+exports.updateUser = async (req, res) => {
+  let id = req.params.id;
+  try {
+    let result = await userModel.findById(id);
+    let roles = await roleModel.find({});
+    if (result !== undefined && result !== null) {
+      return res.render("users/views/update", { title: CONFIG.UPDATE_TITLE, module_title: CONFIG.MODULE_TITLE, results: result, roles: roles });
+    }
+  } catch (error) {
+    res.render("error/ErrorPage", { error: "Error while fetching content" });
+  }
+};
+
+exports.postUpdateUser = async (req, res) => {
+  // console.log(req.params.id);
+  let id = req.params.id;
+  let updatedContent = req.body;
+
+  var form_data = {
+    role_id: req.body.role_id,
+    email: req.body.email,
+    name: {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name
+    },
+    user_status: req.body.user_status,
+    last_login: { type: Date, default: Date.now },
+  }
+  let result = await userModel.findById(id);
+    let roles = await roleModel.find({});
+  
+  //Validation
+  let errorsExtract = [];
+  let validationErrors = validationResult(req);
+  if(!validationErrors.isEmpty()){
+     let errors= Object.values(validationErrors.mapped());
+     errors.forEach((item) =>{
+        errorsExtract.push(item.msg);
+      })
+      req.flash('error',errorsExtract);
+      //res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, formData: form_data, roles: roles });
+      
+     res.render("users/views/update", { title: CONFIG.UPDATE_TITLE, module_title: CONFIG.MODULE_TITLE, results: form_data, roles: roles });
+    }else{
+
+  try {
+    let result = await userModel.findOneAndUpdate(
+      { _id: id },
+      { $set: form_data },
+      { new: true, upsert: true }
+    );
+    if (result !== undefined && result !== null) {
+      req.flash('success', CONFIG.UPDATE_MESSAGE);
+      return res.redirect("/user/view");
+    }
+  } catch (error) {
+    req.flash('error', 'Something went wrong!!');
+    res.render("error/ErrorPage", { error: "Error while updating content" });
+  }
+}
+}
+
+
 
 //render user with given ID
 exports.getUser = async function getUser(req, res, next) {
@@ -124,79 +204,7 @@ exports.removeContent = async (req, res) => {
   }
 };
 
-//render edit/update user page with fiels populated with current values
-exports.updateUser = async (req, res) => {
-  if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    return res.render("views/error/ErrorPage", {
-      error: res.locals.validationError,
-    });
-  }
-  let id = req.params.id;
 
-  try {
-    let result = await userModel.findById(id);
-    if (result !== undefined && result !== null) {
-      return res.render("users/views/update", {
-        title: CONFIG.UPDATE_TITLE,
-        module_title: CONFIG.MODULE_TITLE,
-        results: result,
-      });
-    }
-  } catch (error) {
-    res.render("views/error/ErrorPage", {
-      error: "Error while fetching content",
-    });
-  }
-};
-
-// update/edit user in db if valid
-exports.postUpdateUser = async (req, res) => {
-  let id = req.params.id;
-  if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("userData", req.body);
-    return res.redirect(`/user/update/${id}`);
-  }
-  let updatedContent = req.body;
-
-  var form_data = {
-    role_id: req.body.role_id,
-    email: req.body.email,
-    name: {
-      first: "Dilip",
-      last: "Kumar",
-    },
-    user_status: req.body.user_status,
-    last_login: { type: Date, default: Date.now },
-  };
-
-  try {
-    let user = await userModel.findOne({ _id:id });
-    if(user.email != req.body.email){
-      let uniqueEmail = await userModel.find({ email:req.body.email });
-      if (uniqueEmail.length > 0) {
-        let errorMessage = [];
-        uniqueEmail.length > 0 && errorMessage.push(CONFIG.EMAIL_ALREADY_EXIST);
-        throw errorMessage;
-      }
-    }
-    let result = await userModel.findOneAndUpdate(
-      { _id: id },
-      { $set: form_data },
-      { upsert: true }
-    );
-    if (result !== undefined && result !== null) {
-      req.flash("success", CONFIG.UPDATE_MESSAGE);
-      return res.redirect("/user/view");
-    }
-  } catch (error) {
-    // console.log(error)
-    req.flash("error", error.errors ? error.errors : error);
-    req.flash("userData", req.body);
-    res.redirect(`/user/update/${id}`);
-  }
-};
 
 // render upload profile picture page for user  with given id
 exports.uploadProfilePicture = async (req, res) => {

@@ -1,0 +1,48 @@
+
+<div class="container">
+    <% if (messages.error) { console.log(messages.error)%>
+
+        <div class="alert alert-danger" role="alert">
+
+            <% Object.keys(messages).forEach(function (type) { if(type=="error" || type=="success" ){ %>
+
+                <ul class="<%= type %>">
+                    <% messages[type].forEach(function (message) { %>
+                        <li>
+                            <%= message %>
+                        </li>
+                        <% }) %>
+                </ul>
+
+                <% }}) %>
+        </div>
+        <% } %>
+		     <h4>Role Management</h4>
+	        
+           <div class="row justify-content-center mt-5">
+		   
+			<!-- for updating preview data of role -->
+			<% if(messages.roleData){ title=messages.roleData[0].title;
+                    }else{ title='' ;} %>
+                       <div class="col-6 jumbotron">
+                            <form name="myForm" action="/role/addrole" method="post">
+							 <h6>Add Role</h6>
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input type="text" class="form-control" id="title" value="<%= title %>"  name='title'>
+                                </div>
+								
+								 <div class="col">
+								 <label for="status">Status</label>
+                                <select class="form-control" id="user_status" name="status">
+                                    <option value="1">Active</option>
+                                    <option value="2">Inactive</option>
+                                   
+                                </select>
+                            </div>
+							     <button type="submit" class="btn btn-primary">Submit</button>
+
+                            </form>
+                        </div>
+            </div>
+    </div>

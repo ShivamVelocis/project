@@ -1,0 +1,70 @@
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+   <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+   <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+   <script type="text/javascript">
+    $(document).ready(function(){
+                $("#mytable").DataTable();
+       });
+       </script>
+          <h4>Feedback Management</h4>
+		 <h6>Feedback List</h6>
+		 <div class="container">
+
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert"><%- messages.success %></div>
+        <% } %>
+        <% if (messages.error) { %>
+            <div class="alert alert-danger" role="alert"><%- messages.error %></div>
+            <% } %>
+        <div class="row justify-content-center mt-5">
+            <div class="col">
+                <% if(feedback.length>0) {%>
+                    <!-- Table to list content items -->
+                    <table class="table" id="mytable">
+                        <!-- Table header -->
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Title</th>
+								<th scope="col">Email</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <!-- Table body -->
+                        <tbody>
+                            <% feedback.map((feedback,i)=>{%>
+                                <tr>
+                                    <th scope="row">
+                                        <%= i+1%>
+                                    </th>
+                                    <td>
+                                        <%= feedback.title%>
+                                    </td>
+									<td>
+                                        <%= feedback.email%>
+                                    </td>
+                                    <td>
+                                        <%- feedback.description.substring(0, 20)%>
+                                            <% if(feedback.description.length>=20) {%>...<% } %>
+                                    </td>
+                                    <td>
+									
+									<a class="btn btn-success edit" style="background-color:green;" href="/feedback/update/<%=feedback._id%>">Edit</a> 
+                                           <a class="btn btn-info view" href="/feedback/view/<%=feedback._id%>">Info</a>                       
+                                            <a href="" onclick="if(confirm('Do you want to delete this record?')) event.preventDefault(); document.getElementById('delete-<%=feedback._id%>').submit();"  class="btn btn-danger">Delete</a>
+                                            <form id="delete-<%=feedback._id%>" method="get" action="/feedback/remove/<%=feedback._id%>" style="display: none;">
+                                                <input type="hidden" name="uid" value="<%=feedback._id%>"/>
+                                            </form>  
+                                    </td>
+                                </tr>
+                                <%}) %>
+                        </tbody>
+                    </table>
+                    <% } %>
+            </div>
+        </div>
+        <!-- redirect to add new content button -->
+        <a href='/feedback/addfeedback' class="btn btn-info">Add Feedback</i></a>
+        <!-- <button type="button" class="btn btn-info" onclick="window.location =`/feedback/`"> Add Contactus </button> -->
+</div>

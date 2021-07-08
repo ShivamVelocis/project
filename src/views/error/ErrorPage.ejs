@@ -1,16 +1,7 @@
 <div class="container">
-   
-        <div class="row justify-center mt-5">
-            <div class="col align-self-center">
-                <% if(Array.isArray(error)) { error.map((error,i)=>{%>
-                    <div class="alert alert-danger">
-                        <%= error%>
-                    </div>
-                    <% })} else{ %>
-                        <div class="alert alert-danger">
-                            <%= error%>
-                        </div>
-                        <% } %>
-            </div>
-        </div>
+
+    <h2>
+        <%=error%>
+    </h2>
+
 </div>
