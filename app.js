@@ -12,6 +12,9 @@ dotenv.config();
 
 require("./src/configs/db");
 
+
+
+
 const { loginCheck } = require("./src/middlewares/auth");
 
 const contentRoutes = require("./src/ContentManagement/routes/contentRoutes");
@@ -20,6 +23,8 @@ const roleRoute = require("./src/roleManagement/routes/roleRoute");
 const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
 const { main_menu } = require("./src/middlewares/main_menu/main_menu");
+
+
 
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
@@ -50,9 +55,15 @@ app.use(session({
   }
 }))
 
+
+
 app.use(flash());
 app.use(loginCheck);
 app.use(main_menu)
+const { roleAssignment } = require("./src/users/middlewares/roleAssg");
+const { isPermitted } = require("./src/users/middlewares/roleTest");
+app.use(roleAssignment)
+app.use(isPermitted)
 app.use("/content", contentRoutes);
 app.use("/user", userRoute);
 app.use("/role", roleRoute);
