@@ -1,5 +1,5 @@
 const lodash = require("lodash");
-const aclModel = require("../models/aclModel");
+const aclModel = require("./aclModel");
 
 
 // -----------------------------------check allowed resources start----------------
