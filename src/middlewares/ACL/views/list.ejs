@@ -1,0 +1,69 @@
+
+    <div class="container">
+        <h2><%= module_title %></h2>
+
+        <% if (messages.success) { %>
+            <div class="alert alert-success" role="alert"><%- messages.success %></div>
+            <% } %>
+        
+            <% if (messages.error) { %>
+            <div class="alert alert-danger" role="alert"><%- messages.error %></div>
+            <% } %>
+
+
+            <div class="row justify-content-start">
+                
+                <div class="col">
+                   
+                   <div class="card"> 
+                    <div class="card-header">
+                        <div class="d-flex">
+                            <div class="p-2 mr-auto"><strong><%= title %></strong></div>
+                            <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="window.location =`/user/add`"> Add User </button></div>
+                          </div>
+                    </div>
+                <div class="card-body">
+                   
+                    
+
+                   <% if(results.length>0) {%>
+                        <table class="table">
+                            <!-- Table header -->
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <!-- Table body -->
+                            <tbody>
+                                <% results.map((result,i)=>{%>
+                                    <tr>
+                                        <th scope="row"><%= i+1%></th>
+                                        <td><%= result.name.first_name%> <%= result.name.last_name%></td>
+                                        <td><%= result.username%></td>
+                                        <td><%= result.email%></td>
+                                        <td><% if(result.user_status==1){ %> Active <% }else{ %> Inactive <% } %></td>
+                                        <td>
+                                            <a class="btn btn-success edit" href="/user/update/<%=result._id%>">Edit</a> 
+                                           <a class="btn btn-info view" href="/user/view/<%=result._id%>">Info</a>                       
+                                            <a href="" onclick="if(confirm('Do you want to delete this record?')) event.preventDefault(); document.getElementById('delete-<%=result._id%>').submit();"  class="btn btn-danger">Delete</a>
+                                            <form id="delete-<%=result._id%>" method="post" action="/user/delete/<%=result._id%>" style="display: none;">
+                                                <input type="hidden" name="uid" value="<%=result._id%>"/>
+                                            </form>                      
+                                        </td>
+
+                                    </tr>
+                                    <%}) %>
+                            </tbody>
+                        </table>
+                        <% } %>
+                </div>
+            </div>
+            </div>
+            </div>
+        </div>
