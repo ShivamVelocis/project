@@ -15,7 +15,7 @@ const contentValidationRules = () => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_TITLE);
         }
-        console.log(value.match(CONFIG.TITLE_PATTERN))
+        // console.log(value.match(CONFIG.TITLE_PATTERN))
         if (value.match(CONFIG.TITLE_PATTERN) == null) {
           throw new Error(CONFIG.INVALID_TITLE);
         }

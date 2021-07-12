@@ -15,8 +15,13 @@ const aclModel = require("./aclModel");
   // console.log(resource, rawPath,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", rawPath])) {
-    console.log("test allowed")
     resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
+    dbMethods = resource[resourcePathIndex].methods
+    allowedMethods = dbMethods.includes(method)
+    return allowedMethods;
+  }
+  if (lodash.find(resource, ["path", "/*"])) {
+    resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
     dbMethods = resource[resourcePathIndex].methods
     allowedMethods = dbMethods.includes(method)
     return allowedMethods;
@@ -62,11 +67,18 @@ const aclModel = require("./aclModel");
  * @return {boolean} if allowed return True else False.
  */
  const denyResource = (resource, rawPath,method) => {
-  console.log(resource, rawPath,method)
+  // console.log(resource, rawPath,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", rawPath])) {
     console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
+    dbMethods = resource[resourcePathIndex].methods
+    denyMethods = dbMethods.includes(method)
+    return !denyMethods;
+  }
+  if (lodash.find(resource, ["path", "/*"])) {
+    console.log("test deny")
+    resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
     dbMethods = resource[resourcePathIndex].methods
     denyMethods = dbMethods.includes(method)
     return !denyMethods;
@@ -118,9 +130,9 @@ const isPermitted = async (req, res, next) => {
     allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method) &&
     denyResource(dbRoleData.denyResources, req.originalUrl,req.method)
   // console.log(isAllowed);
-  if (isAllowed) res.send("authorized")
-  else res.send("not authorized")
-
+  if (isAllowed) return next()
+  if (req.headers.referer) return  res.redirect(req.headers.referer);
+  else  return res.redirect('/user/auth/login')
   // console.log(isAllowed);
   // console.log(req.headers.referer)
   // res.redirect(req.headers.referer);

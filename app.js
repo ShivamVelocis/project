@@ -61,8 +61,8 @@ app.use(session({
 app.use(flash());
 app.use(loginCheck);
 app.use(main_menu)
-const { roleAssignment } = require("./src/users/middlewares/roleAssg");
-const { isPermitted } = require("./src/users/middlewares/roleTest");
+const { roleAssignment } = require("./src/middlewares/ACL/roleAssg");
+const { isPermitted } = require("./src/middlewares/ACL/roleTest");
 app.use(roleAssignment)
 app.use(isPermitted)
 app.use("/content", contentRoutes);
