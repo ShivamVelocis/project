@@ -1,106 +1,142 @@
+<h2></h2>
+<%= module_title %>
+    </h2>
+    <% let i=0; %>
+        <div class="card">
+            <div class="card-header">
+                <strong class="mr-auto text-primary">
+                    <%=title%>
+                </strong>
+            </div>
 
-    <h2><%= module_title %></h2>
+            <% if (messages.error) { %>
+                <div class="alert alert-danger" role="alert">
 
-    <div class="card">
-        <div class="card-header">
-            <strong class="mr-auto text-primary"><%=title%></strong>
+                    <% Object.keys(messages).forEach(function (type) { %>
+                        <ul class="<%= type %>">
+                            <% messages[type].forEach(function (message) { %>
+                                <li>
+                                    <%= message %>
+                                </li>
+                                <% }) %>
+                        </ul>
+                        <% }) %>
+                </div>
+                <% } %>
+
+
+                    <div class="card-body">
+
+                        <form name="addResorces" action="/acl/edit/<% results._id %>" method="POST">
+
+                            <div class="row">
+                                <div class="col form-group">
+                                    <label for="role" class="col col-form-label">Role Name</label>
+                                    <div class="col">
+                                        <select class="form-control" id="role" name="role" disabled>
+                                            <option value="">--Select--</option>
+                                            <option value="admin" <% if(results.role=="admin" ){ %> selected <% } %>
+                                                    >Admin
+                                            </option>
+                                            <option value="member" <% if(results.role=="member" ){ %> selected <% } %>
+                                                    >Member
+                                            </option>
+                                            <option value="guest" <% if(results.role=="guest" ){ %> selected <% } %>
+                                                    >Guest
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <% if(results.allowedResources.length>0){ %>
+                                <h3>Allowed Resources</h3>
+                                <% results.allowedResources.map((resource,i)=>{ i=i; %>
+
+                                    <div class=" row">
+
+                                        <div class="col form-group">
+                                            <label for="resource_path" class="col col-form-label">Resource</label>
+                                            <div class="col">
+                                                <input type="text" class="form-control" id="resource_path"
+                                                    placeholder="Enter resource_path" name=`resource<%=i+1%>`
+                                                value="<%=resource.path%> ">
+
+                                            </div>
+                                        </div>
+                                        <div class="col form-group">
+                                            <label for="resource_path" class="col col-form-label">Methods</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="GET"
+                                                    name="methods<%=i+1%>" id="getCheck" <%if(resource.methods.includes("GET")){%>checked<%} %> >
+                                                    <label class="form-check-label" for="getCheck">
+                                                        GET
+                                                    </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="POST"
+                                                    name="methods<%=i+1%>" id="postCheck" <%
+                                                    if(resource.methods.includes("POST")){%>checked<%} %>>
+                                                    <label class="form-check-label" for="postCheck">
+                                                        POST
+                                                    </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% })} %>
+                                        <% if(results.denyResources.length>0){ %>
+
+
+                                            <h3>Denied Resources</h3>
+                                            <% results.denyResources.map((resource,i)=>{ i=i;%>
+
+                                                <div class=" row">
+
+                                                    <div class="col form-group">
+                                                        <label for="resource_path"
+                                                            class="col col-form-label">Resource</label>
+                                                        <div class="col">
+                                                            <input type="text" class="form-control" id="resource_path"
+                                                                placeholder="Enter resource_path" name='dresource<%=i+1%>'
+                                                            value="<%=resource.path%> " disabled>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col form-group">
+                                                        <label for="resource_path"
+                                                            class="col col-form-label">Methods</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" value="GET"
+                                                                name="methods<%=i+1%>" id="getCheck" <%
+                                                                if(methods.includes("GET")){%>checked<%} %> >
+                                                                <label class="form-check-label" for="getCheck">
+                                                                    GET
+                                                                </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" value="POST"
+                                                                name="methods<%=i+1%>" id="postCheck" <%
+                                                                if(methods.includes("POST")){%>checked<%} %>>
+                                                                <label class="form-check-label" for="postCheck">
+                                                                    POST
+                                                                </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% }) }%>
+                                                    <div id="newRow"></div>
+                                                <div class="row">
+                                                    <div class="col form-group">
+                                                        <div class="col">
+                                                            <button type="submit"
+                                                                class="btn btn-primary">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col form-group">
+                                                        <div class="col">
+                                                           
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                        </form>
+                    </div>
         </div>
-
-        <% if (messages.error) { %>
-            <div class="alert alert-danger" role="alert">
-                
-                <% Object.keys(messages).forEach(function (type) { %>
-                    <ul class="<%= type %>">
-                    <% messages[type].forEach(function (message) { %>
-                      <li><%= message %></li>
-                    <% }) %>
-                    </ul>
-                  <% }) %>
-            </div>
-            <% } %>
-
-
-        <div class="card-body">
-            
-    <form name="addUserFrm" action="/user/update/<%=results._id%>" method="POST">
-    
-        <div class="row">
-            <div class="col form-group">
-                <label for="role" class="col col-form-label">Role Name</label>
-                <div class="col">
-                    <select class="form-control" id="role_id" name="role_id">
-                        <option value="">--Select--</option>
-                        <% for(let i=0; i< roles.length; i++){ %>
-                            <option value="<%= roles[i]._id %>" <% if(results.role_id == roles[i]._id){ %> selected <% } %>><%= roles[i].title %></option>
-                       <%  } %>
-
-                    </select>
-                </div>
-            </div>
-
-            <div class="col form-group">
-                <label for="email" class="col col-form-label">Email</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="email" placeholder="Email ID" name="email" value="<%= results.email%>">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col form-group">
-                <label for="first_name" class="col col-form-label">First Name</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="first_name" placeholder="First Name" name="first_name" value="<%= results.name.first_name%>">
-                </div>
-            </div>
-
-            <div class="col form-group">
-                <label for="last_name" class="col col-form-label">Last Name</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="last_name" placeholder="Last Name" name="last_name" value="<%= results.name.last_name%>">
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col form-group">
-                <label for="user_status" class="col col-form-label">Status</label>
-                <div class="col">
-                    <select class="form-control" id="user_status" name="user_status">
-                        <option value="">--Select--</option>
-                        <option value="1" <% if(results.user_status=='1'){ %> selected <% } %> >Active</option>
-                        <option value="2" <% if(results.user_status=='2'){ %> selected <% } %> >Inactive</option>
-                       
-                    </select>
-                </div>
-            </div>
-
-            <div class="col form-group">
-                <label for="" class="col col-form-label"></label>
-                <div class="col">
-                
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col form-group">
-                <label for="" class="col col-form-label"></label>
-                <div class="col">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </div>
-
-            <div class="col form-group">
-                <label for="" class="col col-form-label"></label>
-                <div class="col">
-                
-                </div>
-            </div>
-        </div>
-    </form>
-
-</div>
-</div>
-

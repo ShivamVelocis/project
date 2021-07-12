@@ -4,7 +4,11 @@
 
 <div class="card">
 
-
+    <div class="card-header">
+        <h5 class="card-title">
+            <%=title%>
+        </h5>
+    </div>
 
 
     <% if (messages.success) { %>
@@ -39,66 +43,66 @@
                         </div>
                     </div>
                     <% if(results.allowedResources.length>0){ %>
-                    <h3>Allowed Resources</h3>
-                    <% results.allowedResources.map(resource=>{%>
+                        <h3>Allowed Resources</h3>
+                        <% results.allowedResources.map(resource=>{%>
 
-                        <div class=" row">
+                            <div class=" row">
 
-                            <div class="col form-group">
-                                <label for="resource_path" class="col col-form-label">Resource</label>
-                                <div class="col">
-                                    <input type="text" class="form-control" id="resource_path"
-                                        placeholder="Enter resource_path" name="resource1" value="<%=resource.path%> "
-                                        disabled>
+                                <div class="col form-group">
+                                    <label for="resource_path" class="col col-form-label">Resource</label>
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="resource_path"
+                                            placeholder="Enter resource_path" name="resource1"
+                                            value="<%=resource.path%> " disabled>
 
+                                    </div>
+                                </div>
+                                <div class="col form-group">
+                                    <label for="resource_path" class="col col-form-label">Methods</label>
+                                    <% resource.methods.map(method=>{%>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="GET" name="methods1"
+                                                id="getCheck" checked disabled>
+                                            <label class="form-check-label" for="getCheck">
+                                                <%=method %>
+                                            </label>
+                                        </div>
+
+                                        <% }) %>
                                 </div>
                             </div>
-                            <div class="col form-group">
-                                <label for="resource_path" class="col col-form-label">Methods</label>
-                                <% resource.methods.map(method=>{%>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="GET" name="methods1"
-                                            id="getCheck" checked disabled>
-                                        <label class="form-check-label" for="getCheck">
-                                            <%=method %>
-                                        </label>
-                                    </div>
+                            <% })} %>
+                                <% if(results.denyResources.length>0){ %>
 
-                                    <% }) %>
-                            </div>
-                        </div>
-                        <% })} %>
-                            <% if(results.denyResources.length>0){ %>
+                                    <h3>Denied Resources</h3>
+                                    <% results.denyResources.map(resource=>{%>
 
-                                <h3>Denied Resources</h3>
-                                <% results.denyResources.map(resource=>{%>
+                                        <div class=" row">
 
-                                    <div class=" row">
+                                            <div class="col form-group">
+                                                <label for="resource_path" class="col col-form-label">Resource</label>
+                                                <div class="col">
+                                                    <input type="text" class="form-control" id="resource_path"
+                                                        placeholder="Enter resource_path" name="resource1"
+                                                        value="<%=resource.path%> " disabled>
 
-                                        <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label">Resource</label>
-                                            <div class="col">
-                                                <input type="text" class="form-control" id="resource_path"
-                                                    placeholder="Enter resource_path" name="resource1"
-                                                    value="<%=resource.path%> " disabled>
+                                                </div>
+                                            </div>
+                                            <div class="col form-group">
+                                                <label for="resource_path" class="col col-form-label">Methods</label>
+                                                <% resource.methods.map(method=>{%>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="GET"
+                                                            name="methods1" id="getCheck" checked disabled>
+                                                        <label class="form-check-label" for="getCheck">
+                                                            <%=method %>
+                                                        </label>
+                                                    </div>
 
+                                                    <% }) %>
                                             </div>
                                         </div>
-                                        <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label">Methods</label>
-                                            <% resource.methods.map(method=>{%>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="GET"
-                                                        name="methods1" id="getCheck" checked disabled>
-                                                    <label class="form-check-label" for="getCheck">
-                                                        <%=method %>
-                                                    </label>
-                                                </div>
-
-                                                <% }) %>
-                                        </div>
-                                    </div>
-                                    <% }) }%>
+                                        <% }) }%>
 
                                             <!-- <div class="row">
                     <div class="col form-group">

@@ -74,6 +74,22 @@ const postAddACl = async (req, res, next) => {
   }
 };
 
+
+const editACl = async (req, res, next) => {
+  aclId = req.params.id;
+  try {
+    let result = await aclModel.findById(aclId);
+    return res.render("middlewares/ACL/views/edit", {
+      title: "Edit ACL Rule",
+      module_title: "ACL Mangement",
+      results: result,
+    });
+  } catch (error) {
+    res.send(error);
+    console.log(error);
+  }
+};
+
 const postEditACl = async (req, res, next) => {
   aclId = req.params.id;
   aclData = req.body;
@@ -110,4 +126,5 @@ module.exports = {
   getAcls,
   getAcl,
   addACl,
+  editACl
 };
