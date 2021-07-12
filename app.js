@@ -5,24 +5,25 @@ const flash = require('express-flash');
 const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
 const MongoStore = require("connect-mongo");
-const app = express();
-
 const dotenv = require('dotenv');
-dotenv.config();
 
+
+const app = express();
+dotenv.config();
 require("./src/configs/db");
 
 
 
 
 const { loginCheck } = require("./src/middlewares/auth");
+const { main_menu } = require("./src/middlewares/main_menu/main_menu");
+
 
 const contentRoutes = require("./src/ContentManagement/routes/contentRoutes");
 const userRoute = require("./src/users/routes/userRouter");
 const roleRoute = require("./src/roleManagement/routes/roleRoute");
 const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
-const { main_menu } = require("./src/middlewares/main_menu/main_menu");
 
 
 
@@ -71,12 +72,12 @@ app.use("/contactus", contactusRoute);
 app.use("/feedback", feedbackRoute);
 
 
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
   const error = new Error("URL not found");
   error.status = 404;
   next(error);
 });
-app.use((error, req, res, next) => {
+app.use((error, _req, res) => {
   console.log("Final error handle Middleware--->" ,error.message)
   res.status(error.status || 500);
   res.render("views/error/ErrorPage", { error: error.message });

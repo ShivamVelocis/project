@@ -3,10 +3,8 @@ let mongoose = require("mongoose");
 let aclSchema = new mongoose.Schema(
   {
    role:String,
-   allowedResources:[String],
-   denyResources:[String],
-   allowedMethods:[String],
-   denyMethods:[String]
+   allowedResources:[Object],
+   denyResources:[Object],
   },
   { timestamps: true }
 );

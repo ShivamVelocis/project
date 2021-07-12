@@ -1,6 +1,6 @@
 let roleAssignment =async (req, res, next) => {
-    console.log(req.originalUrl)
-    console.log(req.method)
+    // console.log(req.originalUrl)
+    // console.log(req.method)
   try {
     if (req.session && req.session.token && validateToken(req.session.token)) {
       let tokenUser = decodeToken(req.session.token);
