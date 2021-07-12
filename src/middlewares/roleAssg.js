@@ -1,6 +1,6 @@
-const {validateToken, decodeToken} = require("../../utils/authHelper");
-const userModel =  require("../../users/models/userModel")
-const roldeModel = require('../../roleManagement/models/rolemodel')
+const {validateToken, decodeToken} = require("../utils/authHelper");
+const userModel =  require("../users/models/userModel")
+const roldeModel = require('../roleManagement/models/rolemodel')
 let roleAssignment = async (req, res, next) => {
   // console.log(req.originalUrl)
   // console.log(req.method)

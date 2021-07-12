@@ -24,6 +24,7 @@ const userRoute = require("./src/users/routes/userRouter");
 const roleRoute = require("./src/roleManagement/routes/roleRoute");
 const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
+const aclRouter = require('./src/middlewares/ACL/routes/aclRoutes')
 
 
 
@@ -61,8 +62,8 @@ app.use(session({
 app.use(flash());
 app.use(loginCheck);
 app.use(main_menu)
-const { roleAssignment } = require("./src/middlewares/ACL/roleAssg");
-const { isPermitted } = require("./src/middlewares/ACL/roleTest");
+const { roleAssignment } = require("./src/middlewares/roleAssg");
+const { isPermitted } = require("./src/middlewares/ACL/Utils/roleTest");
 app.use(roleAssignment)
 app.use(isPermitted)
 app.use("/content", contentRoutes);
@@ -70,6 +71,7 @@ app.use("/user", userRoute);
 app.use("/role", roleRoute);
 app.use("/contactus", contactusRoute);
 app.use("/feedback", feedbackRoute);
+app.use("/acl", aclRouter);
 
 
 app.use((_req, _res, next) => {
