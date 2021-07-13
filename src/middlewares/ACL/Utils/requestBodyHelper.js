@@ -1,5 +1,5 @@
 const updateACLResBody = (rawBody, role) => {
-  console.log(rawBody);
+  // console.log(rawBody);
   let aclData = {};
   let allowedResources = [];
   let denyResources = [];

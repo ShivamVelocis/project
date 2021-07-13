@@ -70,14 +70,14 @@ const aclModel = require("../models/aclModel");
   // console.log(resource, rawPath,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", rawPath])) {
-    console.log("test deny")
+    // console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
     dbMethods = resource[resourcePathIndex].methods
     denyMethods = dbMethods.includes(method)
     return !denyMethods;
   }
   if (lodash.find(resource, ["path", "/*"])) {
-    console.log("test deny")
+    // console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
     dbMethods = resource[resourcePathIndex].methods
     denyMethods = dbMethods.includes(method)
@@ -120,11 +120,11 @@ const isPermitted = async (req, res, next) => {
   let userRole = res.locals.userRole;
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
-  console.log(
-    allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method),
-    denyResource(dbRoleData.denyResources, req.originalUrl,req.method),
+  // console.log(
+  //   allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method),
+  //   denyResource(dbRoleData.denyResources, req.originalUrl,req.method),
    
-  );
+  // );
 
   let isAllowed =
     allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method) &&

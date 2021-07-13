@@ -1,5 +1,8 @@
 const aclModel = require("../models/aclModel");
-const { updateACLResBody, addACLReqBody } = require("../Utils/requestBodyHelper");
+const {
+  updateACLResBody,
+  addACLReqBody,
+} = require("../Utils/requestBodyHelper");
 
 const getAcl = async (req, res, _next) => {
   aclId = req.params.id;
@@ -12,7 +15,7 @@ const getAcl = async (req, res, _next) => {
       results: result,
     });
   } catch (error) {
-    res.send(error);
+    next(error);
     console.log(error);
   }
 };
@@ -27,7 +30,7 @@ const getAcls = async (_req, res, _next) => {
     });
     // res.send(result);
   } catch (error) {
-    res.send(error);
+    next(error);
     console.log(error);
   }
 };
@@ -40,7 +43,7 @@ const addACl = async (_req, res, _next) => {
       results: null,
     });
   } catch (error) {
-    res.send(error);
+    next(error);
     console.log(error);
   }
 };
@@ -50,8 +53,8 @@ const postAddACl = async (req, res, next) => {
     let aclData = addACLReqBody(req.body);
     let acl = new aclModel(aclData);
     await acl.save();
-    req.flash("success","ACL RULE added successfully")
-    res.redirect('/acl/')
+    req.flash("success", "ACL RULE added successfully");
+    res.redirect("/acl/");
   } catch (error) {
     next(error);
     console.log(error);
@@ -68,7 +71,7 @@ const editACl = async (req, res, _next) => {
       results: result,
     });
   } catch (error) {
-    res.send(error);
+    next(error);
     console.log(error);
   }
 };
@@ -76,17 +79,17 @@ const editACl = async (req, res, _next) => {
 const postEditACl = async (req, res, _next) => {
   aclId = req.params.id;
   try {
-    let aclDbData = await aclModel.findById(aclId)
-    aclData = updateACLResBody(req.body,aclDbData.role);
+    let aclDbData = await aclModel.findById(aclId);
+    aclData = updateACLResBody(req.body, aclDbData.role);
     await aclModel.findByIdAndUpdate(
       aclId,
       { $set: aclData },
       { upsert: true }
     );
-    req.flash("success","ACL RULE updated successfully")
-    res.redirect('/acl/')
+    req.flash("success", "ACL RULE updated successfully");
+    res.redirect("/acl/");
   } catch (error) {
-    res.send(error);
+    next(error);
     console.log(error);
   }
 };
@@ -96,10 +99,10 @@ const postDeletACl = async (req, res, _next) => {
   aclData = req.body;
   try {
     await aclModel.findByIdAndRemove(aclId);
-    req.flash("success","ACL RULE deleted successfully")
-    res.redirect('/acl/')
+    req.flash("success", "ACL RULE deleted successfully");
+    res.redirect("/acl/");
   } catch (error) {
-    res.send(error);
+    next(error);
     console.log(error);
   }
 };
