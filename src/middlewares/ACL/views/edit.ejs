@@ -27,7 +27,7 @@
 
                     <div class="card-body">
 
-                        <form name="addResorces" action="/acl/edit/<% results._id %>" method="POST">
+                        <form name="addResorces" action="/acl/edit/<%= results._id %>" method="POST">
 
                             <div class="row">
                                 <div class="col form-group">
@@ -58,7 +58,7 @@
                                             <label for="resource_path" class="col col-form-label">Resource</label>
                                             <div class="col">
                                                 <input type="text" class="form-control" id="resource_path"
-                                                    placeholder="Enter resource_path" name=`resource<%=i+1%>`
+                                                    placeholder="Enter resource_path" name="resource<%=i+1%>"
                                                 value="<%=resource.path%> ">
 
                                             </div>

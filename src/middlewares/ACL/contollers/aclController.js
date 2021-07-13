@@ -1,10 +1,11 @@
 const aclModel = require("../models/aclModel");
+const { resturctureResBody } = require("../Utils/requestBodyHelper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
-    console.log(result)
+    // console.log(result);
     return res.render("middlewares/acl/views/view", {
       title: "ACL rule",
       module_title: "ACL Mangement",
@@ -19,8 +20,12 @@ const getAcl = async (req, res, next) => {
 const getAcls = async (req, res, next) => {
   try {
     let result = await aclModel.find();
-    // console.log(result)
-    res.send(result);
+    return res.render("middlewares/ACL/views/list", {
+      title: "ACL Rules",
+      module_title: "ACL Mangement",
+      results: result,
+    });
+    // res.send(result);
   } catch (error) {
     res.send(error);
     console.log(error);
@@ -49,7 +54,7 @@ const postAddACl = async (req, res, next) => {
     for (const [key, value] of Object.entries(req.body)) {
       let methods = [];
       let path = "";
-      if (key.startsWith("resource")) {
+      if (key.startsWith("resource") && value) {
         let lastDigit = key.split("").pop();
         path = value;
         if (Array.isArray(req.body[`methods${lastDigit}`])) {
@@ -67,16 +72,17 @@ const postAddACl = async (req, res, next) => {
     aclData = { allowedResources, denyResources, role: req.body["role"] };
     let acl = new aclModel(aclData);
     await acl.save();
-    res.send("added");
+    req.flash("success","ACL RULE added successfully")
+    res.redirect('/acl/')
   } catch (error) {
     next(error);
     console.log(error);
   }
 };
 
-
 const editACl = async (req, res, next) => {
   aclId = req.params.id;
+
   try {
     let result = await aclModel.findById(aclId);
     return res.render("middlewares/ACL/views/edit", {
@@ -92,15 +98,17 @@ const editACl = async (req, res, next) => {
 
 const postEditACl = async (req, res, next) => {
   aclId = req.params.id;
-  aclData = req.body;
-  console.log(aclData);
+
   try {
+    let aclDbData = await aclModel.findById(aclId)
+    aclData = resturctureResBody(req.body,aclDbData.role);
     await aclModel.findByIdAndUpdate(
       aclId,
       { $set: aclData },
       { upsert: true }
     );
-    res.send("Updated");
+    req.flash("success","ACL RULE updated successfully")
+    res.redirect('/acl/')
   } catch (error) {
     res.send(error);
     console.log(error);
@@ -112,7 +120,8 @@ const postDeletACl = async (req, res, next) => {
   aclData = req.body;
   try {
     await aclModel.findByIdAndRemove(aclId);
-    res.send("Deleted");
+    req.flash("success","ACL RULE deleted successfully")
+    res.redirect('/acl/')
   } catch (error) {
     res.send(error);
     console.log(error);
@@ -126,5 +135,5 @@ module.exports = {
   getAcls,
   getAcl,
   addACl,
-  editACl
+  editACl,
 };
