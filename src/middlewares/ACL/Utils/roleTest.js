@@ -116,7 +116,7 @@ const aclModel = require("../models/aclModel");
 // -----------------------------------check allowed resources end----------------
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
-
+  console.log(req.originalUrl)
   let userRole = res.locals.userRole;
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
