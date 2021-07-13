@@ -1,7 +1,7 @@
 const aclModel = require("../models/aclModel");
-const { resturctureResBody } = require("../Utils/requestBodyHelper");
+const { updateACLResBody, addACLReqBody } = require("../Utils/requestBodyHelper");
 
-const getAcl = async (req, res, next) => {
+const getAcl = async (req, res, _next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
@@ -17,7 +17,7 @@ const getAcl = async (req, res, next) => {
   }
 };
 
-const getAcls = async (req, res, next) => {
+const getAcls = async (_req, res, _next) => {
   try {
     let result = await aclModel.find();
     return res.render("middlewares/ACL/views/list", {
@@ -32,7 +32,7 @@ const getAcls = async (req, res, next) => {
   }
 };
 
-const addACl = async (req, res, next) => {
+const addACl = async (_req, res, _next) => {
   try {
     return res.render("middlewares/ACL/views/add", {
       title: "Add ACL rule",
@@ -46,30 +46,8 @@ const addACl = async (req, res, next) => {
 };
 
 const postAddACl = async (req, res, next) => {
-  let aclData = {};
-  let allowedResources = [];
-  let denyResources = [];
-
   try {
-    for (const [key, value] of Object.entries(req.body)) {
-      let methods = [];
-      let path = "";
-      if (key.startsWith("resource") && value) {
-        let lastDigit = key.split("").pop();
-        path = value;
-        if (Array.isArray(req.body[`methods${lastDigit}`])) {
-          methods = req.body[`methods${lastDigit}`];
-        } else {
-          methods.push(req.body[`methods${lastDigit}`]);
-        }
-        if (req.body["status"] == "allowedResources") {
-          allowedResources.push({ path, methods });
-        } else {
-          denyResources.push({ path, methods });
-        }
-      }
-    }
-    aclData = { allowedResources, denyResources, role: req.body["role"] };
+    let aclData = addACLReqBody(req.body);
     let acl = new aclModel(aclData);
     await acl.save();
     req.flash("success","ACL RULE added successfully")
@@ -80,9 +58,8 @@ const postAddACl = async (req, res, next) => {
   }
 };
 
-const editACl = async (req, res, next) => {
+const editACl = async (req, res, _next) => {
   aclId = req.params.id;
-
   try {
     let result = await aclModel.findById(aclId);
     return res.render("middlewares/ACL/views/edit", {
@@ -96,12 +73,11 @@ const editACl = async (req, res, next) => {
   }
 };
 
-const postEditACl = async (req, res, next) => {
+const postEditACl = async (req, res, _next) => {
   aclId = req.params.id;
-
   try {
     let aclDbData = await aclModel.findById(aclId)
-    aclData = resturctureResBody(req.body,aclDbData.role);
+    aclData = updateACLResBody(req.body,aclDbData.role);
     await aclModel.findByIdAndUpdate(
       aclId,
       { $set: aclData },
@@ -115,7 +91,7 @@ const postEditACl = async (req, res, next) => {
   }
 };
 
-const postDeletACl = async (req, res, next) => {
+const postDeletACl = async (req, res, _next) => {
   aclId = req.params.id;
   aclData = req.body;
   try {
