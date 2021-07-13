@@ -2,6 +2,7 @@ const aclModel = require("../models/aclModel");
 const {
   updateACLResBody,
   addACLReqBody,
+  appendACL,
 } = require("../Utils/requestBodyHelper");
 
 const getAcl = async (req, res, _next) => {
@@ -50,9 +51,19 @@ const addACl = async (_req, res, _next) => {
 
 const postAddACl = async (req, res, next) => {
   try {
-    let aclData = addACLReqBody(req.body);
-    let acl = new aclModel(aclData);
-    await acl.save();
+    let dbData = await aclModel.findOne({ role: req.body.role });
+    if (dbData) {
+      let aclData = appendACL(dbData, req.body);
+      await aclModel.findByIdAndUpdate(
+        dbData._id,
+        { $set: aclData },
+        { upsert: true }
+      );
+    } else {
+      let aclData = addACLReqBody(req.body);
+      let acl = new aclModel(aclData);
+      await acl.save();
+    }
     req.flash("success", "ACL RULE added successfully");
     res.redirect("/acl/");
   } catch (error) {

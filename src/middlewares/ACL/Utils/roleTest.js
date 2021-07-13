@@ -120,12 +120,6 @@ const isPermitted = async (req, res, next) => {
   let userRole = res.locals.userRole;
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
-  // console.log(
-  //   allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method),
-  //   denyResource(dbRoleData.denyResources, req.originalUrl,req.method),
-   
-  // );
-
   let isAllowed =
     allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method) &&
     denyResource(dbRoleData.denyResources, req.originalUrl,req.method)
@@ -133,7 +127,7 @@ const isPermitted = async (req, res, next) => {
   
   if (isAllowed) return next()
   req.flash("error","Not Authorized")
-  if (req.headers.referer) return  res.redirect(req.headers.referer);
+  if (req.headers.referer && req.originalUrl !=req.headers.referer ) return  res.redirect(req.headers.referer);
   else  return res.redirect('/user/auth/login')
 
 };
