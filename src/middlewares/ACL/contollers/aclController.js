@@ -10,7 +10,7 @@ const getAcl = async (req, res, _next) => {
     let result = await aclModel.findById(aclId);
     // console.log(result);
     return res.render("middlewares/acl/views/view", {
-      title: "ACL rule",
+      title: "ACL Rule",
       module_title: "ACL Mangement",
       results: result,
     });
