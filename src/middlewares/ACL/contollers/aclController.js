@@ -39,12 +39,12 @@ const getAcls = async (_req, res, _next) => {
 
 const addACl = async (_req, res, _next) => {
   try {
-    let dbRoles = await rolemodel.find();
-    // console.log(dbRoles)
+    let dbRolesData = await rolemodel.find();
+    // console.log(dbRolesData)
     return res.render("middlewares/ACL/views/add", {
       title: "Add ACL rule",
       module_title: "ACL Mangement",
-      results: dbRoles,
+      results: dbRolesData,
     });
   } catch (error) {
     next(error);
