@@ -1,0 +1,159 @@
+<h2>
+    <%= module_title %>
+</h2>
+
+<div class="card">
+    <div class="card-header">
+        <strong class="mr-auto text-primary">
+            <%=title%>
+        </strong>
+    </div>
+
+    <div class="card-body">
+
+        <% if (messages.success) { %>
+            <div class="alert alert-success" role="alert">
+                <%- messages.success %>
+            </div>
+            <% } %>
+
+                <p class="card-text">
+
+                    <% if (messages.error) { %>
+                        <div class="alert alert-danger" role="alert">
+
+                            <% Object.keys(messages).forEach(function (type) { %>
+                                <ul class="<%= type %>">
+                                    <% messages[type].forEach(function (message) { %>
+                                        <li>
+                                            <%= message %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                                <% }) %>
+                        </div>
+                        <% } %>
+
+                            <div class="">
+                                <form name="addResorces" action="/acl/add" method="POST">
+
+                                    <div class="row">
+                                        <div class="col form-group">
+                                            <label for="role" class="col col-form-label">Role Name</label>
+                                            <div class="col">
+                                                <select class="form-control" id="role" name="role">
+                                                    <option value="">--Select--</option>
+                                                    <% if(results){results.map(role=>{%>
+                                                        <option value="<%=role.title%>">
+                                                            <%=role.title.replace(/^./, str => str.toUpperCase())%>
+                                                        </option>
+                                                        <% }) }%>
+                                                            <option value="anonymous">Anonymous</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col form-group">
+                                            <label for="status" class="col col-form-label">Permission</label>
+                                            <div class="col">
+                                                <select class="form-control" id="status" name="status">
+                                                    <option value="">--Select--</option>
+                                                    <option value="allowedResources">Allowed</option>
+                                                    <option value="denyResources">Deny</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class=" row">
+                                        <div class="col form-group">
+                                            <label for="resource_path" class="col col-form-label">Resource</label>
+                                            <div class="col">
+                                                <input type="text" class="form-control" id="resource_path"
+                                                    placeholder="Enter resource_path" name="resource1" value="">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col form-group">
+                                            <label for="resource_path" class="col col-form-label">Methods</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="GET"
+                                                    name="methods1" id="getCheck" checked>
+                                                <label class="form-check-label" for="getCheck">
+                                                    GET
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="POST"
+                                                    name="methods1" id="postCheck">
+                                                <label class="form-check-label" for="postCheck">
+                                                    POST
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="newRow"></div>
+
+                                    <div class="row">
+                                        <div class="col form-group">
+                                            <div class="col">
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                        <div class="col form-group">
+                                            <div class="col">
+                                                <button id="addRow" type="button" class="btn btn-info">Add Row</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                </p>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    // add row
+    let i = 1;
+    $("#addRow").click(function () {
+        i++;
+        var firstCol = '';
+        var sndCol = '';
+        var mainRow = '';
+        let removeBtn = '';
+        mainRow += '<div class="row" id="inputFormRow">';
+        firstCol += '<div class="col form-group">';
+        firstCol += '<label for="resource_path" class="col col-form-label">Resource</label>'
+        firstCol += '<div class="col">'
+        firstCol += `<input type="text" class="form-control" id="resource" placeholder="resource"  name = "resource${i}" value = "" >`
+        firstCol += '</div>'
+        firstCol += '</div>'
+        sndCol += '<div class="col form-group">'
+        sndCol += '<label for="resource_path" class="col col-form-label">Methods</label>'
+        sndCol += '<div class="form-check">'
+        sndCol += `<input class="form-check-input" type="checkbox" value="GET" id="getCheck" name="methods${i}" checked>`
+        sndCol += '<label class="form-check-label" for="getCheck">GET</label>'
+        sndCol += '</div>'
+        sndCol += '<div class="form-check">'
+        sndCol += `<input class="form-check-input" type="checkbox" value="POST" name="methods${i}" id="postCheck">`
+        sndCol += '<label class="form-check-label" for="postCheck">POST</label>'
+        sndCol += '</div>'
+        sndCol += '</div>'
+        removeBtn += '<div class="row">'
+        removeBtn += '<button type="button" class="close" aria-label="Close">  <span aria-hidden="true" id="removeRow">&times;</span></button>'
+        removeBtn += '</div>'
+        mainRow += firstCol
+        mainRow += sndCol
+        mainRow += removeBtn
+        mainRow += '</div>'
+
+        $('#newRow').append(mainRow);
+    });
+
+    // remove row
+    $(document).on('click', '#removeRow', function () {
+        $(this).closest('#inputFormRow').remove();
+    });
+</script>
