@@ -47,95 +47,129 @@
                                     </div>
                                 </div>
                             </div>
-                            <% if(results.allowedResources.length>0){ %>
-                                <h3>Allowed Resources</h3>
-                                <% results.allowedResources.map((resource,i)=>{ i=i; %>
+                            <div id="aResouces">
+                                <% if(results.allowedResources.length>0){ %>
+                                    <h3>Allowed Resources</h3>
+                                    <% results.allowedResources.map((resource,i)=>{ i=i; %>
 
-                                    <div class=" row">
+                                        <div class="row" id="resource">
 
-                                        <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label">Resource</label>
-                                            <div class="col">
-                                                <input type="text" class="form-control" id="resource_path"
-                                                    placeholder="Enter resource_path" name="resource<%=i+1%>"
-                                                value="<%=resource.path%>">
+                                            <div class="col-5 form-group">
+                                                <label for="resource_path" class="col col-form-label">Resource</label>
+                                                <div class="col">
+                                                    <input type="text" class="form-control" id="resource_path"
+                                                        placeholder="Enter resource_path" name="resource<%=i+1%>"
+                                                        value="<%=resource.path%>">
 
+                                                </div>
+                                            </div>
+                                            <div class="col-4 form-group">
+                                                <label for="resource_path" class="col col-form-label">Methods</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="GET"
+                                                        name="methods<%=i+1%>" id="getCheck"
+                                                        <%if(resource.methods.includes("GET")){%>checked<%} %> >
+                                                        <label class="form-check-label" for="getCheck">
+                                                            GET
+                                                        </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="POST"
+                                                        name="methods<%=i+1%>" id="postCheck" <%
+                                                        if(resource.methods.includes("POST")){%>checked<%} %>>
+                                                        <label class="form-check-label" for="postCheck">
+                                                            POST
+                                                        </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 form-group">
+                                                <div style="margin-top: 10%;">
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="removeResource">Remove</button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label">Methods</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="GET"
-                                                    name="methods<%=i+1%>" id="getCheck" <%if(resource.methods.includes("GET")){%>checked<%} %> >
-                                                    <label class="form-check-label" for="getCheck">
-                                                        GET
-                                                    </label>
+                                        <% })} %>
+                            </div>
+                            <div id="dResources">
+
+
+                                <% if(results.denyResources.length>0){ %>
+                                    <h3>Denied Resources</h3>
+                                    <% results.denyResources.map((resource,i)=>{%>
+
+                                        <div class="row" id="resource">
+                                            <div class="col-5 form-group">
+                                                <label for="resource_path" class="col col-form-label">Resource</label>
+                                                <div class="col">
+                                                    <input type="text" class="form-control" id="resource_path"
+                                                        placeholder="Enter resource_path" name='dresource<%=i+1%>'
+                                                        value="<%=resource.path%>">
+
+                                                </div>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="POST"
-                                                    name="methods<%=i+1%>" id="postCheck" <%
-                                                    if(resource.methods.includes("POST")){%>checked<%} %>>
-                                                    <label class="form-check-label" for="postCheck">
-                                                        POST
-                                                    </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <% })} %>
-                                        <% if(results.denyResources.length>0){ %>
-
-
-                                            <h3>Denied Resources</h3>
-                                            <% results.denyResources.map((resource,i)=>{%>
-
-                                                <div class=" row">
-
-                                                    <div class="col form-group">
-                                                        <label for="resource_path"
-                                                            class="col col-form-label">Resource</label>
-                                                        <div class="col">
-                                                            <input type="text" class="form-control" id="resource_path"
-                                                                placeholder="Enter resource_path" name='dresource<%=i+1%>'
-                                                            value="<%=resource.path%>" >
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col form-group">
-                                                        <label for="resource_path"
-                                                            class="col col-form-label">Methods</label>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" value="GET"
-                                                                name="methods<%=i+1%>" id="getCheck" <%
-                                                                if(resource.methods.includes("GET")){%>checked<%} %> >
-                                                                <label class="form-check-label" for="getCheck">
-                                                                    GET
-                                                                </label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" value="POST"
-                                                                name="methods<%=i+1%>" id="postCheck" <%
-                                                                if(resource.methods.includes("POST")){%>checked<%} %>>
-                                                                <label class="form-check-label" for="postCheck">
-                                                                    POST
-                                                                </label>
-                                                        </div>
+                                            <div class="col-3 form-group">
+                                                <label for="resource_path" class="col col-form-label">Methods</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="GET"
+                                                        name="methods<%=i+1%>" id="getCheck" <%
+                                                        if(resource.methods.includes("GET")){%>checked<%} %> >
+                                                        <label class="form-check-label" for="getCheck">
+                                                            GET
+                                                        </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="POST"
+                                                        name="methods<%=i+1%>" id="postCheck" <%
+                                                        if(resource.methods.includes("POST")){%>checked<%} %>>
+                                                        <label class="form-check-label" for="postCheck">
+                                                            POST
+                                                        </label>
+                                                </div>
+                                                <div class="col-3 form-group">
+                                                    <div style="margin-top: 10%;">
+                                                        <button type="button" class="btn btn-danger"
+                                                            id="removeResource">Remove</button>
                                                     </div>
                                                 </div>
-                                                <% }) }%>
-                                                    <div id="newRow"></div>
-                                                <div class="row">
-                                                    <div class="col form-group">
-                                                        <div class="col">
-                                                            <button type="submit"
-                                                                class="btn btn-primary">Submit</button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col form-group">
-                                                        <div class="col">
-                                                           
-                                                        </div>
-                                                    </div>
-                                                </div> 
+                                            </div>
+                                        </div>
+                                        <% }) }%>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col form-group">
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                                <div class="col form-group">
+                                    <div class="col">
+
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
         </div>
+
+
+
+
+        <script type="text/javascript">
+  
+  // remove row
+  $(document).on('click', '#removeResource', function () {
+      $(this).closest('#resource').remove();
+    //   console.log("Allowed",$('#aResouces').children().length)
+    //   console.log("Deny",$('#dResources').children().length)
+      if($('#aResouces').children().length==1 ){
+          $('#aResouces').remove();
+      }
+      if($('#dResources').children().length==1 ){
+          $('#dResources').remove();
+      }
+  });
+
+</script>
