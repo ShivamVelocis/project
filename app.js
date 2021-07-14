@@ -36,7 +36,7 @@ const sessionDB = `${process.env.DB_HOST}//${process.env.DB_USER}:${process.env.
 
 app.use(
   session({
-    store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/Vel" }),
+    store: MongoStore.create({ mongoUrl: sessionDB }),
     saveUninitialized: true,
     resave: "false",
     secret: "secret",
