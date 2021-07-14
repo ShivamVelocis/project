@@ -1,3 +1,4 @@
+const rolemodel = require("../../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
 const {
   updateACLResBody,
@@ -38,10 +39,12 @@ const getAcls = async (_req, res, _next) => {
 
 const addACl = async (_req, res, _next) => {
   try {
+    let dbRoles = await rolemodel.find();
+    // console.log(dbRoles)
     return res.render("middlewares/ACL/views/add", {
       title: "Add ACL rule",
       module_title: "ACL Mangement",
-      results: null,
+      results: dbRoles,
     });
   } catch (error) {
     next(error);

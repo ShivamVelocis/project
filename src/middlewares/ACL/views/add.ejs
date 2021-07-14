@@ -43,9 +43,12 @@
                                             <div class="col">
                                                 <select class="form-control" id="role" name="role">
                                                     <option value="">--Select--</option>
-                                                    <option value="admin">Admin</option>
-                                                    <option value="member">Member</option>
-                                                    <option value="guest">Guest</option>
+                                                    <% if(results){results.map(role=>{%>
+                                                        <option value="<%=role.title%>">
+                                                            <%=role.title.replace(/^./, str => str.toUpperCase())%>
+                                                        </option>
+                                                        <% }) }%>
+                                                            <option value="anonymous">Anonymous</option>
                                                 </select>
                                             </div>
                                         </div>
