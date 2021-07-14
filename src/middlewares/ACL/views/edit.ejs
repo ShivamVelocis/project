@@ -63,7 +63,7 @@
 
                                                 </div>
                                             </div>
-                                            <div class="col-4 form-group">
+                                            <div class="col-3 form-group">
                                                 <label for="resource_path" class="col col-form-label">Methods</label>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value="GET"
@@ -126,11 +126,12 @@
                                                             POST
                                                         </label>
                                                 </div>
-                                                <div class="col-3 form-group">
-                                                    <div style="margin-top: 10%;">
-                                                        <button type="button" class="btn btn-danger"
-                                                            id="removeResource">Remove</button>
-                                                    </div>
+
+                                            </div>
+                                            <div class="col-3 form-group">
+                                                <div style="margin-top: 10%;">
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="removeResource">Remove</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -158,18 +159,18 @@
 
 
         <script type="text/javascript">
-  
-  // remove row
-  $(document).on('click', '#removeResource', function () {
-      $(this).closest('#resource').remove();
-    //   console.log("Allowed",$('#aResouces').children().length)
-    //   console.log("Deny",$('#dResources').children().length)
-      if($('#aResouces').children().length==1 ){
-          $('#aResouces').remove();
-      }
-      if($('#dResources').children().length==1 ){
-          $('#dResources').remove();
-      }
-  });
 
-</script>
+            // remove row
+            $(document).on('click', '#removeResource', function () {
+                $(this).closest('#resource').remove();
+                //   console.log("Allowed",$('#aResouces').children().length)
+                //   console.log("Deny",$('#dResources').children().length)
+                if ($('#aResouces').children().length == 1) {
+                    $('#aResouces').remove();
+                }
+                if ($('#dResources').children().length == 1) {
+                    $('#dResources').remove();
+                }
+            });
+
+        </script>
