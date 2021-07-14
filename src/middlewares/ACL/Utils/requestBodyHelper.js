@@ -63,31 +63,31 @@ const addACLReqBody = (rawBody) => {
 
 const appendACL = (dbData, newData) => {
   let newObj = {};
-  console.log(dbData);
-  console.log(newData);
+  // console.log(dbData);
+  // console.log(newData);
   let reqData = addACLReqBody(newData);
-  let newAllowedResource = [...reqData.allowedResources];
-  let newDenyResource = [...reqData.denyResources];
+  let newAllowedResources = [...reqData.allowedResources];
+  let newDenyResources = [...reqData.denyResources];
   let reqDataAllowedPathArray = reqData.allowedResources.map((req) => req.path);
   let reqDataDenyPathArray = reqData.denyResources.map((req) => req.path);
   dbData.allowedResources.map((allowedResource) => {
     if (!reqDataAllowedPathArray.includes(allowedResource.path)) {
-      newAllowedResource.push(allowedResource);
+      newAllowedResources.push(allowedResource);
     }
   });
   dbData.denyResources.map((denyResource) => {
     if (!reqDataDenyPathArray.includes(denyResource.path)) {
-      newDenyResource.push(denyResource);
+      newDenyResources.push(denyResource);
     }
   });
 
   // newObj.role = dbData.role;
-  newObj.allowedResources = newAllowedResource;
-  newObj.denyResources = newDenyResource;
+  newObj.allowedResources = newAllowedResources;
+  newObj.denyResources = newDenyResources;
   console.log(newObj);
   return newObj;
-  // console.log(newAllowedResource)
-  // console.log(newDenyResource)
+  // console.log(newAllowedResources)
+  // console.log(newDenyResources)
 };
 
 module.exports = { updateACLResBody, addACLReqBody, appendACL };
