@@ -8,7 +8,6 @@
                     <%=title%>
                 </strong>
             </div>
-<% console.log(results); %> 
             <% if (messages.error) { %>
                 <div class="alert alert-danger" role="alert">
 
@@ -97,7 +96,7 @@
                                                         <div class="col">
                                                             <input type="text" class="form-control" id="resource_path"
                                                                 placeholder="Enter resource_path" name='dresource<%=i+1%>'
-                                                            value="<%=resource.path%>" disabled>
+                                                            value="<%=resource.path%>" >
 
                                                         </div>
                                                     </div>

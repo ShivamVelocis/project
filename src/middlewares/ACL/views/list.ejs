@@ -52,7 +52,7 @@
                                                             <%= i+1%>
                                                         </th>
                                                         <td>
-                                                            <%= result.role%>
+                                                            <%= result.role.replace(/^./, str => str.toUpperCase())%>
                                                         <td>
                                                             <a class="btn btn-success edit"
                                                                 href="/acl/edit/<%=result._id%>">Edit</a>
