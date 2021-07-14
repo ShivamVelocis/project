@@ -9,8 +9,14 @@
         </button>
         <% if(main_menu){ %>
 
-            <div class="main-menu__navbar collapse navbar-collapse" id="navbarsExample03">
-                <ul class="main-menu__item-list navbar-nav mr-auto">
+        <div class="main-menu__navbar collapse navbar-collapse" id="navbarsExample03">
+            <ul class="main-menu__item-list navbar-nav mr-auto">
+                <li class="main-menu__item nav-item">
+                    <a class="nav-link" href="/">
+                        Home
+                    </a>
+                </li>
+                <% if( main_menu){%>
                     <% main_menu.map(menu=>{
                         if(menu.menu_status == 1){
                         if(menu.sub_menu && menu.sub_menu.length >0){%>
@@ -34,12 +40,11 @@
                                 </a>
                             </li>
 
-                            <% }}}) %>
-                </ul>
-                <form class="form-inline my-2 my-md-0">
-                    <input class="form-control" type="text" placeholder="Search">
-                </form>
-            </div>
-            <%}%>
+                            <% }}})} %>                               
+            </ul>
+            <form class="form-inline my-2 my-md-0">
+                <input class="form-control" type="text" placeholder="Search">
+            </form>
+        </div>
     </nav>
 </div>
