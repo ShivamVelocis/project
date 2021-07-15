@@ -1,4 +1,4 @@
-const CONFIG = require("../../configs/config");
+const CONFIG = require("../configs/config");
 const rolemodel = require("../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
 const {
@@ -11,7 +11,6 @@ const getAcl = async (req, res, _next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
-    // console.log(result);
     return res.render("acl/views/view", {
       title: CONFIG.ADD_TITLE,
       module_title: CONFIG.MODULE_TITLE,
@@ -31,7 +30,6 @@ const getAcls = async (_req, res, _next) => {
       module_title: CONFIG.MODULE_TITLE,
       results: result,
     });
-    // res.send(result);
   } catch (error) {
     next(error);
     console.log(error);
@@ -41,7 +39,6 @@ const getAcls = async (_req, res, _next) => {
 const addACl = async (_req, res, _next) => {
   try {
     let dbRolesData = await rolemodel.find();
-    // console.log(dbRolesData)
     return res.render("ACL/views/add", {
       title: CONFIG.ADD_ACL,
       module_title: CONFIG.MODULE_TITLE,
