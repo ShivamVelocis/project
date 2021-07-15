@@ -11,7 +11,7 @@ const getAcl = async (req, res, _next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
-    return res.render("acl/views/view", {
+    return res.render("ACL/views/view", {
       title: CONFIG.ADD_TITLE,
       module_title: CONFIG.MODULE_TITLE,
       results: result,
