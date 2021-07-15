@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const dbPath =`${process.env.DB_HOST}//${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cbzag.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 
+
 connectToDB = async (url) => {
   try {
     console.log("> Trying to connect to Database");

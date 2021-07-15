@@ -1,5 +1,6 @@
 const lodash = require("lodash");
 const aclModel = require("../models/aclModel");
+const CONFIG = require('../configs/config')
 
 
 // -----------------------------------check allowed resources start----------------
@@ -114,9 +115,11 @@ const aclModel = require("../models/aclModel");
 };
 
 // -----------------------------------check allowed resources end----------------
+
+// Middleware 
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
-  console.log(req.originalUrl)
+  // console.log(req.originalUrl)
   let userRole = res.locals.userRole;
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
@@ -126,7 +129,7 @@ const isPermitted = async (req, res, next) => {
 
   // console.log( req.originalUrl ,req.headers.referer)
   if (isAllowed) return next()
-  req.flash("error","Not Authorized")
+  req.flash("error",CONFIG.AUTH_FAIL_MESSAGE)
   if (req.headers.referer &&  !req.headers.referer.endsWith(req.originalUrl) ) return  res.redirect(req.headers.referer);
   else  return res.redirect('/user/auth/login')
 
