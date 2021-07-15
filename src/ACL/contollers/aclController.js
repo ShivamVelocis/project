@@ -1,4 +1,4 @@
-const rolemodel = require("../../../roleManagement/models/rolemodel");
+const rolemodel = require("../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
 const {
   updateACLResBody,
@@ -11,7 +11,7 @@ const getAcl = async (req, res, _next) => {
   try {
     let result = await aclModel.findById(aclId);
     // console.log(result);
-    return res.render("middlewares/acl/views/view", {
+    return res.render("acl/views/view", {
       title: "ACL Rule",
       module_title: "ACL Mangement",
       results: result,
@@ -25,7 +25,7 @@ const getAcl = async (req, res, _next) => {
 const getAcls = async (_req, res, _next) => {
   try {
     let result = await aclModel.find();
-    return res.render("middlewares/ACL/views/list", {
+    return res.render("ACL/views/list", {
       title: "ACL Rules",
       module_title: "ACL Mangement",
       results: result,
@@ -41,7 +41,7 @@ const addACl = async (_req, res, _next) => {
   try {
     let dbRolesData = await rolemodel.find();
     // console.log(dbRolesData)
-    return res.render("middlewares/ACL/views/add", {
+    return res.render("ACL/views/add", {
       title: "Add ACL rule",
       module_title: "ACL Mangement",
       results: dbRolesData,
@@ -79,7 +79,7 @@ const editACl = async (req, res, _next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
-    return res.render("middlewares/ACL/views/edit", {
+    return res.render("ACL/views/edit", {
       title: "Edit ACL Rule",
       module_title: "ACL Mangement",
       results: result,

@@ -124,7 +124,7 @@ const isPermitted = async (req, res, next) => {
     allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method) &&
     denyResource(dbRoleData.denyResources, req.originalUrl,req.method)
 
-  console.log( req.originalUrl ,req.headers.referer)
+  // console.log( req.originalUrl ,req.headers.referer)
   if (isAllowed) return next()
   req.flash("error","Not Authorized")
   if (req.headers.referer &&  !req.headers.referer.endsWith(req.originalUrl) ) return  res.redirect(req.headers.referer);

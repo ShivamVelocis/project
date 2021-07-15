@@ -20,7 +20,7 @@ const userRoute = require("./src/users/routes/userRouter");
 const roleRoute = require("./src/roleManagement/routes/roleRoute");
 const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
-const aclRouter = require("./src/middlewares/ACL/routes/aclRoutes");
+const aclRouter = require("./src/ACL/routes/aclRoutes");
 
 app.set("views", path.join(__dirname, "src"));
 app.set("view engine", "ejs");
@@ -54,7 +54,7 @@ app.use(flash());
 app.use(loginCheck);
 app.use(main_menu);
 const { roleAssignment } = require("./src/middlewares/roleAssg");
-const { isPermitted } = require("./src/middlewares/ACL/Utils/roleTest");
+const { isPermitted } = require("./src/ACL/Utils/roleTest");
 app.use(roleAssignment);
 app.use(isPermitted);
 app.use("/content", contentRoutes);
@@ -72,7 +72,7 @@ app.use((req, res, next) => {
 
 
 app.use((error, req, res,next) => {
-  console.log("Final error handle Middleware--->", error);
+  console.log("Final error handle Middleware--->");
   res.status(error.status || 500);
   res.render("views/error/ErrorPage", { error: error.message?error.message:error });
 });
