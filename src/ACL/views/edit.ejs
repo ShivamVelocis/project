@@ -25,6 +25,18 @@
 
 
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="alert alert-secondary" role="alert">
+                                    <ul>
+                                        <li>Enter relative path only. <b>Such as</b> user/auth/ or content/</li>
+                                        <li>Use *(astrick) after path if you want to allow all subresources of that
+                                            path.</li>
+                                        <li>Atleast a method must be selected. </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
 
                         <form name="addResorces" action="/acl/edit/<%= results._id %>" method="POST">
 
@@ -33,7 +45,9 @@
                                     <label for="role" class="col col-form-label">Role Name</label>
                                     <div class="col">
                                         <select class="form-control" id="role" name="role" disabled>
-                                            <option value="<%=results.role%>"><%=results.role.replace(/^./, str => str.toUpperCase()) %></option>
+                                            <option value="<%=results.role%>">
+                                                <%=results.role.replace( /^./, str=> str.toUpperCase()) %>
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -152,7 +166,7 @@
 
 
 
-                            
+
                         </form>
                     </div>
         </div>

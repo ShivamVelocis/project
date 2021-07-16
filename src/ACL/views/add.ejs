@@ -1,3 +1,17 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</head>
+
+
+
 <h2>
     <%= module_title %>
 </h2>
@@ -33,6 +47,18 @@
                                 <% }) %>
                         </div>
                         <% } %>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="alert alert-secondary" role="alert">
+                                        <ul>
+                                            <li>Enter relative path only. <b>Such as</b> user/auth/ or content/</li>
+                                            <li>Use *(astrick) after path if you want to allow all subresources of that
+                                                path.</li>
+                                            <li>Atleast a method must be selected. </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="">
                                 <form name="addResorces" action="/acl/add" method="POST">
@@ -45,7 +71,7 @@
                                                     <option value="">--Select--</option>
                                                     <% if(results){results.map(role=>{%>
                                                         <option value="<%=role.title%>">
-                                                            <%=role.title.replace(/^./, str => str.toUpperCase())%>
+                                                            <%=role.title.replace( /^./, str=> str.toUpperCase())%>
                                                         </option>
                                                         <% }) }%>
                                                             <option value="anonymous">Anonymous</option>
@@ -67,7 +93,8 @@
 
                                     <div class=" row">
                                         <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label">Resource</label>
+                                            <label for="resource_path" class="col col-form-label "
+                                                id='rtt'>Resource</label>
                                             <div class="col">
                                                 <input type="text" class="form-control" id="resource_path"
                                                     placeholder="Enter resource_path" name="resource1" value="">
@@ -76,7 +103,8 @@
                                         </div>
 
                                         <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label">Methods</label>
+                                            <label for="resource_path" class="col col-form-label"
+                                                id='mtt'>Methods</label>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="GET"
                                                     name="methods1" id="getCheck" checked>
@@ -114,24 +142,35 @@
 </div>
 
 
+
+
+
+
+
 <script type="text/javascript">
+
+
     // add row
     let i = 1;
     $("#addRow").click(function () {
+
         i++;
-        var firstCol = '';
-        var sndCol = '';
-        var mainRow = '';
+        if (i >= 5) {
+            $("#addRow").prop('disabled', true)
+        }
+        let firstCol = '';
+        let sndCol = '';
+        let mainRow = '';
         let removeBtn = '';
         mainRow += '<div class="row" id="inputFormRow">';
         firstCol += '<div class="col form-group">';
-        firstCol += '<label for="resource_path" class="col col-form-label">Resource</label>'
+        firstCol += '<label for="resource_path" class="col col-form-label" id="rtt">Resource</label>'
         firstCol += '<div class="col">'
         firstCol += `<input type="text" class="form-control" id="resource" placeholder="resource"  name = "resource${i}" value = "" >`
         firstCol += '</div>'
         firstCol += '</div>'
         sndCol += '<div class="col form-group">'
-        sndCol += '<label for="resource_path" class="col col-form-label">Methods</label>'
+        sndCol += '<label for="resource_path" class="col col-form-label"  id="rtt">Methods</label>'
         sndCol += '<div class="form-check">'
         sndCol += `<input class="form-check-input" type="checkbox" value="GET" id="getCheck" name="methods${i}" checked>`
         sndCol += '<label class="form-check-label" for="getCheck">GET</label>'
@@ -150,10 +189,28 @@
         mainRow += '</div>'
 
         $('#newRow').append(mainRow);
+
+
     });
 
     // remove row
     $(document).on('click', '#removeRow', function () {
         $(this).closest('#inputFormRow').remove();
+        i--;
+        if (i < 5) {
+            $("#addRow").prop('disabled', false)
+        }
     });
+
+
+    //tooltip
+    $('#rtt').tooltip({
+        html: true,
+        position: { my: "left+15 center", at: "right center" },
+        title: "user/auth/ or content/*"
+    })
+    // $('#mtt').tooltip({
+    //     html: true,
+    //     title: "Atleast a method must be selected."
+    // })
 </script>
