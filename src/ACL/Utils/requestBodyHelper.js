@@ -1,4 +1,5 @@
-const updateACLResBody = (rawBody, dbData) => {
+// restructure update acl rule request body data 
+const updateACLResBody = (rawBody) => {
   // console.log(rawBody);
   let aclData = {};
   let allowedResources = [];
@@ -36,6 +37,8 @@ const updateACLResBody = (rawBody, dbData) => {
   return aclData;
 };
 
+
+// Resturcture requestbody data  //Common function
 const addACLReqBody = (rawBody) => {
   let aclData = {};
   let allowedResources = [];
@@ -62,6 +65,7 @@ const addACLReqBody = (rawBody) => {
   return aclData;
 };
 
+// Append data to db data and create new object for add rule
 const appendACL = (dbData, newData) => {
   let x = 0;
   let y = 0;
