@@ -9,24 +9,24 @@ let roleAssignment = async (req, res, next) => {
       let tokenUser = decodeToken(req.session.token);
       let dbUser = await userModel.findOne({ _id: tokenUser.id });
       if (!dbUser) {
-        res.locals.userRole = "guest";
+        res.locals.userRole = "anonymous";
         return next();
       }
       let dbUserRole = await roleModel.findOne({ _id: dbUser.role_id });
       if (!dbUserRole) {
-        res.locals.userRole = "guest";
+        res.locals.userRole = "anonymous";
         return next();
       }
       res.locals.userRole = dbUserRole.title;
       return next();
     } else {
-      console.log("Guest User");
-      res.locals.userRole = "guest";
+      console.log("anonymous");
+      res.locals.userRole = "anonymous";
       return next();
     }
   } catch (error) {
     console.log(error.message);
-    res.locals.userRole = "guest";
+    res.locals.userRole = "anonymous";
     req.flash("error", error.message);
     res.redirect("/user/auth/login");
   }
