@@ -166,7 +166,8 @@ exports.changePasswordValidationRule = () => {
       )
       .bail()
       .custom((value, { req }) => {
-        if (value !== req.body.newPassword) {
+        // console.log(value , req.body.newPassword)
+        if (value != req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
         return true;
@@ -214,7 +215,8 @@ exports.otpPasswordValidationRule = () => {
       )
       .bail()
       .custom((value, { req }) => {
-        if (value !== req.body.newPassword) {
+        // console.log(value , req.body.password)
+        if (value != req.body.password) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
         return true;
