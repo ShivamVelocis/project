@@ -68,8 +68,10 @@ const postAddACl = async (req, res, next) => {
     req.flash("success", CONFIG.ACL_ADD_SUCCESS);
     res.redirect("/acl/");
   } catch (error) {
-    next(error);
-    console.log(error);
+    // next(error);
+    req.flash("error", error.message);
+    res.redirect("/acl/add");
+    // console.log(error.message);
   }
 };
 
@@ -101,7 +103,7 @@ const postEditACl = async (req, res, _next) => {
     req.flash("success", CONFIG.ACL_UPDATE_SUCESS);
     res.redirect("/acl/");
   } catch (error) {
-    next(error);
+    // next(error);
     console.log(error);
   }
 };

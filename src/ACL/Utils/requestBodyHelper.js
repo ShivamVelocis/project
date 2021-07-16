@@ -1,4 +1,4 @@
-const updateACLResBody = (rawBody) => {
+const updateACLResBody = (rawBody, dbData) => {
   // console.log(rawBody);
   let aclData = {};
   let allowedResources = [];
@@ -31,6 +31,7 @@ const updateACLResBody = (rawBody) => {
       denyResources.push({ path, methods });
     }
   }
+
   aclData = { allowedResources, denyResources };
   return aclData;
 };
@@ -62,9 +63,9 @@ const addACLReqBody = (rawBody) => {
 };
 
 const appendACL = (dbData, newData) => {
+  let x = 0;
+  let y = 0;
   let newObj = {};
-  // console.log(dbData);
-  // console.log(newData);
   let reqData = addACLReqBody(newData);
   let newAllowedResources = [...reqData.allowedResources];
   let newDenyResources = [...reqData.denyResources];
@@ -73,21 +74,26 @@ const appendACL = (dbData, newData) => {
   dbData.allowedResources.map((allowedResource) => {
     if (!reqDataAllowedPathArray.includes(allowedResource.path)) {
       newAllowedResources.push(allowedResource);
+    } else {
+      x++;
     }
   });
   dbData.denyResources.map((denyResource) => {
     if (!reqDataDenyPathArray.includes(denyResource.path)) {
       newDenyResources.push(denyResource);
+    } else {
+      y++;
     }
   });
 
-  // newObj.role = dbData.role;
+  if (x == reqDataAllowedPathArray.length && y == reqDataDenyPathArray.length) {
+    throw new Error("Rule already present in db");
+  }
+
   newObj.allowedResources = newAllowedResources;
   newObj.denyResources = newDenyResources;
   console.log(newObj);
   return newObj;
-  // console.log(newAllowedResources)
-  // console.log(newDenyResources)
 };
 
 module.exports = { updateACLResBody, addACLReqBody, appendACL };
