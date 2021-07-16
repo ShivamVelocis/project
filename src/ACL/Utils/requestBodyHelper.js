@@ -1,4 +1,4 @@
-const updateACLResBody = (rawBody, role) => {
+const updateACLResBody = (rawBody) => {
   // console.log(rawBody);
   let aclData = {};
   let allowedResources = [];
@@ -22,10 +22,10 @@ const updateACLResBody = (rawBody, role) => {
       let path = "";
       let lastDigit = key.split("").pop();
       path = value;
-      if (Array.isArray(rawBody[`methods${lastDigit}`])) {
+      if (Array.isArray(rawBody[`dmethods${lastDigit}`])) {
         methods = rawBody[`methods${lastDigit}`];
       } else {
-        methods.push(rawBody[`methods${lastDigit}`]);
+        methods.push(rawBody[`dmethods${lastDigit}`]);
       }
 
       denyResources.push({ path, methods });
