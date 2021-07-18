@@ -1,7 +1,6 @@
 const lodash = require("lodash");
 const aclModel = require("../models/aclModel");
-const CONFIG = require('../configs/config')
-
+const CONFIG = require("../configs/config");
 
 // -----------------------------------check allowed resources start----------------
 /**
@@ -12,30 +11,33 @@ const CONFIG = require('../configs/config')
  * @param {string} method Request method user want to access.
  * @return {boolean} if allowed return True else False.
  */
- const allowedResource = (resource, rawPath,method) => {
+const allowedResource = (resource, rawPath, method) => {
   // console.log(resource, rawPath,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", rawPath])) {
     resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
-    dbMethods = resource[resourcePathIndex].methods
-    allowedMethods = dbMethods.includes(method)
+    dbMethods = resource[resourcePathIndex].methods;
+    allowedMethods = dbMethods.includes(method);
     return allowedMethods;
   }
   if (lodash.find(resource, ["path", "/*"])) {
     resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
-    dbMethods = resource[resourcePathIndex].methods
-    allowedMethods = dbMethods.includes(method)
+    dbMethods = resource[resourcePathIndex].methods;
+    allowedMethods = dbMethods.includes(method);
     return allowedMethods;
   }
-  let path = rawPath.substring(rawPath.length - 1) == "/" ? rawPath.slice(0, rawPath.length - 1) : rawPath;
-  let pathArray = lodash.remove(path.split("/"), n=>!!n);
+  let path =
+    rawPath.substring(rawPath.length - 1) == "/"
+      ? rawPath.slice(0, rawPath.length - 1)
+      : rawPath;
+  let pathArray = lodash.remove(path.split("/"), (n) => !!n);
   let i = 0;
   let subPath = pathArray[0];
   while (pathArray.length > i) {
     astrikPath = subPath + "/*";
     if (lodash.find(resource, ["path", astrikPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", astrikPath]);
-      dbMethods = resource[resourcePathIndex].methods
+      dbMethods = resource[resourcePathIndex].methods;
       return dbMethods.includes(method);
     }
     i++;
@@ -47,8 +49,8 @@ const CONFIG = require('../configs/config')
     subPath = subPath + "/";
     if (lodash.find(resource, ["path", subPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", subPath]);
-      dbMethods = resource[resourcePathIndex].methods
-      dbMethods = resource[resourcePathIndex].methods
+      dbMethods = resource[resourcePathIndex].methods;
+      dbMethods = resource[resourcePathIndex].methods;
       return dbMethods.includes(method);
     }
     i++;
@@ -67,32 +69,35 @@ const CONFIG = require('../configs/config')
  * @param {string} method Request method user want to access.
  * @return {boolean} if allowed return True else False.
  */
- const denyResource = (resource, rawPath,method) => {
+const denyResource = (resource, rawPath, method) => {
   // console.log(resource, rawPath,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", rawPath])) {
     // console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
-    dbMethods = resource[resourcePathIndex].methods
-    denyMethods = dbMethods.includes(method)
+    dbMethods = resource[resourcePathIndex].methods;
+    denyMethods = dbMethods.includes(method);
     return !denyMethods;
   }
   if (lodash.find(resource, ["path", "/*"])) {
     // console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
-    dbMethods = resource[resourcePathIndex].methods
-    denyMethods = dbMethods.includes(method)
+    dbMethods = resource[resourcePathIndex].methods;
+    denyMethods = dbMethods.includes(method);
     return !denyMethods;
   }
-  let path = rawPath.substring(rawPath.length - 1) == "/" ? rawPath.slice(0, rawPath.length - 1) : rawPath;
-  let pathArray = lodash.remove(path.split("/"), n=>!!n);;
+  let path =
+    rawPath.substring(rawPath.length - 1) == "/"
+      ? rawPath.slice(0, rawPath.length - 1)
+      : rawPath;
+  let pathArray = lodash.remove(path.split("/"), (n) => !!n);
   let i = 0;
   let subPath = pathArray[0];
   while (pathArray.length > i) {
     astrikPath = subPath + "/*";
     if (lodash.find(resource, ["path", astrikPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", astrikPath]);
-      dbMethods = resource[resourcePathIndex].methods
+      dbMethods = resource[resourcePathIndex].methods;
       return !dbMethods.includes(method);
     }
     i++;
@@ -104,8 +109,8 @@ const CONFIG = require('../configs/config')
     subPath = subPath + "/";
     if (lodash.find(resource, ["path", subPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", subPath]);
-      dbMethods = resource[resourcePathIndex].methods
-      dbMethods = resource[resourcePathIndex].methods
+      dbMethods = resource[resourcePathIndex].methods;
+      dbMethods = resource[resourcePathIndex].methods;
       return !dbMethods.includes(method);
     }
     i++;
@@ -116,7 +121,7 @@ const CONFIG = require('../configs/config')
 
 // -----------------------------------check allowed resources end----------------
 
-// Middleware 
+// Middleware
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
   // console.log(req.originalUrl)
@@ -124,15 +129,20 @@ const isPermitted = async (req, res, next) => {
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
   let isAllowed =
-    allowedResource(dbRoleData.allowedResources, req.originalUrl,req.method) &&
-    denyResource(dbRoleData.denyResources, req.originalUrl,req.method)
+    allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
+    denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
 
   // console.log( req.originalUrl ,req.headers.referer)
-  if (isAllowed) return next()
-  req.flash("error",CONFIG.AUTH_FAIL_MESSAGE)
-  if (req.headers.referer &&  !req.headers.referer.endsWith(req.originalUrl) ) return  res.redirect(req.headers.referer);
-  else  return res.redirect('/user/auth/login')
+  if (isAllowed) return next();
 
+  if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
+    console.log( req.flash('error'))
+    req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
+    return res.redirect(req.headers.referer);
+  } else {
+    req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
+    return res.redirect("/user/auth/login");
+  }
 };
 
 module.exports = { isPermitted };
