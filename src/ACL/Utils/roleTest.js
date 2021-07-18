@@ -70,17 +70,14 @@ const allowedResource = (resource, rawPath, method) => {
  * @return {boolean} if allowed return True else False.
  */
 const denyResource = (resource, rawPath, method) => {
-  // console.log(resource, rawPath,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", rawPath])) {
-    // console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
     dbMethods = resource[resourcePathIndex].methods;
     denyMethods = dbMethods.includes(method);
     return !denyMethods;
   }
   if (lodash.find(resource, ["path", "/*"])) {
-    // console.log("test deny")
     resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
     dbMethods = resource[resourcePathIndex].methods;
     denyMethods = dbMethods.includes(method);
@@ -132,7 +129,6 @@ const isPermitted = async (req, res, next) => {
     allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
     denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
 
-  // console.log( req.originalUrl ,req.headers.referer)
   if (isAllowed) return next();
 
   if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
