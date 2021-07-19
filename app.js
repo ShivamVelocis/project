@@ -54,7 +54,7 @@ app.use(
 app.use(flash());
 app.use(loginCheck);
 app.use(main_menu);
-const { roleAssignment } = require("./src/middlewares/roleAssg");
+const { roleAssignment } = require("./src/ACL/middlewares/roleAssg");
 const { isPermitted } = require("./src/ACL/Utils/roleTest");
 app.use(roleAssignment);
 app.use(isPermitted);
