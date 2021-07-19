@@ -132,14 +132,19 @@ const isPermitted = async (req, res, next) => {
   if (isAllowed) return next();
 
   if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
-    if (res.req.session.flash.error && res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)) {
-     
+    if (
+      res.req.session.flash.error &&
+      res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
+    ) {
       return res.redirect(req.headers.referer);
     }
     req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
     return res.redirect(req.headers.referer);
   } else {
-    if (res.req.session.flash.error && res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)) {
+    if (
+      res.req.session.flash.error &&
+      res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
+    ) {
       return res.redirect(req.headers.referer);
     }
     req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
