@@ -1,9 +1,11 @@
 
     
     
-    <script src="https://rawgit.com/unconditional/jquery-table2excel/master/src/jquery.table2excel.js"></script>
+    <!-- <script src="https://rawgit.com/unconditional/jquery-table2excel/master/src/jquery.table2excel.js"></script> -->
     
-    
+    <script lang="javascript" src="/scripts/xlsx/dist/xlsx.full.min.js"></script>
+
+
     <div class="container">
         <h2><%= module_title %></h2>
 
@@ -75,10 +77,49 @@
 
 
         <script>
-            $(document).ready(function() {
-                $("#studtable").table2excel({
-                    exclude: ".ignore",
-                    filename: "name-of-the-file",
-                });
+            // $(document).ready(function() {
+            //     $("#studtable").table2excel({
+            //         exclude: ".ignore",
+            //         filename: "name-of-the-file",
+            //     });
+            // });
+            let rawData = '<%-JSON.stringify(results) %>'
+            // console.log(rawData)
+            let users = JSON.parse(rawData);
+            const workSheetColumnName = [
+                                            "First Name",
+                                            "Last Name",
+                                            "Username",
+                                            "Email",
+                                            "Status"
+                                        ]
+
+            const workSheetName = 'Users';
+            // const filePath = './outputFiles/excel-from-js.xlsx';
+            const exportExcel = (data, workSheetColumnNames, workSheetName, filePath) => {
+            const workBook = XLSX.utils.book_new();
+            const workSheetData = [
+                workSheetColumnNames,
+                ... data
+            ];
+            const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
+            XLSX.utils.book_append_sheet(workBook, workSheet, workSheetName);
+            XLSX.writeFile(workBook, 'users.xlsb');
+            // XLSX.writeFile(workBook, path.resolve(filePath));
+             }
+
+            const exportUsersToExcel = (users, workSheetColumnNames, workSheetName) => {
+                const data = users.map(user => {
+                    let user_status = "";
+                    if(user.user_status){
+                        user_status="Active"
+                    }else{
+                        user_status="Inactive"
+                    }
+                    return [user.name.first_name, user.name.last_name, user.username,user.email,user_status];
             });
+            exportExcel(data, workSheetColumnNames, workSheetName);
+            }
+
+            exportUsersToExcel(users,workSheetColumnName,workSheetName)
         </script>
