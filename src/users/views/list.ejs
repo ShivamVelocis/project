@@ -30,6 +30,7 @@
                         <div class="d-flex">
                             <div class="p-2 mr-auto"><strong><%= title %></strong></div>
                             <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="window.location =`/user/add`"> Add User </button></div>
+                            <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="exportToExcel()"> Export to Excel</button></div>
                           </div>
                     </div>
                 <div class="card-body">
@@ -113,8 +114,8 @@
 
 
         <script>
-            let rawData = '<%-JSON.stringify(results) %>'
-            let users = JSON.parse(rawData);
+            let jsonData = '<%-JSON.stringify(results) %>'
+            let users = JSON.parse(jsonData);
             const exportUsersToExcel = (users) => {
                 const data = users.map(user => {
                     let user_status = "";
@@ -133,6 +134,7 @@
                 });
                 return data
             }
+            exportToExcel = ()=>{
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Users Data');
             worksheet.columns = [{
@@ -176,10 +178,11 @@
                 worksheet.addRow(user);
             })
 
-            //  workbook.xlsx.writeFile('export.xlsx');
             workbook.xlsx.writeBuffer()
                 .then(buffer => saveAs(new Blob([buffer]), `${Date.now()}_users.xlsx`))
                 .catch(err => console.log('Error writing excel export', err))
+            }
+            
 
 
 
