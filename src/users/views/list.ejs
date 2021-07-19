@@ -77,14 +77,7 @@
 
 
         <script>
-            // $(document).ready(function() {
-            //     $("#studtable").table2excel({
-            //         exclude: ".ignore",
-            //         filename: "name-of-the-file",
-            //     });
-            // });
             let rawData = '<%-JSON.stringify(results) %>'
-            // console.log(rawData)
             let users = JSON.parse(rawData);
             const workSheetColumnName = [
                                             "First Name",
@@ -95,7 +88,6 @@
                                         ]
 
             const workSheetName = 'Users';
-            // const filePath = './outputFiles/excel-from-js.xlsx';
             const exportExcel = (data, workSheetColumnNames, workSheetName, filePath) => {
             const workBook = XLSX.utils.book_new();
             const workSheetData = [
@@ -104,8 +96,7 @@
             ];
             const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
             XLSX.utils.book_append_sheet(workBook, workSheet, workSheetName);
-            XLSX.writeFile(workBook, 'users.xlsb');
-            // XLSX.writeFile(workBook, path.resolve(filePath));
+            XLSX.writeFile(workBook, 'users.xlsb')
              }
 
             const exportUsersToExcel = (users, workSheetColumnNames, workSheetName) => {
