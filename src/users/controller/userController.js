@@ -269,59 +269,59 @@ exports.getProfilePicture = async (req, res) => {
 
 exports.getUsersExcel =async (req, res, next) =>{
   try {
-    let contents = await userModel.find({});
+    let contents = await userModel.find({}).select({name:1, username:1,email:1,user_status:1});
     
     // console.log(contents)
     // console.log(generateHeaderRow(contents))
 
     if (contents.length > 0) {
-      console.log(generateHeaderRow(contents,["__v","_id","created_at","updated_at","token","role_id","password"]))
+      // console.log()
       // console.log(generateHeaderRow(contents))
-      const data = contents.map(user => {
-        let user_status = "";
-        if (user.user_status) {
-            user_status = "Active"
-        } else {
-            user_status = "Inactive"
-        }
-        return {
-            first_name: user.name.first_name,
-            last_name: user.name.last_name,
-            username: user.username,
-            email: user.email,
-            status: user_status
-        };
-    });
+    //   const data = contents.map(user => {
+    //     let user_status = "";
+    //     if (user.user_status) {
+    //         user_status = "Active"
+    //     } else {
+    //         user_status = "Inactive"
+    //     }
+    //     return {
+    //         first_name: user.name.first_name,
+    //         last_name: user.name.last_name,
+    //         username: user.username,
+    //         email: user.email,
+    //         status: user_status
+    //     };
+    // });
     // console.log(data)
-    let headerRow = [
-      {
-        header: "First Name",
-        key: "first_name",
-        width: 20,
-      },
-      {
-        header: "Last Name",
-        key: "last_name",
-        width: 20,
-      },
-      {
-        header: "Username",
-        key: "username",
-        width: 15,
-      },
-      {
-        header: "Email",
-        key: "email",
-        width: 30,
-      },
-      {
-        header: "Status",
-        key: "status",
-        width: 15,
-      },
-    ];
-
-      let excelBuffer = await exportToExcel(headerRow, data,"Users")
+    // let headerRow = [
+    //   {
+    //     header: "First Name",
+    //     key: "first_name",
+    //     width: 20,
+    //   },
+    //   {
+    //     header: "Last Name",
+    //     key: "last_name",
+    //     width: 20,
+    //   },
+    //   {
+    //     header: "Username",
+    //     key: "username",
+    //     width: 15,
+    //   },
+    //   {
+    //     header: "Email",
+    //     key: "email",
+    //     width: 30,
+    //   },
+    //   {
+    //     header: "Status",
+    //     key: "status",
+    //     width: 15,
+    //   },
+    // ];
+      let [headerRow, restructureData] = generateHeaderRow(contents,["__v","_id","created_at","updated_at","token","role_id","password","profilePicture"])
+      let excelBuffer = await exportToExcel(headerRow, restructureData,"Users")
       // console.log(excelBuffer)
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
       res.setHeader("Content-Disposition", "attachment; filename=" + "UsersData.xlsx");
@@ -330,6 +330,7 @@ exports.getUsersExcel =async (req, res, next) =>{
       res.render("views/error/ErrorPage", { error: "No content added yet!" });
     }
   } catch (error) {
+    console.log(error)
     res.render("views/error/ErrorPage", { error: "Unable to get any content" });
   }
 };

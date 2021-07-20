@@ -40,9 +40,11 @@ let reformatHeaderWord = (word) => {
   return newWord;
 };
 const generateHeaderRow = (data = [], ignoreKeys = []) => {
+
   data = JSON.parse(JSON.stringify(data));
+  // console.log(data)
   let headerRow = [];
-  for (const [key, value] of Object.entries(data[1])) {
+  for (const [key, value] of Object.entries(data[0])) {
     if (!ignoreKeys.includes(key)) {
       let newObj = {};
       newObj.header = reformatHeaderWord(key);
