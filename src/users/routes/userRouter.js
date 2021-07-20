@@ -3,15 +3,14 @@ const router = express.Router();
 const userController = require("./../controller/userController");
 const authController = require("./../controller/authController");
 const { isUserLoggedIn } = require("../../middlewares/auth");
-const {roleAuth,roleAuthv1} = require("../../middlewares/roleAuth")
 const { addUserValidationRules, updateUserValidationRules,changePasswordValidationRule,changeMyPasswordValidationRule,otpPasswordValidationRule,forgetpasswordEmailValidation, mongoIDValidationRules,isRequestValid } = require("../middlewares/validater");
 const userValidationRules = require('./../validations/UserValidation');
 const { uploadProfilePicture } = require("../utils/uploadHandler");
 
 
-router.get("/add",roleAuthv1(process.env.ADMIN_TITLE), userController.addUser); //render add user page 
+router.get("/add", userController.addUser); //render add user page 
 //router.post("/add",isAdmin, addUserValidationRules(), isRequestValid , userController.postAddUser); // add user to database if valid
-router.post("/add", roleAuth(process.env.ADMIN_TITLE), userValidationRules.validateUserAdd, userController.postAddUser);
+router.post("/add", userValidationRules.validateUserAdd, userController.postAddUser);
 
 router.get("/view", isUserLoggedIn, userController.getUsers); // renders all users
 router.get("/view/:id", isUserLoggedIn, mongoIDValidationRules(),userController.getUser); //render user with id given in url
@@ -20,7 +19,7 @@ router.get("/update/:id",isUserLoggedIn,mongoIDValidationRules(),isRequestValid 
 //router.post("/update/:id",isUserLoggedIn,updateUserValidationRules(),isRequestValid , userController.postUpdateUser); //updates user eith new data in db
 router.post("/update/:id",updateUserValidationRules(),isRequestValid,isUserLoggedIn,userValidationRules.validateUserUpdate, userController.postUpdateUser);
 
-router.post("/delete/:id",isUserLoggedIn, roleAuth("admin"), mongoIDValidationRules(), isRequestValid , userController.removeContent); //deletes user with id given in url
+router.post("/delete/:id",isUserLoggedIn, mongoIDValidationRules(), isRequestValid , userController.removeContent); //deletes user with id given in url
 
 router.get("/auth/login", authController.login); //render login page
 router.post("/auth/login", authController.postLogin); //genrate token and send to user in session also store in db

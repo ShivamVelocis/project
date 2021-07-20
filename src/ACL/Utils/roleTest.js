@@ -128,7 +128,7 @@ const isPermitted = async (req, res, next) => {
   let isAllowed =
     allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
     denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
-
+  
   if (isAllowed) return next();
 
   if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
@@ -147,7 +147,7 @@ const isPermitted = async (req, res, next) => {
       res.req.session.flash.error &&
       res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
     ) {
-      return res.redirect(req.headers.referer);
+      return res.redirect("/user/auth/login");
     }
     req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
     return res.redirect("/user/auth/login");
