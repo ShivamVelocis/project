@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
     <script src="/scripts/exceljs/dist/exceljs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
     <div class="container">
         <h2><%= module_title %></h2>
@@ -30,8 +30,11 @@
                         <div class="d-flex">
                             <div class="p-2 mr-auto"><strong><%= title %></strong></div>
                             <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="window.location =`/user/add`"> Add User </button></div>
-                            <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="exportToExcel()"> Export to Excel</button></div>
-                          </div>
+                            <!-- <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="exportToExcel()"> Export to Excel</button></div> -->
+                            
+                            <div class="p-2 ml-auto"><button type="button" id="excelexprt" class="btn"> <img src="https://img.icons8.com/material-outlined/24/000000/export-excel.png" id="excelexprt"/></button></div>
+
+                        </div>
                     </div>
                 <div class="card-body">
                    
@@ -112,8 +115,22 @@
             exportUsersToExcel(users,workSheetColumnName,workSheetName)
         </script> -->
 
-
+<!-- Exceljs -->
         <script>
+
+            $("#excelexprt").click(function(){
+                        const url = "/user/excelexport"
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // the filename you want
+                        a.download = 'users.xls';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+            });
+
+
             let jsonData = '<%-JSON.stringify(results) %>'
             let users = JSON.parse(jsonData);
             const exportUsersToExcel = (users) => {
@@ -187,3 +204,4 @@
 
 
         </script>
+

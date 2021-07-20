@@ -49,4 +49,9 @@ router.get('/profile/:id',isUserLoggedIn,userController.getProfilePicture)
 //myprofile
 router.get('/profile',isUserLoggedIn,authController.myprofile)
 
+
+
+//excel
+router.get('/excelExport',userController.getUsersExcel)
+
 module.exports = router;

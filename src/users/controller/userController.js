@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator');
 const userModel = require("../models/userModel");
 const roleModel = require("./../../roleManagement/models/rolemodel");
 const CONFIG = require("./../configs/config");
+const { exportToExcel } = require("../../utils/exportToExcel");
 
 exports.addUser = async function addUser(req, res, next){
   var form_data = {
@@ -262,5 +263,68 @@ exports.getProfilePicture = async (req, res) => {
     }
   } catch (error) {
     console.log(error)
+  }
+};
+
+
+exports.getUsersExcel =async (req, res, next) =>{
+  try {
+    let contents = await userModel.find({});
+
+    if (contents.length > 0) {
+      const data = contents.map(user => {
+        let user_status = "";
+        if (user.user_status) {
+            user_status = "Active"
+        } else {
+            user_status = "Inactive"
+        }
+        return {
+            first_name: user.name.first_name,
+            last_name: user.name.last_name,
+            username: user.username,
+            email: user.email,
+            status: user_status
+        };
+    });
+    // console.log(data)
+    let headerRow = [
+      {
+        header: "First Name",
+        key: "first_name",
+        width: 20,
+      },
+      {
+        header: "Last Name",
+        key: "last_name",
+        width: 20,
+      },
+      {
+        header: "Username",
+        key: "username",
+        width: 15,
+      },
+      {
+        header: "Email",
+        key: "email",
+        width: 30,
+      },
+      {
+        header: "Status",
+        key: "status",
+        width: 15,
+      },
+    ];
+
+      let excelBuffer = await exportToExcel(headerRow, data,"Users")
+      // console.log(excelBuffer)
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+      res.setHeader("Content-Disposition", "attachment; filename=" + "UsersData.xlsx");
+      res.send(excelBuffer);
+    } else {
+      res.render("views/error/ErrorPage", { error: "No content added yet!" });
+    }
+  } catch (error) {
+    res.render("views/error/ErrorPage", { error: "Unable to get any content" });
   }
 };

@@ -7,12 +7,12 @@ const ExcelJS = require("exceljs");
  * @param {string} sheetName Excel sheet name.
  * @return {Buffer} return file buffer.
  */
-exportToExcel = async (headerRow, data,sheetName) => {
+exportToExcel = async (headerRow, data, sheetName) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
   worksheet.columns = headerRow;
-  let headerRow = worksheet.getRow(1);
-  headerRow.eachCell(function (cell, colNumber) {
+  let headRow = worksheet.getRow(1);
+  headRow.eachCell(function (cell, colNumber) {
     cell.fill = {
       type: "pattern",
       pattern: "solid",
@@ -25,7 +25,8 @@ exportToExcel = async (headerRow, data,sheetName) => {
     worksheet.addRow(user);
   });
 
-  return await workbook.xlsx.writeBuffer();
+  let excelBuffer = await workbook.xlsx.writeBuffer();
+  return excelBuffer;
   // .then((buffer) => saveAs(new Blob([buffer]), `${Date.now()}_users.xlsx`))
   // .catch((err) => console.log("Error writing excel export", err));
 };
