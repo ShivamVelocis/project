@@ -5,7 +5,7 @@ const { check, validationResult } = require('express-validator');
 const userModel = require("../models/userModel");
 const roleModel = require("./../../roleManagement/models/rolemodel");
 const CONFIG = require("./../configs/config");
-const { exportToExcel } = require("../../utils/exportToExcel");
+const { exportToExcel, generateHeaderRow } = require("../../utils/exportToExcel");
 
 exports.addUser = async function addUser(req, res, next){
   var form_data = {
@@ -270,8 +270,13 @@ exports.getProfilePicture = async (req, res) => {
 exports.getUsersExcel =async (req, res, next) =>{
   try {
     let contents = await userModel.find({});
+    
+    // console.log(contents)
+    // console.log(generateHeaderRow(contents))
 
     if (contents.length > 0) {
+      console.log(generateHeaderRow(contents,["__v","_id","created_at","updated_at","token","role_id","password"]))
+      // console.log(generateHeaderRow(contents))
       const data = contents.map(user => {
         let user_status = "";
         if (user.user_status) {
