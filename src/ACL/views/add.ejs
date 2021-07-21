@@ -94,10 +94,35 @@
                                     <div class=" row">
                                         <div class="col form-group">
                                             <label for="resource_path" class="col col-form-label "
+                                                id='rtt'>Module</label>
+                                            <div class="col">
+                                                <select class="form-control" id="module1" name="module1">
+                                                    <option value="">--Select--</option>
+                                                    <% resources.map(resource=>{%>
+                                                        <option value="<%= resource.module_name %>">
+                                                            <%= resource.module_name %>
+                                                        </option>
+                                                        <%}) %>
+                                                </select>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col form-group">
+                                            <label for="resource_path" class="col col-form-label "
                                                 id='rtt'>Resource</label>
                                             <div class="col">
-                                                <input type="text" class="form-control" id="resource_path"
-                                                    placeholder="Enter resource_path" name="resource1" value="">
+                                                <select class="form-control" id="resources1" name="resources1">
+                                                    <option value="">--Select--</option>
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=" row">
+                                        <div class="col form-group">
+                                            <div class="col">
+
 
                                             </div>
                                         </div>
@@ -121,7 +146,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="newRow"></div>
+                                    <div id="newRow" class=" row"></div>
 
                                     <div class="row">
                                         <div class="col form-group">
@@ -149,6 +174,53 @@
 
 <script type="text/javascript">
 
+  
+
+
+    let data = '<%-JSON.stringify(resources)%>'
+    let resourecesData = JSON.parse(data)
+    var resForSlctModule = []
+    let moduleList = resourecesData.map(item => item.module_name)
+    //select change detection
+
+    $(document).on('change', 'select', function () {
+        let selectedModule = $(this).find("option:selected").attr('value')
+        let i = $(this).attr('id').slice(-1);
+        resourecesData.map(resource => {
+                if (resource.module_name == selectedModule) {
+                    $(`#resources${i}`).children('option:not(:first)').remove();
+                    $.each(resource.resources, function (index, item) {
+                        $(`#resources${i}`).append($('<option>', {
+                            value: item.resource_path,
+                            text: item.resource_name
+                        }));
+                    });
+                }
+            })
+    });
+
+
+
+
+    // $(document).ready(function () {
+    //     $('select').change(function () {
+    //         let selectedModule = $(this).find("option:selected").attr('value')
+    //         let i = $(this).attr('id').slice(-1);
+    //         console.log(i)
+    //         resourecesData.map(resource => {
+    //             if (resource.module_name == selectedModule) {
+    //                 $(`#resources${i}`).children('option:not(:first)').remove();
+    //                 $.each(resource.resources, function (index, item) {
+    //                     $(`#resources${i}`).append($('<option>', {
+    //                         value: item.resource_path,
+    //                         text: item.resource_name
+    //                     }));
+    //                 });
+    //             }
+    //         })
+
+    //     });
+    // });
 
     // add row
     let i = 1;
@@ -158,37 +230,67 @@
         if (i >= 5) {
             $("#addRow").prop('disabled', true)
         }
-        let firstCol = '';
-        let sndCol = '';
-        let mainRow = '';
-        let removeBtn = '';
-        mainRow += '<div class="row" id="inputFormRow">';
-        firstCol += '<div class="col form-group">';
-        firstCol += '<label for="resource_path" class="col col-form-label" id="rtt">Resource</label>'
-        firstCol += '<div class="col">'
-        firstCol += `<input type="text" class="form-control" id="resource" placeholder="resource"  name = "resource${i}" value = "" >`
-        firstCol += '</div>'
-        firstCol += '</div>'
-        sndCol += '<div class="col form-group">'
-        sndCol += '<label for="resource_path" class="col col-form-label"  id="rtt">Methods</label>'
-        sndCol += '<div class="form-check">'
-        sndCol += `<input class="form-check-input" type="checkbox" value="GET" id="getCheck" name="methods${i}" checked>`
-        sndCol += '<label class="form-check-label" for="getCheck">GET</label>'
-        sndCol += '</div>'
-        sndCol += '<div class="form-check">'
-        sndCol += `<input class="form-check-input" type="checkbox" value="POST" name="methods${i}" id="postCheck">`
-        sndCol += '<label class="form-check-label" for="postCheck">POST</label>'
-        sndCol += '</div>'
-        sndCol += '</div>'
-        removeBtn += '<div class="row">'
-        removeBtn += '<button type="button" class="close" aria-label="Close">  <span aria-hidden="true" id="removeRow">&times;</span></button>'
-        removeBtn += '</div>'
-        mainRow += firstCol
-        mainRow += sndCol
-        mainRow += removeBtn
-        mainRow += '</div>'
 
-        $('#newRow').append(mainRow);
+        // Module select
+        var mformgrpDiv = document.createElement('div')
+        mformgrpDiv.className = "col form-group"
+        var mcolDiv = document.createElement('div')
+        mcolDiv.className = "col"
+        var moduleValues = ["", ...moduleList];
+        var moduleSelect = document.createElement("select");
+        moduleSelect.name = "module" + i;
+        moduleSelect.id = "module" + i
+        moduleSelect.className = "form-control"
+
+        for (const val of moduleValues) {
+            var option = document.createElement("option");
+            option.value = val;
+            option.text = val == "" ? "--Select--" : val;
+            moduleSelect.appendChild(option);
+        }
+
+        var modulelabel = document.createElement("label");
+        modulelabel.className = "col col-form-label"
+        modulelabel.innerHTML = "Module"
+        modulelabel.htmlFor = "module" + i;
+        mcolDiv.appendChild(moduleSelect)
+        mformgrpDiv.appendChild(modulelabel)
+        mformgrpDiv.appendChild(mcolDiv)
+
+        // Resources select
+        var rformgrpDiv = document.createElement('div')
+        rformgrpDiv.className = "col form-group"
+        var rcolDiv = document.createElement('div')
+        rcolDiv.className = "col"
+        var resourcesValues = [""];
+
+        var resSelect = document.createElement("select");
+        resSelect.name = "resources" + i;
+        resSelect.id = "resources" + i
+        resSelect.className = "form-control"
+
+        for (const val of resourcesValues) {
+            var option = document.createElement("option");
+            option.value = val;
+            option.text = '--Select--';
+            resSelect.appendChild(option);
+        }
+
+        var reslabel = document.createElement("label");
+        reslabel.className = "col col-form-label"
+        reslabel.innerHTML = "Resources"
+        reslabel.htmlFor = "resources" + i;
+        rcolDiv.appendChild(resSelect)
+        rformgrpDiv.appendChild(reslabel)
+        rformgrpDiv.appendChild(rcolDiv)
+
+        // document.getElementById("container").appendChild(label).appendChild(select);
+
+
+
+
+        document.getElementById("newRow").appendChild(mformgrpDiv)
+        document.getElementById("newRow").appendChild(rformgrpDiv)
 
 
     });

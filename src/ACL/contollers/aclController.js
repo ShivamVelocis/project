@@ -1,13 +1,14 @@
 const CONFIG = require("../configs/config");
 const rolemodel = require("../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
+const resourceModel = require('../models/resourcesModel');
 const {
   updateACLResBody,
   addACLReqBody,
   appendACL,
 } = require("../Utils/requestBodyHelper");
 
-const getAcl = async (req, res, _next) => {
+const getAcl = async (req, res, next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
@@ -22,7 +23,7 @@ const getAcl = async (req, res, _next) => {
   }
 };
 
-const getAcls = async (_req, res, _next) => {
+const getAcls = async (_req, res, next) => {
   try {
     let result = await aclModel.find();
     return res.render("ACL/views/list", {
@@ -36,13 +37,16 @@ const getAcls = async (_req, res, _next) => {
   }
 };
 
-const addACl = async (_req, res, _next) => {
+const addACl = async (_req, res, next) => {
   try {
+    let dbResourcesData = await resourceModel.find();
+    console.log(dbResourcesData);
     let dbRolesData = await rolemodel.find();
     return res.render("ACL/views/add", {
       title: CONFIG.ADD_ACL,
       module_title: CONFIG.MODULE_TITLE,
       results: dbRolesData,
+      resources:dbResourcesData
     });
   } catch (error) {
     next(error);
@@ -75,7 +79,7 @@ const postAddACl = async (req, res, next) => {
   }
 };
 
-const editACl = async (req, res, _next) => {
+const editACl = async (req, res, next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
@@ -90,7 +94,7 @@ const editACl = async (req, res, _next) => {
   }
 };
 
-const postEditACl = async (req, res, _next) => {
+const postEditACl = async (req, res, next) => {
   aclId = req.params.id;
   try {
     let aclDbData = await aclModel.findById(aclId);
@@ -108,7 +112,7 @@ const postEditACl = async (req, res, _next) => {
   }
 };
 
-const postDeletACl = async (req, res, _next) => {
+const postDeletACl = async (req, res, next) => {
   aclId = req.params.id;
   aclData = req.body;
   try {
