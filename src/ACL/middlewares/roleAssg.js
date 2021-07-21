@@ -1,4 +1,4 @@
-const { validateToken, decodeToken } = require("../../utils/authHelper");
+const { validateToken, decodeToken } = require("../Utils/authHelper");
 const userModel = require("../../users/models/userModel");
 const roleModel = require("../../roleManagement/models/rolemodel");
 let roleAssignment = async (req, res, next) => {
