@@ -1,11 +1,12 @@
 const bcrypt = require("bcrypt");
 const sharp = require('sharp');
 
-const { check, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const userModel = require("../models/userModel");
 const roleModel = require("./../../roleManagement/models/rolemodel");
 const CONFIG = require("./../configs/config");
 const { exportToExcel, generateHeaderRow } = require("../../utils/exportToExcel");
+const { exportToCSV } = require("../../utils/exportToCSV");
 
 exports.addUser = async function addUser(req, res, next){
   var form_data = {
@@ -270,13 +271,7 @@ exports.getProfilePicture = async (req, res) => {
 exports.getUsersExcel =async (req, res, next) =>{
   try {
     let contents = await userModel.find({}).select({name:1, username:1,email:1,user_status:1});
-    
-    // console.log(contents)
-    // console.log(generateHeaderRow(contents))
-
     if (contents.length > 0) {
-      // console.log()
-      // console.log(generateHeaderRow(contents))
     //   const data = contents.map(user => {
     //     let user_status = "";
     //     if (user.user_status) {
@@ -288,8 +283,7 @@ exports.getUsersExcel =async (req, res, next) =>{
     //         first_name: user.name.first_name,
     //         last_name: user.name.last_name,
     //         username: user.username,
-    //         email: user.email,
-    //         status: user_status
+    //         email: user.email
     //     };
     // });
     // console.log(data)
@@ -320,9 +314,9 @@ exports.getUsersExcel =async (req, res, next) =>{
     //     width: 15,
     //   },
     // ];
+  
       let [headerRow, restructureData] = generateHeaderRow(contents,["__v","_id","created_at","updated_at","token","role_id","password","profilePicture"])
       let excelBuffer = await exportToExcel(headerRow, restructureData,"Users")
-      // console.log(excelBuffer)
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
       res.setHeader("Content-Disposition", "attachment; filename=" + "UsersData.xlsx");
       res.send(excelBuffer);
@@ -332,5 +326,37 @@ exports.getUsersExcel =async (req, res, next) =>{
   } catch (error) {
     console.log(error)
     res.render("views/error/ErrorPage", { error: "Unable to get any content" });
+  }
+};
+
+exports.getUsersCsv = async (req, res, next) => {
+  try {
+    let contents = await userModel
+      .find({})
+      .select({ name: 1, username: 1, email: 1, user_status: 1 });
+    if (contents.length > 0) {
+      const data = contents.map((user) => {
+        let user_status = "";
+        if (user.user_status) {
+          user_status = "Active";
+        } else {
+          user_status = "Inactive";
+        }
+        return {
+          first_name: user.name.first_name,
+          last_name: user.name.last_name,
+          username: user.username,
+          email: user.email,
+        };
+      });
+
+      let csv = exportToCSV("", data);
+      res.attachment('customers.csv').send(csv)
+      // res.send(csv);
+    } else {
+      res.send("error");
+    }
+  } catch (error) {
+    res.send(error.message);
   }
 };

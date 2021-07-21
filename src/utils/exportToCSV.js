@@ -1,4 +1,4 @@
-import { Parser } from "json2csv";
+const { Parser }  =require("json2csv");
 
 
 /**
@@ -10,7 +10,25 @@ import { Parser } from "json2csv";
 
 
 const exportToCSV = (headerRow, data) => {
-  const json2csv = new Parser({ headerRow });
+  const fields = [
+        {
+          label: 'First Name',
+          value: 'first_name'
+        },
+        {
+          label: 'Last Name',
+          value: 'last_name'
+        },
+        {
+         label: 'Email Address',
+          value: 'email'
+        },
+        {
+          label: 'Username',
+           value: 'username'
+         }
+      ];
+  const json2csv = new Parser({ fields });
   const csv = json2csv.parse(data);
   return csv;
 };

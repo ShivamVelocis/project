@@ -54,4 +54,7 @@ router.get('/profile',isUserLoggedIn,authController.myprofile)
 //excel
 router.get('/excelExport',userController.getUsersExcel)
 
+//csv
+router.get('/csvExport',userController.getUsersCsv)
+
 module.exports = router;

@@ -1,204 +1,146 @@
+<!-- <script src="https://rawgit.com/unconditional/jquery-table2excel/master/src/jquery.table2excel.js"></script> -->
 
-    
-    
-    <!-- <script src="https://rawgit.com/unconditional/jquery-table2excel/master/src/jquery.table2excel.js"></script> -->
-    
-    <!-- <script lang="javascript" src="/scripts/xlsx/dist/xlsx.full.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
-    <script src="/scripts/exceljs/dist/exceljs.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script> -->
+<!-- <script lang="javascript" src="/scripts/xlsx/dist/xlsx.full.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
+    <script src="/scripts/exceljs/dist/exceljs.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+<div class="container">
+    <h2>
+        <%= module_title %>
+    </h2>
 
-    <div class="container">
-        <h2><%= module_title %></h2>
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%- messages.success %>
+        </div>
+        <% } %>
 
-        <% if (messages.success) { %>
-            <div class="alert alert-success" role="alert"><%- messages.success %></div>
-            <% } %>
-        
             <% if (messages.error) { %>
-            <div class="alert alert-danger" role="alert"><%- messages.error %></div>
-            <% } %>
+                <div class="alert alert-danger" role="alert">
+                    <%- messages.error %>
+                </div>
+                <% } %>
 
 
-            <div class="row justify-content-start">
-                
-                <div class="col">
-                   
-                   <div class="card"> 
-                    <div class="card-header">
-                        <div class="d-flex">
-                            <div class="p-2 mr-auto"><strong><%= title %></strong></div>
-                            <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="window.location =`/user/add`"> Add User </button></div>
-                            <!-- <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="exportToExcel()"> Export to Excel</button></div> -->
-                            
-                            <div class="p-2 ml-auto"><button type="button" id="excelexprt" class="btn"> <img src="https://img.icons8.com/material-outlined/24/000000/export-excel.png" id="excelexprt"/></button></div>
+                    <div class="row justify-content-start">
 
+                        <div class="col">
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex">
+                                        <div class="p-2 mr-auto"><strong>
+                                                <%= title %>
+                                            </strong></div>
+                                        <div class="p-2 ml-auto"><button type="button" class="btn btn-info"
+                                                onclick="window.location =`/user/add`"> Add User </button></div>
+                                        <!-- <div class="p-2 ml-auto"><button type="button" class="btn btn-info"
+                                                    onclick="window.location =`/user/csvexport`"> csv User </button></div> -->
+                                        <!-- <div class="p-2 ml-auto"><button type="button" class="btn btn-info" onclick="exportToExcel()"> Export to Excel</button></div> -->
+
+
+
+                                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                                            <div class="p-2 ml-auto"><button type="button" id="excelexport" class="btn"
+                                                    title="Download users excel file">
+                                                    <img src="https://img.icons8.com/material-outlined/24/000000/export-excel.png"
+                                                        id="excelexport" /></button></div>
+                                            <div class="p-2 ml-auto"><button type="button" id="excelCSV" class="btn"
+                                                    title="Download users CSV"> <img
+                                                        src="https://img.icons8.com/office/24/000000/csv.png" /></button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="card-body">
+
+
+
+                                    <% if(results.length>0) {%>
+                                        <table class="table" id="studtable">
+                                            <!-- Table header -->
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Username</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col" class="ignore">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <!-- Table body -->
+                                            <tbody>
+                                                <% results.map((result,i)=>{%>
+                                                    <tr>
+                                                        <th scope="row">
+                                                            <%= i+1%>
+                                                        </th>
+                                                        <td>
+                                                            <%= result.name.first_name%>
+                                                                <%= result.name.last_name%>
+                                                        </td>
+                                                        <td>
+                                                            <%= result.username%>
+                                                        </td>
+                                                        <td>
+                                                            <%= result.email%>
+                                                        </td>
+                                                        <td>
+                                                            <% if(result.user_status==1){ %> Active <% }else{ %>
+                                                                    Inactive <% } %>
+                                                        </td>
+                                                        <td class="ignore">
+                                                            <a class="btn btn-success edit"
+                                                                href="/user/update/<%=result._id%>">Edit</a>
+                                                            <a class="btn btn-info view"
+                                                                href="/user/view/<%=result._id%>">Info</a>
+                                                            <a href=""
+                                                                onclick="if(confirm('Do you want to delete this record?')) event.preventDefault(); document.getElementById('delete-<%=result._id%>').submit();"
+                                                                class="btn btn-danger">Delete</a>
+                                                            <form id="delete-<%=result._id%>" method="post"
+                                                                action="/user/delete/<%=result._id%>"
+                                                                style="display: none;">
+                                                                <input type="hidden" name="uid"
+                                                                    value="<%=result._id%>" />
+                                                            </form>
+                                                        </td>
+
+                                                    </tr>
+                                                    <%}) %>
+                                            </tbody>
+                                        </table>
+                                        <% } %>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                <div class="card-body">
-                   
-                    
-
-                   <% if(results.length>0) {%>
-                        <table class="table" id="studtable">
-                            <!-- Table header -->
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col" class="ignore">Actions</th>
-                                </tr>
-                            </thead>
-                            <!-- Table body -->
-                            <tbody>
-                                <% results.map((result,i)=>{%>
-                                    <tr>
-                                        <th scope="row"><%= i+1%></th>
-                                        <td><%= result.name.first_name%> <%= result.name.last_name%></td>
-                                        <td><%= result.username%></td>
-                                        <td><%= result.email%></td>
-                                        <td><% if(result.user_status==1){ %> Active <% }else{ %> Inactive <% } %></td>
-                                        <td class="ignore">
-                                            <a class="btn btn-success edit" href="/user/update/<%=result._id%>">Edit</a>
-                                            <a class="btn btn-info view" href="/user/view/<%=result._id%>">Info</a>                       
-                                            <a href="" onclick="if(confirm('Do you want to delete this record?')) event.preventDefault(); document.getElementById('delete-<%=result._id%>').submit();"  class="btn btn-danger">Delete</a>
-                                            <form id="delete-<%=result._id%>" method="post" action="/user/delete/<%=result._id%>" style="display: none;">
-                                                <input type="hidden" name="uid" value="<%=result._id%>"/>
-                                            </form>                      
-                                        </td>
-
-                                    </tr>
-                                    <%}) %>
-                            </tbody>
-                        </table>
-                        <% } %>
-                </div>
-            </div>
-            </div>
-            </div>
-        </div>
+</div>
 
 
-        <!-- <script>
-            let rawData = '<%-JSON.stringify(results) %>'
-            let users = JSON.parse(rawData);
-            const workSheetColumnName = ["First Name","Last Name","Username","Email","Status" ]
-            const workSheetName = 'Users';
-            const exportExcel = (data, workSheetColumnNames, workSheetName, filePath) => {
-            const workBook = XLSX.utils.book_new();
-            const workSheetData = [
-                workSheetColumnNames,
-                ... data
-            ];
-            const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
-            XLSX.utils.book_append_sheet(workBook, workSheet, workSheetName);
-            XLSX.writeFile(workBook, 'users.xlsb')
-             }
+<!-- Axios -->
+<script>
+    $("#excelexport").click(function () {
+        axios({ url: '/user/excelexport', responseEncoding: 'utf8', responseType: 'arraybuffer', }).then(res => {
 
-            const exportUsersToExcel = (users, workSheetColumnNames, workSheetName) => {
-                const data = users.map(user => {
-                    let user_status = "";
-                    if(user.user_status){
-                        user_status="Active"
-                    }else{
-                        user_status="Inactive"
-                    }
-                    return [user.name.first_name, user.name.last_name, user.username,user.email,user_status];
-            });
-            exportExcel(data, workSheetColumnNames, workSheetName);
+            if (res.status == 200) {
+                saveAs(new Blob([res.data]), `${Date.now()}_users.xlsx`)
             }
-
-            exportUsersToExcel(users,workSheetColumnName,workSheetName)
-        </script> -->
-
-<!-- Exceljs -->
-        <script>
-
-            $("#excelexprt").click(function(){
-                        const url = "/user/excelexport"
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-            });
-
-
-            let jsonData = '<%-JSON.stringify(results) %>'
-            let users = JSON.parse(jsonData);
-            const exportUsersToExcel = (users) => {
-                const data = users.map(user => {
-                    let user_status = "";
-                    if (user.user_status) {
-                        user_status = "Active"
-                    } else {
-                        user_status = "Inactive"
-                    }
-                    return {
-                        first_name: user.name.first_name,
-                        last_name: user.name.last_name,
-                        username: user.username,
-                        email: user.email,
-                        status: user_status
-                    };
-                });
-                return data
+        }).catch(error => {
+            alert(error.meessage)
+        })
+    })
+    $("#excelCSV").click(function () {
+        axios({ url: '/user/csvexport', responseEncoding: 'utf8', responseType: 'arraybuffer', }).then(res => {
+            if (res.status == 200) {
+                saveAs(new Blob([res.data]), `${Date.now()}_users.csv`)
             }
-            exportToExcel = ()=>{
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Users Data');
-            worksheet.columns = [{
-                    header: 'First Name',
-                    key: 'first_name',
-                    width: 20
-                },
-                {
-                    header: 'Last Name',
-                    key: 'last_name',
-                    width: 20
-                },
-                {
-                    header: 'Username',
-                    key: 'username',
-                    width: 15,
-                },
-                {
-                    header: 'Email',
-                    key: 'email',
-                    width: 30,
-                },
-                {
-                    header: 'Status',
-                    key: 'status',
-                    width: 15,
-                }
-            ];
-            let headerRow = worksheet.getRow(1)
-            headerRow.eachCell(function(cell, colNumber) {
-                cell.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: {
-                        argb: 'cccccc'
-                    }
-                }
-            });
-            let data = exportUsersToExcel(users)
-            data.map(user => {
-                worksheet.addRow(user);
-            })
-            workbook.xlsx.writeBuffer()
-                .then(buffer => saveAs(new Blob([buffer]), `${Date.now()}_users.xlsx`))
-                .catch(err => console.log('Error writing excel export', err))
-            }
-            
+        }).catch(error => {
+            alert(error.meessage)
+        })
+    })
 
-
-
-        </script>
-
+</script>
