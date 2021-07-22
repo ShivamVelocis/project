@@ -103,6 +103,7 @@ const appendACL = (dbData, newData) => {
   return newObj;
 };
 
+//request body validator
 const requestBodyValidator = (reqBody) => {
   if (!reqBody["role"]) {
     throw new Error("Please select role name.");
