@@ -177,10 +177,10 @@
 
 
 
-    let data = '<%-JSON.stringify(resources)%>'
+    let data = '<%-JSON.stringify(resources)%>'//data from server
     let resourecesData = JSON.parse(data)
     var resForSlctModule = []
-    let moduleList = resourecesData.map(item => item.module_name)
+    let moduleList = resourecesData.map(item => item.module_name)//modules list
     //select change detection
 
     $(document).on('change', 'select', function () {

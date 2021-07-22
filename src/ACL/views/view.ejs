@@ -31,12 +31,14 @@
                             <label for="role" class="col col-form-label">Role Name</label>
                             <div class="col">
                                 <select class="form-control" id="role" name="role" disabled>
-                                    <option value="<%=results.role%>"><%=results.role.replace(/^./, str => str.toUpperCase()) %></option>
+                                    <option value="<%=results.role%>">
+                                        <%=results.role.replace( /^./, str=> str.toUpperCase()) %>
+                                    </option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <% if(results.allowedResources.length>0){ %>
+                    <% if(results && results.allowedResources.length>0){ %>
                         <h3>Allowed Resources</h3>
                         <% results.allowedResources.map(resource=>{%>
 
@@ -66,7 +68,7 @@
                                 </div>
                             </div>
                             <% })} %>
-                                <% if(results.denyResources.length>0){ %>
+                                <% if(results && results.denyResources.length>0){ %>
 
                                     <h3>Denied Resources</h3>
                                     <% results.denyResources.map(resource=>{%>
@@ -97,8 +99,17 @@
                                             </div>
                                         </div>
                                         <% }) }%>
+                                            <% if(results.allowedResources.length<=0 &&
+                                                results.denyResources.length<=0){%>
+                                                <div class="col form-group">
+                                                    <div class="col">
+                                                        <h3>No record found for <%=results.role%>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <%} %>
 
-                                            <!-- <div class="row">
+                                                    <!-- <div class="row">
                     <div class="col form-group">
                         <div class="col">
                             <button type="submit" class="btn btn-primary">Submit</button>
