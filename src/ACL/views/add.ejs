@@ -197,29 +197,6 @@
         })
     });
 
-
-
-
-    // $(document).ready(function () {
-    //     $('select').change(function () {
-    //         let selectedModule = $(this).find("option:selected").attr('value')
-    //         let i = $(this).attr('id').slice(-1);
-    //         console.log(i)
-    //         resourecesData.map(resource => {
-    //             if (resource.module_name == selectedModule) {
-    //                 $(`#resources${i}`).children('option:not(:first)').remove();
-    //                 $.each(resource.resources, function (index, item) {
-    //                     $(`#resources${i}`).append($('<option>', {
-    //                         value: item.resource_path,
-    //                         text: item.resource_name
-    //                     }));
-    //                 });
-    //             }
-    //         })
-
-    //     });
-    // });
-
     // add row
     let i = 1;
     $("#addRow").click(function () {
@@ -376,14 +353,10 @@
     });
 
 
-    //tooltip
-    $('#rtt').tooltip({
-        html: true,
-        position: { my: "left+15 center", at: "right center" },
-        title: "user/auth/ or content/*"
-    })
-    // $('#mtt').tooltip({
+    // //tooltip
+    // $('#rtt').tooltip({
     //     html: true,
-    //     title: "Atleast a method must be selected."
+    //     position: { my: "left+15 center", at: "right center" },
+    //     title: "user/auth/ or content/*"
     // })
 </script>

@@ -40,7 +40,7 @@ const getAcls = async (_req, res, next) => {
 const addACl = async (_req, res, next) => {
   try {
     let dbResourcesData = await resourceModel.find();
-    console.log(dbResourcesData);
+    // console.log(dbResourcesData);
     let dbRolesData = await rolemodel.find();
     return res.render("ACL/views/add", {
       title: CONFIG.ADD_ACL,
@@ -56,6 +56,7 @@ const addACl = async (_req, res, next) => {
 
 const postAddACl = async (req, res, next) => {
   try {
+    console.log(req.body)
     let dbData = await aclModel.findOne({ role: req.body.role });
     if (dbData) {
       let aclData = appendACL(dbData, req.body);
