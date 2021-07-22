@@ -91,7 +91,7 @@
                                         </div>
                                     </div>
 
-                                    <div class=" row">
+                                    <div class=" row" id="inputFormRow">
                                         <div class="col form-group">
                                             <label for="resource_path" class="col col-form-label "
                                                 id='rtt'>Module</label>
@@ -108,45 +108,43 @@
                                             </div>
                                         </div>
 
-                                        <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label "
-                                                id='rtt'>Resource</label>
-                                            <div class="col">
-                                                <select class="form-control" id="resources1" name="resources1">
-                                                    <option value="">--Select--</option>
-                                                </select>
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col form-group">
+                                                    <label for="resource_path" class="col col-form-label "
+                                                        id='rtt'>Resource</label>
+                                                    <div class="col">
+                                                        <select class="form-control" id="resources1" name="resources1">
+                                                            <option value="">--Select--</option>
+                                                        </select>
 
+                                                    </div>
+                                                </div>
+                                                <div class="col form-group">
+                                                    <label for="resource_path" class="col col-form-label"
+                                                        id='mtt'>Methods</label>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" value="GET"
+                                                            name="methods1" id="getCheck" checked>
+                                                        <label class="form-check-label" for="getCheck">
+                                                            GET
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" value="POST"
+                                                            name="methods1" id="postCheck">
+                                                        <label class="form-check-label" for="postCheck">
+                                                            POST
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <button type="button" class="btn btn-danger mt-5" id="removeRow" disabled>Remove</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class=" row">
-                                        <div class="col form-group">
-                                            <div class="col">
-
-
-                                            </div>
-                                        </div>
-
-                                        <div class="col form-group">
-                                            <label for="resource_path" class="col col-form-label"
-                                                id='mtt'>Methods</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="GET"
-                                                    name="methods1" id="getCheck" checked>
-                                                <label class="form-check-label" for="getCheck">
-                                                    GET
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="POST"
-                                                    name="methods1" id="postCheck">
-                                                <label class="form-check-label" for="postCheck">
-                                                    POST
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="newRow" class=" row"></div>
+                                    <div id="newRow"></div>
 
                                     <div class="row">
                                         <div class="col form-group">
@@ -174,7 +172,7 @@
 
 <script type="text/javascript">
 
-  
+
 
 
     let data = '<%-JSON.stringify(resources)%>'
@@ -187,16 +185,16 @@
         let selectedModule = $(this).find("option:selected").attr('value')
         let i = $(this).attr('id').slice(-1);
         resourecesData.map(resource => {
-                if (resource.module_name == selectedModule) {
-                    $(`#resources${i}`).children('option:not(:first)').remove();
-                    $.each(resource.resources, function (index, item) {
-                        $(`#resources${i}`).append($('<option>', {
-                            value: item.resource_path,
-                            text: item.resource_name
-                        }));
-                    });
-                }
-            })
+            if (resource.module_name == selectedModule) {
+                $(`#resources${i}`).children('option:not(:first)').remove();
+                $.each(resource.resources, function (index, item) {
+                    $(`#resources${i}`).append($('<option>', {
+                        value: item.resource_path,
+                        text: item.resource_name
+                    }));
+                });
+            }
+        })
     });
 
 
@@ -230,34 +228,52 @@
         if (i >= 5) {
             $("#addRow").prop('disabled', true)
         }
+        // Parent row---------------------------------
+        var row = document.createElement('div')
+        row.className = "row"
+        row.id = "inputFormRow"
+        // Module select-------------------------------
 
-        // Module select
+        // form group div-----------------------------
         var mformgrpDiv = document.createElement('div')
         mformgrpDiv.className = "col form-group"
+        // column ------------------------------------
         var mcolDiv = document.createElement('div')
         mcolDiv.className = "col"
+        //select-----------------------
         var moduleValues = ["", ...moduleList];
         var moduleSelect = document.createElement("select");
         moduleSelect.name = "module" + i;
         moduleSelect.id = "module" + i
         moduleSelect.className = "form-control"
-
+        // option for select-------------------------
         for (const val of moduleValues) {
             var option = document.createElement("option");
             option.value = val;
             option.text = val == "" ? "--Select--" : val;
             moduleSelect.appendChild(option);
         }
-
+        // main label for module select------------------------------
         var modulelabel = document.createElement("label");
         modulelabel.className = "col col-form-label"
         modulelabel.innerHTML = "Module"
         modulelabel.htmlFor = "module" + i;
+        // appended select to column----------
         mcolDiv.appendChild(moduleSelect)
+        // appended label to form group----------
         mformgrpDiv.appendChild(modulelabel)
+        // added column to form group -------------
         mformgrpDiv.appendChild(mcolDiv)
 
+
+
+
         // Resources select
+        var rParentCol = document.createElement('div')
+        rParentCol.className = "col"
+        var rParentRow = document.createElement('div')
+        rParentRow.className = "row"
+
         var rformgrpDiv = document.createElement('div')
         rformgrpDiv.className = "col form-group"
         var rcolDiv = document.createElement('div')
@@ -280,17 +296,72 @@
         reslabel.className = "col col-form-label"
         reslabel.innerHTML = "Resources"
         reslabel.htmlFor = "resources" + i;
+// methods 
+
+
+// Label
+        var methodsformgrpDiv = document.createElement('div')
+        methodsformgrpDiv.className = "col form-group"
+        var mathodLable = document.createElement('label')
+        mathodLable.className = "col col-form-label"
+        mathodLable.innerHTML = "Methods"
+        mathodLable.htmlFor = "methods" + i;
+        methodsformgrpDiv.appendChild(mathodLable)
+// check box
+        var checkboxs = ["GET","POST"]
+       for (const checkbox of checkboxs){
+        var MethodDiv = document.createElement('div')
+        MethodDiv.className = "form-check form-check-inline"
+        var MethodInput = document.createElement('input')
+        MethodInput.className = "form-check-input"
+        MethodInput.type ="checkbox"
+        MethodInput.value = checkbox
+        MethodInput.name = "methods"+i
+        MethodInput.id = checkbox+"check"
+        var MethodLabel =document.createElement('label')
+        MethodLabel.className = "form-check-label"
+        MethodLabel.for = checkbox+"check"
+        MethodLabel.innerHTML = checkbox
+        MethodDiv.appendChild(MethodInput)
+        MethodDiv.appendChild(MethodLabel)
+        methodsformgrpDiv.appendChild(MethodDiv)
+       }
+
+//remove button
+
+        var removeBtnDiv = document.createElement('div')
+        removeBtnDiv.className = "col"
+        var removeBtn = document.createElement('div')
+        removeBtn.className = "btn btn-danger mt-5"
+        removeBtn.type = "button"
+        removeBtn.id = "removeRow"
+        removeBtn.innerHTML = "Remove"
+        removeBtnDiv.appendChild(removeBtn)
+
+
+
         rcolDiv.appendChild(resSelect)
         rformgrpDiv.appendChild(reslabel)
         rformgrpDiv.appendChild(rcolDiv)
 
-        // document.getElementById("container").appendChild(label).appendChild(select);
+
+        rParentRow.appendChild(rformgrpDiv)
+        rParentRow.appendChild(methodsformgrpDiv)
+        rParentRow.appendChild(removeBtnDiv)
+        rParentCol.appendChild(rParentRow)
 
 
 
 
-        document.getElementById("newRow").appendChild(mformgrpDiv)
-        document.getElementById("newRow").appendChild(rformgrpDiv)
+
+
+
+
+        // appended form group dev of module and resources to column
+        row.appendChild(mformgrpDiv)
+        row.appendChild(rParentCol)
+        // appended final row to newRow div in body 
+        document.getElementById("newRow").appendChild(row)
 
 
     });
