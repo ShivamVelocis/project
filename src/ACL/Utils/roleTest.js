@@ -7,7 +7,7 @@ const CONFIG = require("../configs/config");
 /**
  * check resource user want to access.
  * @param {Array} resource List of resources allowed.
- * @param {string} rawPath Resource user want to access.
+ * @param {string} resourceToBeAccess Resource user want to access.
  * @param {string} method Request method user want to access.
  * @return {boolean} if allowed return True else False.
  */
@@ -85,7 +85,7 @@ const denyResource = (resource, resourceToBeAccess, method) => {
   let path =
     resourceToBeAccess.substring(resourceToBeAccess.length - 1) == "/"
       ? resourceToBeAccess.slice(0, resourceToBeAccess.length - 1)
-      : rawPath;
+      : resourceToBeAccess;
   let pathArray = lodash.remove(path.split("/"), (n) => !!n);
   let i = 0;
   let subPath = pathArray[0];
