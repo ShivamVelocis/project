@@ -5,9 +5,9 @@ let resourcesSchema = new mongoose.Schema(
     module_name: String,
     resources: [
       {
-        resource_name: String,
-        resource_path: String,
-        resource_status: String,
+        resource_name: { type: String },
+        resource_path: { type: String },
+        resource_status: { type: Number },
       },
     ],
   },
