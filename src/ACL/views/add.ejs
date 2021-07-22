@@ -125,15 +125,15 @@
                                                         id='mtt'>Methods</label>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="checkbox" value="GET"
-                                                            name="methods1" id="getCheck" checked>
-                                                        <label class="form-check-label" for="getCheck">
+                                                            name="methods1" id="GETcheck1">
+                                                        <label class="form-check-label" for="GETcheck1">
                                                             GET
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="checkbox" value="POST"
-                                                            name="methods1" id="postCheck">
-                                                        <label class="form-check-label" for="postCheck">
+                                                            name="methods1" id="POSTcheck1">
+                                                        <label class="form-check-label" for="POSTcheck1">
                                                             POST
                                                         </label>
                                                     </div>
@@ -187,6 +187,8 @@
         resourecesData.map(resource => {
             if (resource.module_name == selectedModule) {
                 $(`#resources${i}`).children('option:not(:first)').remove();
+                $(`#GETcheck${i}`).prop("checked", false) // Unchecks it
+                $(`#POSTcheck${i}`).prop("checked", false) // Unchecks it
                 $.each(resource.resources, function (index, item) {
                     $(`#resources${i}`).append($('<option>', {
                         value: item.resource_path,
@@ -209,6 +211,10 @@
         var row = document.createElement('div')
         row.className = "row"
         row.id = "inputFormRow"
+
+
+
+        
         // Module select-------------------------------
 
         // form group div-----------------------------
@@ -294,10 +300,10 @@
         MethodInput.type ="checkbox"
         MethodInput.value = checkbox
         MethodInput.name = "methods"+i
-        MethodInput.id = checkbox+"check"
+        MethodInput.id = checkbox+"check"+i
         var MethodLabel =document.createElement('label')
         MethodLabel.className = "form-check-label"
-        MethodLabel.for = checkbox+"check"
+        MethodLabel.for = checkbox+"check"+i
         MethodLabel.innerHTML = checkbox
         MethodDiv.appendChild(MethodInput)
         MethodDiv.appendChild(MethodLabel)
