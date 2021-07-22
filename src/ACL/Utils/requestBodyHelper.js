@@ -9,7 +9,7 @@ const updateACLResBody = (rawBody) => {
       let methods = [];
       let path = "";
       let lastDigit = key.split("").pop();
-      path = value;
+      path = value.toLowerCase();
       if (Array.isArray(rawBody[`methods${lastDigit}`])) {
         methods = rawBody[`methods${lastDigit}`];
       } else {
@@ -21,7 +21,7 @@ const updateACLResBody = (rawBody) => {
       let methods = [];
       let path = "";
       let lastDigit = key.split("").pop();
-      path = value;
+      path = value.toLowerCase();
       if (Array.isArray(rawBody[`dmethods${lastDigit}`])) {
         methods = rawBody[`methods${lastDigit}`];
       } else {
@@ -46,7 +46,7 @@ const addACLReqBody = (rawBody) => {
     let path = "";
 
     if (key.startsWith("resource") && value) {
-      path = value;
+      path = value.toLowerCase();
       if (Array.isArray(rawBody[`methods${i}`])) {
         methods = rawBody[`methods${i}`];
       } else {
