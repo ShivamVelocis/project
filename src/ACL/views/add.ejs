@@ -214,7 +214,7 @@
 
 
 
-        
+//1st column*******************************************************
         // Module select-------------------------------
 
         // form group div-----------------------------
@@ -250,7 +250,7 @@
 
 
 
-
+//2nd column*********************************************************
         // Resources select
         var rParentCol = document.createElement('div')
         rParentCol.className = "col"
@@ -267,7 +267,7 @@
         resSelect.name = "resources" + i;
         resSelect.id = "resources" + i
         resSelect.className = "form-control"
-
+        //option for resource
         for (const val of resourcesValues) {
             var option = document.createElement("option");
             option.value = val;
@@ -292,6 +292,7 @@
         methodsformgrpDiv.appendChild(mathodLable)
 // check box
         var checkboxs = ["GET","POST"]
+        // added checkbox in methods
        for (const checkbox of checkboxs){
         var MethodDiv = document.createElement('div')
         MethodDiv.className = "form-check form-check-inline"

@@ -1,4 +1,4 @@
-// restructure update acl rule request body data 
+// restructure update acl rule request body data
 const updateACLResBody = (rawBody) => {
   // console.log(rawBody);
   let aclData = {};
@@ -15,7 +15,6 @@ const updateACLResBody = (rawBody) => {
       } else {
         methods.push(rawBody[`methods${lastDigit}`]);
       }
-
       allowedResources.push({ path, methods });
     }
     if (key.startsWith("dresource") && value) {
@@ -28,15 +27,12 @@ const updateACLResBody = (rawBody) => {
       } else {
         methods.push(rawBody[`dmethods${lastDigit}`]);
       }
-
       denyResources.push({ path, methods });
     }
   }
-
   aclData = { allowedResources, denyResources };
   return aclData;
 };
-
 
 // Resturcture requestbody data  //Common function
 const addACLReqBody = (rawBody) => {
