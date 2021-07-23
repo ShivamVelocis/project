@@ -2,7 +2,7 @@ const CONFIG = require("../configs/config");
 
 // restructure update acl rule request body data
 const updateACLResBody = (rawBody) => {
-  console.log(rawBody);
+  // console.log(rawBody);
   updateACLRulRequestBodyValidator(rawBody);
   let aclData = {};
   let allowedResources = [];
@@ -102,7 +102,7 @@ const appendACL = (dbData, newData) => {
 
   newObj.allowedResources = newAllowedResources;
   newObj.denyResources = newDenyResources;
-  console.log(newObj);
+  // console.log(newObj);
   return newObj;
 };
 
