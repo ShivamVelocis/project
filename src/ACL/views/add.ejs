@@ -62,7 +62,6 @@
 
                             <div class="">
                                 <form name="addResorces" action="/acl/add" method="POST">
-
                                     <div class="row">
                                         <div class="col form-group">
                                             <label for="role" class="col col-form-label">Role Name</label>
@@ -335,7 +334,6 @@
         }
 
         //remove button
-
         var removeBtnDiv = document.createElement('div')
         removeBtnDiv.className = "col"
         var removeBtn = document.createElement('div')
@@ -345,32 +343,20 @@
         removeBtn.innerHTML = "Remove"
         removeBtnDiv.appendChild(removeBtn)
 
-
-
         rcolDiv.appendChild(resSelect)
         rformgrpDiv.appendChild(reslabel)
         rformgrpDiv.appendChild(rcolDiv)
-
 
         rParentRow.appendChild(rformgrpDiv)
         rParentRow.appendChild(methodsformgrpDiv)
         rParentRow.appendChild(removeBtnDiv)
         rParentCol.appendChild(rParentRow)
 
-
-
-
-
-
-
-
         // appended form group dev of module and resources to column
         row.appendChild(mformgrpDiv)
         row.appendChild(rParentCol)
         // appended final row to newRow div in body 
         document.getElementById("newRow").appendChild(row)
-
-
     });
 
     // remove row

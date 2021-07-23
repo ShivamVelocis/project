@@ -44,7 +44,6 @@
                                         <input type="text" class="form-control" id="resource_path"
                                             placeholder="Enter resource_path" name="resource1"
                                             value="<%=resource.path%>" disabled>
-
                                     </div>
                                 </div>
                                 <div class="col form-group">
@@ -57,18 +56,14 @@
                                                 <%=method %>
                                             </label>
                                         </div>
-
                                         <% }) %>
                                 </div>
                             </div>
                             <% })} %>
                                 <% if(results && results.denyResources.length>0){ %>
-
                                     <h3>Denied Resources</h3>
                                     <% results.denyResources.map(resource=>{%>
-
                                         <div class=" row">
-
                                             <div class="col form-group">
                                                 <label for="resource_path" class="col col-form-label">Resource</label>
                                                 <div class="col">
