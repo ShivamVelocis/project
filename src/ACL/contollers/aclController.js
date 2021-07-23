@@ -1,12 +1,8 @@
 const CONFIG = require("../configs/config");
 const rolemodel = require("../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
-const resourceModel = require('../models/resourcesModel');
-const {
-  updateACLResBody,
-  addACLReqBody,
-  appendACL,
-} = require("../Utils/requestBodyHelper");
+const resourceModel = require("../models/resourcesModel");
+const {updateACLResBody,addACLReqBody,appendACL} = require("../Utils/requestBodyHelper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -18,12 +14,12 @@ const getAcl = async (req, res, next) => {
       results: result,
     });
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };
 
-const getAcls = async (_req, res, next) => {
+const getAcls = async (req, res, next) => {
   try {
     let result = await aclModel.find();
     return res.render("ACL/views/list", {
@@ -32,31 +28,40 @@ const getAcls = async (_req, res, next) => {
       results: result,
     });
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };
 
-const addACl = async (_req, res, next) => {
+const addACl = async (req, res, next) => {
   try {
     let dbResourcesData = await resourceModel.find();
-    // console.log(dbResourcesData);
     let dbRolesData = await rolemodel.find();
-    return res.render("ACL/views/add", {
-      title: CONFIG.ADD_ACL,
-      module_title: CONFIG.MODULE_TITLE,
-      results: dbRolesData,
-      resources:dbResourcesData
-    });
+    if (dbResourcesData && dbRolesData) {
+      return res.render("ACL/views/add", {
+        title: CONFIG.ADD_ACL,
+        module_title: CONFIG.MODULE_TITLE,
+        results: dbRolesData,
+        resources: dbResourcesData,
+      });
+    } else {
+      req.flash("error", CONFIG.NO_RULE_FOUND);
+      return res.render("ACL/views/add", {
+        title: CONFIG.ADD_ACL,
+        module_title: CONFIG.MODULE_TITLE,
+        results: null,
+        resources: null,
+      });
+    }
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };
 
 const postAddACl = async (req, res, next) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     let dbData = await aclModel.findOne({ role: req.body.role });
     if (dbData) {
       let aclData = appendACL(dbData, req.body);
@@ -84,11 +89,20 @@ const editACl = async (req, res, next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
-    return res.render("ACL/views/edit", {
-      title: CONFIG.UPDATE_ACL,
-      module_title: CONFIG.MODULE_TITLE,
-      results: result,
-    });
+    if (result) {
+      return res.render("ACL/views/edit", {
+        title: CONFIG.UPDATE_ACL,
+        module_title: CONFIG.MODULE_TITLE,
+        results: result,
+      });
+    }else{
+      req.flash("error",CONFIG.NO_RULE_FOUND)
+      return res.render("ACL/views/edit", {
+        title: CONFIG.UPDATE_ACL,
+        module_title: CONFIG.MODULE_TITLE,
+        results: null,
+      });
+    }
   } catch (error) {
     next(error);
     console.log(error);
@@ -109,7 +123,9 @@ const postEditACl = async (req, res, next) => {
     res.redirect("/acl/");
   } catch (error) {
     // next(error);
-    console.log(error);
+    req.flash("error", error.message);
+    res.redirect(`/acl/edit/${aclId}`);
+    // console.log(error);
   }
 };
 
@@ -121,8 +137,8 @@ const postDeletACl = async (req, res, next) => {
     req.flash("success", CONFIG.ACL_DELETE_SUCCESS);
     res.redirect("/acl/");
   } catch (error) {
-    next(error);
-    console.log(error);
+    req.flash("error", error.message);
+    res.redirect(`/acl/delete/${aclId}`);
   }
 };
 

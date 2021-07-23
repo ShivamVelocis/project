@@ -10,6 +10,7 @@ const validateToken = (token) => {
   }
 };
 
+//generate JWT token
 const genrateJWTToken = async (userId, secretKey, expiresTime) => {
   // console.log(secretKey, expiresTime);
   let token = await jwt.sign(
@@ -24,11 +25,13 @@ const genrateJWTToken = async (userId, secretKey, expiresTime) => {
   return token;
 };
 
+//decode JWT token and return decode data
 const decodeToken = (token) => {
   let userData = jwt_decode(token);
   return { id: userData.userId };
 };
 
+// generate refresh token for logged users.
 const generaterefreshToken = async (token) => {
   let { id } = decodeToken(token);
   let refreshtoken = await genrateJWTToken(

@@ -47,7 +47,7 @@
                                 <% }) %>
                         </div>
                         <% } %>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col">
                                     <div class="alert alert-secondary" role="alert">
                                         <ul>
@@ -58,7 +58,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="">
                                 <form name="addResorces" action="/acl/add" method="POST">
@@ -79,16 +79,18 @@
                                             </div>
                                         </div>
 
-                                        <div class="col form-group">
-                                            <label for="status" class="col col-form-label">Permission</label>
-                                            <div class="col">
-                                                <select class="form-control" id="status" name="status">
-                                                    <option value="">--Select--</option>
-                                                    <option value="allowedResources">Allowed</option>
-                                                    <option value="denyResources">Deny</option>
-                                                </select>
+                                        <% if(resources){%>
+
+                                            <div class="col form-group">
+                                                <label for="status" class="col col-form-label">Permission</label>
+                                                <div class="col">
+                                                    <select class="form-control" id="status" name="status">
+                                                        <option value="">--Select--</option>
+                                                        <option value="allowedResources">Allowed</option>
+                                                        <option value="denyResources">Deny</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
                                     </div>
 
                                     <div class=" row" id="inputFormRow">
@@ -160,6 +162,8 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <%} %>
                                 </form>
                             </div>
                 </p>
@@ -181,8 +185,9 @@
     let resourecesData = JSON.parse(data)
     var resForSlctModule = []
     let moduleList = resourecesData.map(item => item.module_name)//modules list
-    //select change detection
 
+
+    //select change detection
     $(document).on('change', 'select', function () {
         let selectedModule = $(this).find("option:selected").attr('value')
         let i = $(this).attr('id').slice(-1);

@@ -20,7 +20,7 @@ let roleAssignment = async (req, res, next) => {
       res.locals.userRole = dbUserRole.title;
       return next();
     } else {
-      console.log("anonymous");
+      console.log("Anonymous user");
       res.locals.userRole = "anonymous";
       return next();
     }
