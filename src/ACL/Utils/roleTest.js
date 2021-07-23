@@ -123,9 +123,12 @@ const isPermitted = async (req, res, next) => {
   let userRole = res.locals.userRole;
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
-  let isAllowed =
-    allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
+  let isAllowed = false;
+  if(userRole && dbRoleData){
+    isAllowed = allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
     denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
+  }
+   
 
   if (isAllowed) return next();
 

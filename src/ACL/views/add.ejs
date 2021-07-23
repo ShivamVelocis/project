@@ -185,8 +185,9 @@
     let resourecesData = JSON.parse(data)
     var resForSlctModule = []
     let moduleList = resourecesData.map(item => item.module_name)//modules list
-    //select change detection
 
+
+    //select change detection
     $(document).on('change', 'select', function () {
         let selectedModule = $(this).find("option:selected").attr('value')
         let i = $(this).attr('id').slice(-1);
