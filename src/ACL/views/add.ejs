@@ -69,11 +69,11 @@
                                             <div class="col">
                                                 <select class="form-control" id="role" name="role">
                                                     <option value="">--Select--</option>
-                                                    <% if(results){results.map(role=>{%>
+                                                    <% if(results){results.map(role=>{if(role.status){%>
                                                         <option value="<%=role.title%>">
                                                             <%=role.title.replace( /^./, str=> str.toUpperCase())%>
                                                         </option>
-                                                        <% }) }%>
+                                                        <% }}) }%>
                                                             <option value="anonymous">Anonymous</option>
                                                 </select>
                                             </div>
