@@ -2,11 +2,7 @@ const CONFIG = require("../configs/config");
 const rolemodel = require("../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
 const resourceModel = require("../models/resourcesModel");
-const {
-  updateACLResBody,
-  addACLReqBody,
-  appendACL,
-} = require("../Utils/requestBodyHelper");
+const {updateACLResBody,addACLReqBody,appendACL} = require("../Utils/requestBodyHelper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
