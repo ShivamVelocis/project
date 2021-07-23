@@ -69,11 +69,11 @@
                                             <div class="col">
                                                 <select class="form-control" id="role" name="role">
                                                     <option value="">--Select--</option>
-                                                    <% if(results){results.map(role=>{%>
+                                                    <% if(results){results.map(role=>{if(role.status){%>
                                                         <option value="<%=role.title%>">
                                                             <%=role.title.replace( /^./, str=> str.toUpperCase())%>
                                                         </option>
-                                                        <% }) }%>
+                                                        <% }}) }%>
                                                             <option value="anonymous">Anonymous</option>
                                                 </select>
                                             </div>
@@ -209,10 +209,12 @@
                 $(`#GETcheck${i}`).prop("checked", false)
                 $(`#POSTcheck${i}`).prop("checked", false)
                 $.each(resource.resources, function (index, item) {
-                    $(`#resources${i}`).append($('<option>', {
-                        value: item.resource_path,
-                        text: item.resource_name
-                    }));
+                    if (item.resource_status == 1) {
+                        $(`#resources${i}`).append($('<option>', {
+                            value: item.resource_path,
+                            text: item.resource_name
+                        }));
+                    }
                 });
             }
         })

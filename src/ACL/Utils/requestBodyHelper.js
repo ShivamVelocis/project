@@ -1,10 +1,9 @@
 const CONFIG = require("../configs/config");
 
-
-
 // restructure update acl rule request body data
 const updateACLResBody = (rawBody) => {
   // console.log(rawBody);
+  updateACLRulRequestBodyValidator(rawBody);
   let aclData = {};
   let allowedResources = [];
   let denyResources = [];
@@ -40,7 +39,7 @@ const updateACLResBody = (rawBody) => {
 
 // Resturcture requestbody data  //Common function
 const addACLReqBody = (rawBody) => {
-  requestBodyValidator(rawBody);
+  addACLRulRequestBodyValidator(rawBody);
   let aclData = {};
   let allowedResources = [];
   let denyResources = [];
@@ -103,12 +102,12 @@ const appendACL = (dbData, newData) => {
 
   newObj.allowedResources = newAllowedResources;
   newObj.denyResources = newDenyResources;
-  console.log(newObj);
+  // console.log(newObj);
   return newObj;
 };
 
 //request body validator
-const requestBodyValidator = (reqBody) => {
+const addACLRulRequestBodyValidator = (reqBody) => {
   if (!reqBody["role"]) {
     throw new Error(CONFIG.ROLE_NOT_SELECTED);
   }
@@ -122,6 +121,27 @@ const requestBodyValidator = (reqBody) => {
     if (key.startsWith("module") && value) {
       let i = key.split("").pop();
       if (!reqBody[`methods${i}`] && !reqBody[`resource${i}`]) {
+        throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+      }
+    }
+  }
+  return;
+};
+
+const updateACLRulRequestBodyValidator = (reqBody) => {
+  for (const [key, value] of Object.entries(reqBody)) {
+    if ((key.startsWith("resource") || key.startsWith("aresource")) && !value) {
+      throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+    }
+    if (key.startsWith("resource") && value) {
+      let i = key.split("").pop();
+      if (!reqBody[`methods${i}`]) {
+        throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+      }
+    }
+    if (key.startsWith("dresource") && value) {
+      let i = key.split("").pop();
+      if (!reqBody[`dmethods${i}`]) {
         throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
       }
     }
