@@ -14,8 +14,8 @@ const getAcl = async (req, res, next) => {
       results: result,
     });
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };
 
@@ -28,8 +28,8 @@ const getAcls = async (req, res, next) => {
       results: result,
     });
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };
 
@@ -54,8 +54,8 @@ const addACl = async (req, res, next) => {
       });
     }
   } catch (error) {
-    next(error);
     console.log(error);
+    next(error);
   }
 };
 
