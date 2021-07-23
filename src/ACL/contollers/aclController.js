@@ -49,7 +49,7 @@ const addACl = async (req, res, next) => {
         resources: dbResourcesData,
       });
     } else {
-      req.flash("error", "No record found");
+      req.flash("error", CONFIG.NO_RULE_FOUND);
       return res.render("ACL/views/add", {
         title: CONFIG.ADD_ACL,
         module_title: CONFIG.MODULE_TITLE,
@@ -100,7 +100,7 @@ const editACl = async (req, res, next) => {
         results: result,
       });
     }else{
-      req.flash("error","No record found")
+      req.flash("error",CONFIG.NO_RULE_FOUND)
       return res.render("ACL/views/edit", {
         title: CONFIG.UPDATE_ACL,
         module_title: CONFIG.MODULE_TITLE,

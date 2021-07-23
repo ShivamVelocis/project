@@ -1,3 +1,7 @@
+const CONFIG = require("../configs/config");
+
+
+
 // restructure update acl rule request body data
 const updateACLResBody = (rawBody) => {
   // console.log(rawBody);
@@ -94,7 +98,7 @@ const appendACL = (dbData, newData) => {
     reqDataDenyPathArray.length > 0 &&
     y == reqDataDenyPathArray.length
   ) {
-    throw new Error("Rule already present in db");
+    throw new Error(CONFIG.RULE_ALREADY_ADDED);
   }
 
   newObj.allowedResources = newAllowedResources;
@@ -106,19 +110,19 @@ const appendACL = (dbData, newData) => {
 //request body validator
 const requestBodyValidator = (reqBody) => {
   if (!reqBody["role"]) {
-    throw new Error("Please select role name.");
+    throw new Error(CONFIG.ROLE_NOT_SELECTED);
   }
   if (!reqBody["status"]) {
     throw new Error("Please select Permission.");
   }
   for (const [key, value] of Object.entries(reqBody)) {
     if (key.startsWith("module") && !value) {
-      throw new Error("Please select atleast a Module");
+      throw new Error(CONFIG.MODULE_NOT_SELECTED);
     }
     if (key.startsWith("module") && value) {
       let i = key.split("").pop();
       if (!reqBody[`methods${i}`] && !reqBody[`resource${i}`]) {
-        throw new Error("Please select resource/method for selected Module(s)");
+        throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
       }
     }
   }
