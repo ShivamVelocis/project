@@ -26,7 +26,6 @@ exports.addUser = async function addUser(req, res, next){
   res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, formData: form_data, roles: roles, error: null });
 };
 
-
 exports.postAddUser = async function addUser(req, res, next) {
   try {
     var form_data = {
@@ -73,8 +72,6 @@ exports.postAddUser = async function addUser(req, res, next) {
       res.render("users/views/add", { title: CONFIG.ADD_TITLE, module_title: CONFIG.MODULE_TITLE, error: error });
   }
 };
-
-
 
 exports.updateUser = async (req, res) => {
   let id = req.params.id;
@@ -137,8 +134,6 @@ exports.postUpdateUser = async (req, res) => {
   }
 }
 }
-
-
 
 //render user with given ID
 exports.getUser = async function getUser(req, res, next) {
@@ -206,8 +201,6 @@ exports.removeContent = async (req, res) => {
   }
 };
 
-
-
 // render upload profile picture page for user  with given id
 exports.uploadProfilePicture = async (req, res) => {
   let userId = req.params.id;
@@ -267,7 +260,6 @@ exports.getProfilePicture = async (req, res) => {
   }
 };
 
-
 exports.getUsersExcel =async (req, res, next) =>{
   try {
     let contents = await userModel.find({}).select({name:1, username:1,email:1,user_status:1});
@@ -314,18 +306,22 @@ exports.getUsersExcel =async (req, res, next) =>{
     //     width: 15,
     //   },
     // ];
-  
-      let [headerRow, restructureData] = generateHeaderRow(contents,["__v","_id","created_at","updated_at","token","role_id","password","profilePicture"])
+    // res.status(500);
+    // res.send(null);
+      let [headerRow, restructureData] = generateHeaderRow(contents,["email","name"])
       let excelBuffer = await exportToExcel(headerRow, restructureData,"Users")
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
       res.setHeader("Content-Disposition", "attachment; filename=" + "UsersData.xlsx");
       res.send(excelBuffer);
     } else {
-      res.render("views/error/ErrorPage", { error: "No content added yet!" });
+      res.status(500)
+      res.send(null);
     }
   } catch (error) {
-    console.log(error)
-    res.render("views/error/ErrorPage", { error: "Unable to get any content" });
+    console.log(error);
+    res.status(500);
+    res.send(null);
+  
   }
 };
 

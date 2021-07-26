@@ -31,6 +31,7 @@ const exportToExcel = async (headerRow, data, sheetName) => {
   // .then((buffer) => saveAs(new Blob([buffer]), `${Date.now()}_users.xlsx`))
   // .catch((err) => console.log("Error writing excel export", err));
 };
+
 let reformatHeaderWord = (word) => {
   let words = word.split("_");
   let newWord = "";
@@ -39,13 +40,19 @@ let reformatHeaderWord = (word) => {
   });
   return newWord;
 };
-const generateHeaderRow = (data = [], ignoreKeys = []) => {
 
+/**
+ * Export data to Excel file
+ * @param {Array} data raw data for excel file.
+ * @param {Array} keysToBeInclude Column key to be added to Excel file.
+ * @return {Array} headerRow and restructureData .
+ */
+const generateHeaderRow = (data = [], keysToBeInclude = []) => {
   data = JSON.parse(JSON.stringify(data));
-  // console.log(data)
+
   let headerRow = [];
   for (const [key, value] of Object.entries(data[0])) {
-    if (!ignoreKeys.includes(key)) {
+    if (keysToBeInclude.includes(key)) {
       let newObj = {};
       newObj.header = reformatHeaderWord(key);
       newObj.key = key;

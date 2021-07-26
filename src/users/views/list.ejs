@@ -22,7 +22,12 @@
                     <%- messages.error %>
                 </div>
                 <% } %>
+                    <div class="alert alert-danger" role="alert" id="dwnFileError">
 
+                    </div>
+                    <div class="alert alert-success" role="alert" id="dwnFileSuccess">
+
+                    </div>
 
                     <div class="row justify-content-start">
 
@@ -123,24 +128,48 @@
 
 <!-- Axios -->
 <script>
+    $('#dwnFileError').hide();
+    $('#dwnFileSuccess').hide();
     $("#excelexport").click(function () {
         axios({ url: '/user/excelexport', responseEncoding: 'utf8', responseType: 'arraybuffer', }).then(res => {
 
             if (res.status == 200) {
                 saveAs(new Blob([res.data]), `${Date.now()}_users.xlsx`)
+                successMessage("File downloaded successfully")
+            } else {
+                errorMessage("Error encounter while downloading file")
             }
         }).catch(error => {
-            alert(error.meessage)
+            errorMessage("Error encounter while downloading file")
         })
     })
     $("#excelCSV").click(function () {
         axios({ url: '/user/csvexport', responseEncoding: 'utf8', responseType: 'arraybuffer', }).then(res => {
             if (res.status == 200) {
                 saveAs(new Blob([res.data]), `${Date.now()}_users.csv`)
+                successMessage("File downloaded successfully")
+            } else {
+                errorMessage("Error encounter while downloading file")
             }
         }).catch(error => {
-            alert(error.meessage)
+            errorMessage("Error encounter while downloading file")
         })
     })
 
+    function successMessage(message) {
+        $("#dwnFileSuccess").html(message);
+        $('#dwnFileSuccess').show();
+        setTimeout(function () {
+            $('#dwnFileSuccess').hide();
+        }, 5000);
+
+
+    }
+    function errorMessage(message) {
+        $("#dwnFileError").html(message);
+        $('#dwnFileError').show();
+        setTimeout(function () {
+            $('#dwnFileError').hide();
+        }, 5000);
+    }
 </script>
