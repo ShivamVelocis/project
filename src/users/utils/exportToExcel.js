@@ -33,10 +33,14 @@ const exportToExcel = async (headerRow, data, sheetName) => {
 };
 
 let reformatHeaderWord = (word) => {
-  let words = word.split("_");
+  let camelCase = lodash.camelCase(word)
+  console.log(camelCase)
+  let delimed = camelCase.replace(/([A-Z]+)/g, ",$1").replace(/^,/, "");
+  console.log(delimed)
+  let words = delimed.split(",");
   let newWord = "";
   words.map((word) => {
-    newWord += word.replace(/^./, (str) => str.toUpperCase()) + " ";
+    newWord += lodash.capitalize(word) + " ";
   });
   return newWord;
 };
@@ -56,7 +60,7 @@ const generateHeaderRow = (data = [], keysToBeInclude = []) => {
       let newObj = {};
       newObj.header = reformatHeaderWord(key);
       newObj.key = key;
-      newObj.width = JSON.stringify(value).length + 10;
+      newObj.width = JSON.stringify(value).length + 5;
       headerRow.push(newObj);
     }
   }
