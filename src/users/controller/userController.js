@@ -5,8 +5,8 @@ const { validationResult } = require("express-validator");
 const userModel = require("../models/userModel");
 const roleModel = require("./../../roleManagement/models/rolemodel");
 const CONFIG = require("./../configs/config");
-const { exportToExcel, generateHeaderRow } = require("../utils/exportToExcel");
-const { exportToCSV } = require("../utils/exportToCSV");
+const { exportDataToExcel, prepareDataForExcel } = require("../utils/exportToExcel");
+const { exportDataToCSV } = require("../utils/exportToCSV");
 
 exports.addUser = async function addUser(req, res, next) {
   var form_data = {
@@ -337,12 +337,13 @@ exports.getUsersExcel = async (req, res, next) => {
       // ];
       // res.status(500);
       // res.send(null);
-      let [headerRow, restructureData] = generateHeaderRow(contents, [
+      let [headerRow, restructureData] = prepareDataForExcel(contents, [
         "name",
         "username",
         "email",
+        "user_status"
       ]);
-      let excelBuffer = await exportToExcel(
+      let excelBuffer = await exportDataToExcel(
         headerRow,
         restructureData,
         "Users"
@@ -385,7 +386,7 @@ exports.getUsersCsv = async (req, res, next) => {
         };
       });
 
-      let csv = exportToCSV("", data);
+      let csv = exportDataToCSV("", data);
       res.attachment("customers.csv").send(csv);
       // res.send(csv);
     } else {

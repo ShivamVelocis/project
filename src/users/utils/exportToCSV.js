@@ -9,7 +9,7 @@ const { Parser }  =require("json2csv");
  */
 
 
-const exportToCSV = (headerRow, data) => {
+const exportDataToCSV = (headerRow, data) => {
   const fields = [
         {
           label: 'First Name',
@@ -33,7 +33,7 @@ const exportToCSV = (headerRow, data) => {
   return csv;
 };
 
-module.exports = { exportToCSV };
+module.exports = { exportDataToCSV };
 // const fields = [
 //     {
 //       label: 'First Name',

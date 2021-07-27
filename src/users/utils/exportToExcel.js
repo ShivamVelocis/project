@@ -8,7 +8,7 @@ const lodash = require("lodash");
  * @param {string} sheetName Excel sheet name.
  * @return {Buffer} return file buffer.
  */
-const exportToExcel = async (headerRow, data, sheetName) => {
+const exportDataToExcel = async (headerRow, data, sheetName) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
   worksheet.columns = headerRow;
@@ -51,7 +51,7 @@ let reformatHeaderWord = (word) => {
  * @param {Array} keysToBeInclude Column key to be added to Excel file.
  * @return {Array} headerRow and restructureData .
  */
-const generateHeaderRow = (data = [], keysToBeInclude = []) => {
+const prepareDataForExcel = (data = [], keysToBeInclude = []) => {
   data = JSON.parse(JSON.stringify(data));
 
   let headerRow = [];
@@ -60,7 +60,7 @@ const generateHeaderRow = (data = [], keysToBeInclude = []) => {
       let newObj = {};
       newObj.header = reformatHeaderWord(key);
       newObj.key = key;
-      newObj.width = JSON.stringify(value).length + 5;
+      newObj.width = JSON.stringify(value).length + 10;
       headerRow.push(newObj);
     }
   }
@@ -88,7 +88,7 @@ const generateHeaderRow = (data = [], keysToBeInclude = []) => {
   return [headerRow, restructureData];
 };
 
-module.exports = { exportToExcel, generateHeaderRow };
+module.exports = { exportDataToExcel, prepareDataForExcel };
 
 // [{
 //     header: 'First Name',
