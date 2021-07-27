@@ -46,7 +46,7 @@ let reformatHeaderWord = (word) => {
 };
 
 /**
- * Export data to Excel file
+ * PrepareData to for excel file
  * @param {Array} data raw data for excel file.
  * @param {Array} keysToBeInclude Column key to be added to Excel file.
  * @return {Array} headerRow and restructureData .

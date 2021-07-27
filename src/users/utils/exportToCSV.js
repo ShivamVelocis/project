@@ -10,6 +10,7 @@ const { Parser }  =require("json2csv");
 
 
 const exportDataToCSV = (headerRow, data) => {
+  // Header row
   const fields = [
         {
           label: 'First Name',
