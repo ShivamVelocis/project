@@ -7,29 +7,32 @@ const CONFIG = require("../configs/config");
 /**
  * check resource user want to access.
  * @param {Array} resource List of resources allowed.
- * @param {string} rawPath Resource user want to access.
+ * @param {string} resourceToBeAccess Resource user want to access.
  * @param {string} method Request method user want to access.
  * @return {boolean} if allowed return True else False.
  */
-const allowedResource = (resource, rawPath, method) => {
-  // console.log(resource, rawPath,method)
+const allowedResource = (resource, resourceToBeAccess, method) => {
+  // console.log(resource, resourceToBeAccess,method)
   let resourcePathIndex = null;
-  if (lodash.find(resource, ["path", rawPath])) {
-    resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
-    dbMethods = resource[resourcePathIndex].methods;
-    allowedMethods = dbMethods.includes(method);
-    return allowedMethods;
+  if (lodash.find(resource, ["path", resourceToBeAccess])) {
+    resourcePathIndex = lodash.findIndex(resource, [
+      "path",
+      resourceToBeAccess,
+    ]);
+    allowedMethods = resource[resourcePathIndex].methods;
+    isMethodsAllowed = allowedMethods.includes(method);
+    return isMethodsAllowed;
   }
   if (lodash.find(resource, ["path", "/*"])) {
     resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
-    dbMethods = resource[resourcePathIndex].methods;
-    allowedMethods = dbMethods.includes(method);
-    return allowedMethods;
+    allowedMethods = resource[resourcePathIndex].methods;
+    isMethodsAllowed = allowedMethods.includes(method);
+    return isMethodsAllowed;
   }
   let path =
-    rawPath.substring(rawPath.length - 1) == "/"
-      ? rawPath.slice(0, rawPath.length - 1)
-      : rawPath;
+    resourceToBeAccess.substring(resourceToBeAccess.length - 1) == "/"
+      ? resourceToBeAccess.slice(0, resourceToBeAccess.length - 1)
+      : resourceToBeAccess;
   let pathArray = lodash.remove(path.split("/"), (n) => !!n);
   let i = 0;
   let subPath = pathArray[0];
@@ -37,8 +40,8 @@ const allowedResource = (resource, rawPath, method) => {
     astrikPath = subPath + "/*";
     if (lodash.find(resource, ["path", astrikPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", astrikPath]);
-      dbMethods = resource[resourcePathIndex].methods;
-      return dbMethods.includes(method);
+      allowedMethods = resource[resourcePathIndex].methods;
+      return allowedMethods.includes(method);
     }
     i++;
     subPath = subPath + "/" + pathArray[i];
@@ -49,9 +52,8 @@ const allowedResource = (resource, rawPath, method) => {
     subPath = subPath + "/";
     if (lodash.find(resource, ["path", subPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", subPath]);
-      dbMethods = resource[resourcePathIndex].methods;
-      dbMethods = resource[resourcePathIndex].methods;
-      return dbMethods.includes(method);
+      allowedMethods = resource[resourcePathIndex].methods;
+      return allowedMethods.includes(method);
     }
     i++;
     subPath = subPath + pathArray[i];
@@ -65,28 +67,31 @@ const allowedResource = (resource, rawPath, method) => {
 /**
  * check resource user want to access.
  * @param {Array} resource List of resources allowed.
- * @param {string} rawPath Resource user want to access.
+ * @param {string} resourceToBeAccess Resource user want to access.
  * @param {string} method Request method user want to access.
  * @return {boolean} if allowed return True else False.
  */
-const denyResource = (resource, rawPath, method) => {
+const denyResource = (resource, resourceToBeAccess, method) => {
   let resourcePathIndex = null;
-  if (lodash.find(resource, ["path", rawPath])) {
-    resourcePathIndex = lodash.findIndex(resource, ["path", rawPath]);
-    dbMethods = resource[resourcePathIndex].methods;
-    denyMethods = dbMethods.includes(method);
-    return !denyMethods;
+  if (lodash.find(resource, ["path", resourceToBeAccess])) {
+    resourcePathIndex = lodash.findIndex(resource, [
+      "path",
+      resourceToBeAccess,
+    ]);
+    deniedMethods = resource[resourcePathIndex].methods;
+    isMethodDenied = deniedMethods.includes(method);
+    return !isMethodDenied;
   }
   if (lodash.find(resource, ["path", "/*"])) {
     resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
-    dbMethods = resource[resourcePathIndex].methods;
-    denyMethods = dbMethods.includes(method);
-    return !denyMethods;
+    deniedMethods = resource[resourcePathIndex].methods;
+    isMethodDenied = deniedMethods.includes(method);
+    return !isMethodDenied;
   }
   let path =
-    rawPath.substring(rawPath.length - 1) == "/"
-      ? rawPath.slice(0, rawPath.length - 1)
-      : rawPath;
+    resourceToBeAccess.substring(resourceToBeAccess.length - 1) == "/"
+      ? resourceToBeAccess.slice(0, resourceToBeAccess.length - 1)
+      : resourceToBeAccess;
   let pathArray = lodash.remove(path.split("/"), (n) => !!n);
   let i = 0;
   let subPath = pathArray[0];
@@ -94,8 +99,8 @@ const denyResource = (resource, rawPath, method) => {
     astrikPath = subPath + "/*";
     if (lodash.find(resource, ["path", astrikPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", astrikPath]);
-      dbMethods = resource[resourcePathIndex].methods;
-      return !dbMethods.includes(method);
+      deniedMethods = resource[resourcePathIndex].methods;
+      return !deniedMethods.includes(method);
     }
     i++;
     subPath = subPath + "/" + pathArray[i];
@@ -106,9 +111,8 @@ const denyResource = (resource, rawPath, method) => {
     subPath = subPath + "/";
     if (lodash.find(resource, ["path", subPath])) {
       resourcePathIndex = lodash.findIndex(resource, ["path", subPath]);
-      dbMethods = resource[resourcePathIndex].methods;
-      dbMethods = resource[resourcePathIndex].methods;
-      return !dbMethods.includes(method);
+      deniedMethods = resource[resourcePathIndex].methods;
+      return !deniedMethods.includes(method);
     }
     i++;
     subPath = subPath + pathArray[i];
@@ -125,33 +129,41 @@ const isPermitted = async (req, res, next) => {
   let userRole = res.locals.userRole;
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
-  let isAllowed =
-    allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
-    denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
-  
-  if (isAllowed) return next();
-
-  if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
-    if (
-      res.req.session.flash &&
-      res.req.session.flash.error &&
-      res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
-    ) {
-      return res.redirect(req.headers.referer);
-    }
-    req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
-    return res.redirect(req.headers.referer);
-  } else {
-    if (
-      res.req.session.flash &&
-      res.req.session.flash.error &&
-      res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
-    ) {
-      return res.redirect("/user/auth/login");
-    }
-    req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
-    return res.redirect("/user/auth/login");
+  let isAllowed = false;
+  if (userRole && dbRoleData) {
+    isAllowed =
+      allowedResource(
+        dbRoleData.allowedResources,
+        req.originalUrl,
+        req.method
+      ) && denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
   }
+
+  if (isAllowed) return next();
+  // console.log(req.headers.referer,  req.originalUrl)
+
+  // if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
+  //   if (
+  //     res.req.session.flash &&
+  //     res.req.session.flash.error &&
+  //     res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
+  //   ) {
+  //     return res.redirect(req.headers.referer);
+  //   }
+  //   req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
+  //   return res.redirect(req.headers.referer);
+  // } else {
+  //   if (
+  //     res.req.session.flash &&
+  //     res.req.session.flash.error &&
+  //     res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
+  //   ) {
+  //     return res.redirect("/user/auth/login");
+  //   }
+  //   req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
+  //   return res.redirect("/user/auth/login");
+  // }
+  res.render("ACL/views/errors/noaccess");
 };
 
 module.exports = { isPermitted };

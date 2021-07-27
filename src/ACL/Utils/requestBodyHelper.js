@@ -1,6 +1,9 @@
-// restructure update acl rule request body data 
+const CONFIG = require("../configs/config");
+
+// restructure update acl rule request body data
 const updateACLResBody = (rawBody) => {
   // console.log(rawBody);
+  updateACLRulRequestBodyValidator(rawBody);
   let aclData = {};
   let allowedResources = [];
   let denyResources = [];
@@ -9,50 +12,48 @@ const updateACLResBody = (rawBody) => {
       let methods = [];
       let path = "";
       let lastDigit = key.split("").pop();
-      path = value;
+      path = value.toLowerCase();
       if (Array.isArray(rawBody[`methods${lastDigit}`])) {
         methods = rawBody[`methods${lastDigit}`];
       } else {
         methods.push(rawBody[`methods${lastDigit}`]);
       }
-
       allowedResources.push({ path, methods });
     }
     if (key.startsWith("dresource") && value) {
       let methods = [];
       let path = "";
       let lastDigit = key.split("").pop();
-      path = value;
+      path = value.toLowerCase();
       if (Array.isArray(rawBody[`dmethods${lastDigit}`])) {
         methods = rawBody[`methods${lastDigit}`];
       } else {
         methods.push(rawBody[`dmethods${lastDigit}`]);
       }
-
       denyResources.push({ path, methods });
     }
   }
-
   aclData = { allowedResources, denyResources };
   return aclData;
 };
 
-
 // Resturcture requestbody data  //Common function
 const addACLReqBody = (rawBody) => {
+  addACLRulRequestBodyValidator(rawBody);
   let aclData = {};
   let allowedResources = [];
   let denyResources = [];
   for (const [key, value] of Object.entries(rawBody)) {
+    let i = key.split("").pop();
     let methods = [];
     let path = "";
+
     if (key.startsWith("resource") && value) {
-      let lastDigit = key.split("").pop();
-      path = value;
-      if (Array.isArray(rawBody[`methods${lastDigit}`])) {
-        methods = rawBody[`methods${lastDigit}`];
+      path = value.toLowerCase();
+      if (Array.isArray(rawBody[`methods${i}`])) {
+        methods = rawBody[`methods${i}`];
       } else {
-        methods.push(rawBody[`methods${lastDigit}`]);
+        methods.push(rawBody[`methods${i}`]);
       }
       if (rawBody["status"] == "allowedResources") {
         allowedResources.push({ path, methods });
@@ -90,14 +91,62 @@ const appendACL = (dbData, newData) => {
     }
   });
 
-  if (x == reqDataAllowedPathArray.length && y == reqDataDenyPathArray.length) {
-    throw new Error("Rule already present in db");
+  if (
+    x == reqDataAllowedPathArray.length &&
+    reqDataAllowedPathArray.length > 0 &&
+    reqDataDenyPathArray.length > 0 &&
+    y == reqDataDenyPathArray.length
+  ) {
+    throw new Error(CONFIG.RULE_ALREADY_ADDED);
   }
 
   newObj.allowedResources = newAllowedResources;
   newObj.denyResources = newDenyResources;
-  console.log(newObj);
+  // console.log(newObj);
   return newObj;
+};
+
+//request body validator
+const addACLRulRequestBodyValidator = (reqBody) => {
+  if (!reqBody["role"]) {
+    throw new Error(CONFIG.ROLE_NOT_SELECTED);
+  }
+  if (!reqBody["status"]) {
+    throw new Error("Please select Permission.");
+  }
+  for (const [key, value] of Object.entries(reqBody)) {
+    if (key.startsWith("module") && !value) {
+      throw new Error(CONFIG.MODULE_NOT_SELECTED);
+    }
+    if (key.startsWith("module") && value) {
+      let i = key.split("").pop();
+      if (!reqBody[`methods${i}`] && !reqBody[`resource${i}`]) {
+        throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+      }
+    }
+  }
+  return;
+};
+
+const updateACLRulRequestBodyValidator = (reqBody) => {
+  for (const [key, value] of Object.entries(reqBody)) {
+    if ((key.startsWith("resource") || key.startsWith("aresource")) && !value) {
+      throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+    }
+    if (key.startsWith("resource") && value) {
+      let i = key.split("").pop();
+      if (!reqBody[`methods${i}`]) {
+        throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+      }
+    }
+    if (key.startsWith("dresource") && value) {
+      let i = key.split("").pop();
+      if (!reqBody[`dmethods${i}`]) {
+        throw new Error(CONFIG.NO_RESOURCE_OR_METHOD);
+      }
+    }
+  }
+  return;
 };
 
 module.exports = { updateACLResBody, addACLReqBody, appendACL };
