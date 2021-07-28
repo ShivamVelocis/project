@@ -10,7 +10,7 @@ router.post("/", contentValidationRules(), isRequestValid, controller.addContent
 router.get("/all", controller.getContents);
 router.get("/:id", mongoIDValidationRules(),isRequestValid,controller.getContent);
 router.get("/update/:id", controller.contentToUpdate);
-router.post("/updateContent/:id",mongoIDValidationRules(),contentValidationRules(), isRequestValid, controller.updateContent);
+router.post("/update/:id",mongoIDValidationRules(),contentValidationRules(), isRequestValid, controller.updateContent);
 router.get("/remove/:id", mongoIDValidationRules(),isRequestValid,controller.removeContent);
 
 module.exports = router;

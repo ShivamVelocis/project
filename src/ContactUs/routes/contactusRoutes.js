@@ -8,7 +8,7 @@ router.post("/addcontactus", contentValidationRules(), validate, controller.addC
 router.get("/all", controller.getAllcontactus);
 router.get("/view/:id", mongoIDValidationRules(),validate,controller.getContactus);
 router.get("/update/:id", controller.contactusToUpdate);
-router.post("/updateContent/:id",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateContactus);
+router.post("/update/:id",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateContactus);
 router.get("/remove/:id", mongoIDValidationRules(),validate,controller.removeContactus);
 
 module.exports = router;
