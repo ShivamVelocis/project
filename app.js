@@ -76,8 +76,9 @@ app.use((req, res, next) => {
 
 app.use((error, req, res,next) => {
   console.log("Final error handle Middleware--->");
+  let main_menu = res.locals.main_menu || null
   res.status(error.status || 500);
-  res.render("views/error/ErrorPage", { error: error.message?error.message:error });
+  res.render("views/error/ErrorPage", { error: error.message?error.message:error,main_menu });
 });
 
 mongoose.connection.once('open', function callback () {

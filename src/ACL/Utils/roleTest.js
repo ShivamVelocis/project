@@ -15,7 +15,10 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
   // console.log(resource, resourceToBeAccess,method)
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    resourcePathIndex = lodash.findIndex(resource, ["path", resourceToBeAccess]);
+    resourcePathIndex = lodash.findIndex(resource, [
+      "path",
+      resourceToBeAccess,
+    ]);
     allowedMethods = resource[resourcePathIndex].methods;
     isMethodsAllowed = allowedMethods.includes(method);
     return isMethodsAllowed;
@@ -71,7 +74,10 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
 const denyResource = (resource, resourceToBeAccess, method) => {
   let resourcePathIndex = null;
   if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    resourcePathIndex = lodash.findIndex(resource, ["path", resourceToBeAccess]);
+    resourcePathIndex = lodash.findIndex(resource, [
+      "path",
+      resourceToBeAccess,
+    ]);
     deniedMethods = resource[resourcePathIndex].methods;
     isMethodDenied = deniedMethods.includes(method);
     return !isMethodDenied;
@@ -124,35 +130,40 @@ const isPermitted = async (req, res, next) => {
   let dbRoleData = await aclModel.findOne({ role: userRole });
 
   let isAllowed = false;
-  if(userRole && dbRoleData){
-    isAllowed = allowedResource(dbRoleData.allowedResources, req.originalUrl, req.method) &&
-    denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
+  if (userRole && dbRoleData) {
+    isAllowed =
+      allowedResource(
+        dbRoleData.allowedResources,
+        req.originalUrl,
+        req.method
+      ) && denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
   }
-   
 
   if (isAllowed) return next();
+  // console.log(req.headers.referer,  req.originalUrl)
 
-  if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
-    if (
-      res.req.session.flash &&
-      res.req.session.flash.error &&
-      res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
-    ) {
-      return res.redirect(req.headers.referer);
-    }
-    req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
-    return res.redirect(req.headers.referer);
-  } else {
-    if (
-      res.req.session.flash &&
-      res.req.session.flash.error &&
-      res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
-    ) {
-      return res.redirect("/user/auth/login");
-    }
-    req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
-    return res.redirect("/user/auth/login");
-  }
+  // if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
+  //   if (
+  //     res.req.session.flash &&
+  //     res.req.session.flash.error &&
+  //     res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
+  //   ) {
+  //     return res.redirect(req.headers.referer);
+  //   }
+  //   req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
+  //   return res.redirect(req.headers.referer);
+  // } else {
+  //   if (
+  //     res.req.session.flash &&
+  //     res.req.session.flash.error &&
+  //     res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
+  //   ) {
+  //     return res.redirect("/user/auth/login");
+  //   }
+  //   req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
+  //   return res.redirect("/user/auth/login");
+  // }
+  res.render("ACL/views/errors/noaccess");
 };
 
 module.exports = { isPermitted };
