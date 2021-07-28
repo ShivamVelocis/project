@@ -7,7 +7,7 @@ router.post("/addrole", contentValidationRules(), validate, controller.addRole);
 router.get("/all", controller.getAllRole);
 router.get("/view/:id",mongoIDValidationRules(),validate, controller.getRole);
 router.get("/update/:id", controller.roleToUpdate);
-router.post("/updateRole/:id",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateRole);
+router.post("/update/:id",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateRole);
 router.get("/deleterole/:id", mongoIDValidationRules(),validate, controller.removeRole);
 
 module.exports = router;
