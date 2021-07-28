@@ -63,6 +63,9 @@ app.use("/role", roleRoute);
 app.use("/contactus", contactusRoute);
 app.use("/feedback", feedbackRoute);
 app.use("/acl", aclRouter);
+app.get("/",(req,res)=>{
+  return res.render('views/home')
+})
 
 app.use((req, res, next) => {
   const error = new Error("URL not found");
