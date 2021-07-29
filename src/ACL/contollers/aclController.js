@@ -1,5 +1,6 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
+const { appendACL } = require("../Utils/helper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -29,13 +30,24 @@ const getAcls = async (req, res, next) => {
 };
 
 const addACl = async (req, res, next) => {
+
   try {
-    let acl = new aclModel(req.body);
-    let result = await acl.save();
+    let responseData;
+    let dbData = await aclModel.findOne({ role: req.body.role });
+    if (dbData) {
+      let result = appendACL(dbData, req.body);
+      responseData = await aclModel.findOneAndUpdate(
+        { role: req.body.role },
+        { $set: result }
+      );
+    } else {
+      let acl = new aclModel(req.body);
+      responseData = await acl.save();
+    }
     return res.json({
       status: true,
       message: CONFIG.ACL_ADD_SUCCESS,
-      data: result,
+      data: responseData,
     });
   } catch (error) {
     next(error);
@@ -44,10 +56,15 @@ const addACl = async (req, res, next) => {
 
 const editACl = async (req, res, next) => {
   aclId = req.body.id;
+
   try {
+    let dbACLData = await aclModel.findById(aclId);
+    let updatedData = appendACL(dbACLData, req.body);
     let updateACLRule = await aclModel.findByIdAndUpdate(
       aclId,
-      { $set: aclData },
+      {
+        $set: updatedData,
+      },
       { upsert: true }
     );
     return res.json({
