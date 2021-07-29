@@ -1,20 +1,18 @@
 const CONFIG = require("../configs/config");
-const rolemodel = require("../../roleManagement/models/rolemodel");
 const aclModel = require("../models/aclModel");
-const resourceModel = require("../models/resourcesModel");
-const {
-  updateACLResBody,
-  addACLReqBody,
-  appendACL,
-} = require("../Utils/requestBodyHelper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
   try {
     let result = await aclModel.findById(aclId);
     if (!result) {
-      return res.json({ status: true, message: "ACL Rule", data: result });
+      return res.json({
+        status: false,
+        message: "ACL Rule not available",
+        data: null,
+      });
     }
+    return res.json({ status: true, message: "ACL Rule", data: result });
   } catch (error) {
     next(error);
   }
@@ -30,38 +28,24 @@ const getAcls = async (req, res, next) => {
   }
 };
 
-const postAddACl = async (req, res, next) => {
+const addACl = async (req, res, next) => {
   try {
-    console.log(req.body);
-    let dbData = await aclModel.findOne({ role: req.body.role });
-    if (dbData) {
-      let aclData = appendACL(dbData, req.body);
-      await aclModel.findByIdAndUpdate(
-        dbData._id,
-        { $set: aclData },
-        { upsert: true }
-      );
-    } else {
-      let aclData = addACLReqBody(req.body);
-      let acl = new aclModel(aclData);
-      await acl.save();
-    }
+    let acl = new aclModel(req.body);
+    let result = await acl.save();
     return res.json({
       status: true,
       message: CONFIG.ACL_ADD_SUCCESS,
-      data: null,
+      data: result,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const postEditACl = async (req, res, next) => {
-  aclId = req.params.id;
+const editACl = async (req, res, next) => {
+  aclId = req.body.id;
   try {
-    let aclDbData = await aclModel.findById(aclId);
-    aclData = updateACLResBody(req.body, aclDbData.role);
-    await aclModel.findByIdAndUpdate(
+    let updateACLRule = await aclModel.findByIdAndUpdate(
       aclId,
       { $set: aclData },
       { upsert: true }
@@ -69,15 +53,15 @@ const postEditACl = async (req, res, next) => {
     return res.json({
       status: true,
       message: CONFIG.ACL_UPDATE_SUCESS,
-      data: null,
+      data: updateACLRule,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const postDeletACl = async (req, res, next) => {
-  aclId = req.params.id;
+const deletACl = async (req, res, next) => {
+  aclId = req.body.id;
   aclData = req.body;
   try {
     await aclModel.findByIdAndRemove(aclId);
@@ -92,9 +76,9 @@ const postDeletACl = async (req, res, next) => {
 };
 
 module.exports = {
-  postAddACl,
-  postEditACl,
-  postDeletACl,
+  addACl,
+  editACl,
+  deletACl,
   getAcls,
   getAcl,
 };

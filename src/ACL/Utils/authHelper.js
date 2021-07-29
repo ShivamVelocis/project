@@ -7,11 +7,11 @@ const isUserTokenValid = (req) => {
     if (!req.headers.authorization) {
       return false;
     }
-    const token = req.headers.authorization.split(" ")[1];
-    if (token === null) {
+    const accesstoken = req.headers.authorization.split(" ")[1];
+    if (accesstoken === null) {
       return false;
     }
-    let payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    let payload = jwt.verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
     if (!payload) {
       return false;
     }
