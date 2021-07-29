@@ -25,7 +25,8 @@ CONFIG.CHANGE_PASSWORD_SUCCESS = "Your password update with new password"
 // Validaton messages
 CONFIG.LOGIN_FAIL_MESSAGE = "Invalid Username or Password";
 CONFIG.LOGIN_SUCCESS_MESSAGE = "Logged in success";
-CONFIG.OTP_SUCCESS = "Check your inbox for the next steps. If you don't receive an email, and it's not in your spam folder this could mean you signed up with a different address.";
+// CONFIG.OTP_SUCCESS = "Check your inbox for the next steps. If you don't receive an email, and it's not in your spam folder this could mean you signed up with a different address.";
+CONFIG.OTP_SUCCESS = "OTP successfully send"
 CONFIG.NOT_REGISTER_USER = "Not a registered user";
 CONFIG.PASSWORD_SUCCESS_CHANGE = "Password changed successfully";
 CONFIG.FORGET_PASSWORD_LINK_EXPIRATED = "Link expired";

@@ -22,7 +22,7 @@ const isUserTokenValid = (req) => {
 };
 
 //generate JWT token
-const genrateJWTToken = async (payload, secretKey, expiresTime) => {
+const generateJWTToken = async (payload, secretKey, expiresTime) => {
   let token = await jwt.sign(payload, `${secretKey}`, {
     expiresIn: Number(expiresTime),
   });
@@ -40,7 +40,7 @@ const decodeToken = (token) => {
 // generate refresh token for logged users.
 const generaterefreshToken = async (token) => {
   let user = decodeToken(token);
-  let refreshtoken = await genrateJWTToken(
+  let refreshtoken = await generateJWTToken(
     user,
     process.env.ACCESS_TOKEN_SECRET,
     process.env.REFRESH_TOKEN_LIFE

@@ -173,8 +173,6 @@ exports.uploadProfilePicture = async (req, res) => {
     });
   }
 };
-
-
 exports.getProfilePicture = async (req, res) => {
   let userId = req.params.id;
   // console.log(userId)

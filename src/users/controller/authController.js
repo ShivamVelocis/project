@@ -1,11 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
-const {
-  genrateJWTToken,
-  validateToken,
-  decodeToken,
-} = require("../utils/auth");
+const {generateJWTToken,validateToken,decodeToken} = require("../utils/auth");
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 //  handler for login form and redirect to users after success login
@@ -35,7 +31,7 @@ exports.userLogin = async (req, res, next) => {
         userName: user.name.first_name,
         userRole: user.role_id,
       };
-      let token = await genrateJWTToken(
+      let token = await generateJWTToken(
         tokenPayload,
         process.env.ACCESS_TOKEN_SECRET,
         process.env.ACCESS_TOKEN_LIFE
@@ -76,19 +72,19 @@ exports.forgetPassword = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
     return res.json({
-      error: res.locals.validationError,
+      success: false,
+      message: res.locals.validationError,
       data: null,
-      message: null,
     });
   }
   try {
     let user = await userModel.findOne({ email: data.email });
     if (user !== null && user !== undefined) {
       let otp = Math.floor(1000 + Math.random() * 9000);
-      let token = await genrateJWTToken(
-        user.email,
+      let token = await generateJWTToken(
+        { userEmail: user.email },
         process.env.ACCESS_TOKEN_SECRET,
-        60 * 10
+        process.env.OTP_LIFE
       );
       let result = await userModel.findOneAndUpdate(
         { email: data.email },
@@ -99,25 +95,26 @@ exports.forgetPassword = async (req, res, next) => {
         // await mailOtp(data.email, otp, token);
         await sendOtpMail(data.email, otp, token);
         return res.json({
-          error: null,
-          data: null,
+          success: true,
           message: CONFIG.OTP_SUCCESS,
+          data: null
         });
       }
     } else {
       return res.json({
-        error: null,
-        data: null,
-        message: "OTP sent successfully",
+        success: true,
+          message: CONFIG.OTP_SUCCESS,
+          data: null
       });
     }
   } catch (error) {
+    console.log(error)
     next(error);
   }
 };
 
 // reset user password after valid OTP and URL
-exports.postOtpVerification = async (req, res, next) => {
+exports.otpVerification = async (req, res, next) => {
   let token = req.params.token;
   if (res.locals.validationError) {
     return res.json({
@@ -137,7 +134,7 @@ exports.postOtpVerification = async (req, res, next) => {
     }
     let userData = await decodeToken(token);
     let data = req.body;
-    let user = await userModel.findOne({ email: userData.userId });
+    let user = await userModel.findOne({ email: userData.userEmail });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
       return res.json({
@@ -151,7 +148,7 @@ exports.postOtpVerification = async (req, res, next) => {
       if (user.otp == data.otp) {
         let passwordHash = await bcrypt.hashSync(data.password, 10);
         await userModel.findOneAndUpdate(
-          { email: userData.userId },
+          { email: userData.userEmail },
           { $set: { otp: null, password: passwordHash, otpToken: null } },
           { upsert: true }
         );
@@ -186,8 +183,8 @@ exports.logOut = (req, res, next) => {
 
 //change password after user provide current and new password
 exports.changePassword = async (req, res, next) => {
-  let userId = req.params.id;
   let userData = req.body;
+  // console.log(userData)
   if (res.locals.validationError) {
     return res.json({
       success: false,
@@ -196,7 +193,7 @@ exports.changePassword = async (req, res, next) => {
     });
   }
   try {
-    let user = await userModel.findOne({ _id: userId });
+    let user = await userModel.findOne({ _id: userData.id });
     if (user != null && user != undefined) {
       let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
       await userModel.findOneAndUpdate(
@@ -209,6 +206,12 @@ exports.changePassword = async (req, res, next) => {
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
       });
+    }else{
+      return res.json({
+        success: false,
+        message: "Invalid user ID",
+        data: null,
+      });
     }
   } catch (err) {
     next(err);
@@ -216,8 +219,6 @@ exports.changePassword = async (req, res, next) => {
 };
 
 exports.changeMyPassword = async (req, res, next) => {
-  let userId = res.locals.user.userId;
-  let userData = req.body;
   if (res.locals.validationError) {
     return res.json({
       success: false,
@@ -226,6 +227,9 @@ exports.changeMyPassword = async (req, res, next) => {
     });
   }
   try {
+    let {userId} =decodeToken(res.locals.refreshAccessToken)
+    let userData = req.body;
+    
     let user = await userModel.findOne({ _id: userId });
     if (user != null && user != undefined) {
       let oldPasswordVerified = await bcrypt.compare(

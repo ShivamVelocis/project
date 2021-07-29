@@ -18,22 +18,17 @@ router.delete("/", mongoIDValidationRules(), isRequestValid , userController.rem
 router.post("/login", authController.userLogin); //genrate token and send to user in session also store in db
 router.get("/logout", authController.logOut); // destroy session and redirect to login page
 
-
+//change password
 router.post("/forgetpassword/",forgetpasswordEmailValidation(),isRequestValid, authController.forgetPassword); //add otp and token for url expiry to db and sent same to registered user if 
-router.post("/pwdreset/:token", otpPasswordValidationRule(),isRequestValid,authController.postOtpVerification); // reset user password if url not expired and redirect to login page
+router.post("/pwdreset/:token", otpPasswordValidationRule(),isRequestValid,authController.otpVerification); // reset user password if url not expired and redirect to login page
 
-router.post('/changepwd/:id',changePasswordValidationRule(),isRequestValid,authController.changePassword)
+router.post('/changepwd/',changePasswordValidationRule(),isRequestValid,authController.changePassword)
 router.post('/change-my-password/',changeMyPasswordValidationRule(),isRequestValid,authController.changeMyPassword)
 
 
 
 //upload profile Picture
-router.get('/upload/profile/:id',userController.uploadProfilePicture)
-router.post('/upload/profile/:id',uploadProfilePicture,userController.uploadProfilePicture)
 router.get('/profile/:id',userController.getProfilePicture)
-
-
-//myprofile
-// router.get('/profile',isUserLoggedIn,authController.myprofile)
+router.post('/profile/:id',uploadProfilePicture,userController.uploadProfilePicture)
 
 module.exports = router;

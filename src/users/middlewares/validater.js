@@ -127,11 +127,8 @@ exports.changeMyPasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
-      .withMessage(
-        "Password must contain at least one uppercase letter, one lowercase letter and one number"
-      )
       .custom((value, { req }) => {
+        console.log(value,req.body.newPassword)
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -159,11 +156,6 @@ exports.changePasswordValidationRule = () => {
       .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
-      .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
-      .withMessage(
-        "Password must contain at least one uppercase letter, one lowercase letter and one number"
-      )
       .bail()
       .custom((value, { req }) => {
         // console.log(value , req.body.newPassword)

@@ -9,7 +9,7 @@ let assignRole = async (req, res, next) => {
         res.locals.userRole = "anonymous";
         return next();
       }
-      res.locals.accessToken = generaterefreshToken(req.headers.authorization.split(" ")[1])
+      res.locals.refreshAccessToken = await generaterefreshToken(req.headers.authorization.split(" ")[1])
       res.locals.userRole = dbUserRole.title;
       return next();
     } else {
