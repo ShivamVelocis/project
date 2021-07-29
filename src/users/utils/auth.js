@@ -3,7 +3,7 @@ const jwt_decode = require("jwt-decode");
 
 // generate JWT token
 const generateJWTToken = async (payload, secretKey, expiresTime) => {
-  console.log(payload, secretKey, expiresTime);
+  // console.log(payload, secretKey, expiresTime);
   let token = await jwt.sign(payload, `${secretKey}`, {
     expiresIn: Number(expiresTime),
   });

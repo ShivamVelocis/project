@@ -1,5 +1,8 @@
 const { isUserTokenValid, decodeToken, generaterefreshToken } = require("../Utils/authHelper");
 const roleModel = require("../../roleManagement/models/rolemodel");
+
+
+
 let assignRole = async (req, res, next) => {
   try {
     if (isUserTokenValid(req)) {
@@ -18,6 +21,7 @@ let assignRole = async (req, res, next) => {
       return next();
     }
   } catch (error) {
+    console.log(error)
     res.locals.userRole = "anonymous";
     return next();
   }

@@ -3,6 +3,7 @@ const sharp = require("sharp");
 const { validationResult } = require("express-validator");
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
+const { decodeToken } = require("../utils/auth");
 
 exports.addUser = async function addUser(req, res, next) {
   try {
@@ -147,7 +148,8 @@ exports.removeUser = async (req, res) => {
 };
 
 exports.uploadProfilePicture = async (req, res) => {
-  let userId = req.params.id;
+  console.log("user profile");
+  let userId = req.body.id;
   if (req.file && req.file.buffer) {
     try {
       let file = await sharp(req.file.buffer)
@@ -173,18 +175,18 @@ exports.uploadProfilePicture = async (req, res) => {
     });
   }
 };
-exports.getProfilePicture = async (req, res) => {
-  let userId = req.params.id;
-  // console.log(userId)
+exports.getProfilePicture = async (req, res,next) => {
   try {
+    // let userId = req.body.id;
+    let { userId } = decodeToken(res.locals.refreshAccessToken);
     let user = await userModel.findOne({ _id: userId });
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
-      res.send(user.profilePicture);
+      return res.send(user.profilePicture);
     } else {
-      res.send(null);
+      return res.send(null);
     }
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };

@@ -9,7 +9,6 @@ const { uploadProfilePicture } = require("../utils/uploadHandler");
 
 //User management
 router.get("/", userController.getUsers); 
-router.get("/:id", mongoIDValidationRules(),userController.getUser); 
 router.post("/", userValidationRules.validateUserAdd, userController.addUser);
 router.put("/",updateUserValidationRules(),isRequestValid,userValidationRules.validateUserUpdate, userController.updateUser);
 router.delete("/", mongoIDValidationRules(), isRequestValid , userController.removeUser); 
@@ -27,8 +26,12 @@ router.post('/change-my-password/',changeMyPasswordValidationRule(),isRequestVal
 
 
 
-//upload profile Picture
-router.get('/profile/:id',userController.getProfilePicture)
-router.post('/profile/:id',uploadProfilePicture,userController.uploadProfilePicture)
+//Profile Picture
+router.get('/profile/',userController.getProfilePicture)
+router.post('/profile/',uploadProfilePicture,userController.uploadProfilePicture)
+
+
+//get user by id
+router.get("/:id", mongoIDValidationRules(),userController.getUser); 
 
 module.exports = router;

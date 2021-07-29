@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
 const {generateJWTToken,validateToken,decodeToken} = require("../utils/auth");
+const { responseHandler } = require("../utils/responseHandler");
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 //  handler for login form and redirect to users after success login
@@ -42,6 +43,7 @@ exports.userLogin = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
+        // return res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
         return res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,

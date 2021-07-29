@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
-const { isDate } = require("moment");
+// const { isDate } = require("moment");
 
 const isUserTokenValid = (req) => {
   try {
@@ -17,6 +17,7 @@ const isUserTokenValid = (req) => {
     }
     return true;
   } catch (err) {
+    console.log(err)
     return false;
   }
 };
