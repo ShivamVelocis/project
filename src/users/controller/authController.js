@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
 const {
@@ -9,21 +8,15 @@ const {
 } = require("../utils/auth");
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
-// render login page
-exports.login = (req, res, next) => {
-  res.render("users/views/auth/login", {
-    title: CONFIG.LOGIN_TITLE,
-    module_title: CONFIG.MODULE_TITLE,
-  });
-};
-
-// post handler for login form and redirect to users after success login
-exports.postLogin = async (req, res, next) => {
+//  handler for login form and redirect to users after success login
+exports.userLogin = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("loginData", req.body);
-    return res.redirect(`/user/auth/login`);
+    return res.json({
+      success: false,
+      message: res.locals.validationError,
+      data: null,
+    });
   }
   try {
     let user = await userModel.findOne({ email: data.email, user_status: 1 });
@@ -31,12 +24,19 @@ exports.postLogin = async (req, res, next) => {
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
-        req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
-        req.flash("loginData", req.body);
-        return res.redirect("/user/auth/login");
+        return res.json({
+          success: false,
+          message: CONFIG.LOGIN_FAIL_MESSAGE,
+          data: null,
+        });
       }
+      let tokenPayload = {
+        userId: user._id,
+        userName: user.name.first_name,
+        userRole: user.role_id,
+      };
       let token = await genrateJWTToken(
-        user._id,
+        tokenPayload,
         process.env.ACCESS_TOKEN_SECRET,
         process.env.ACCESS_TOKEN_LIFE
       );
@@ -46,35 +46,40 @@ exports.postLogin = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        req.flash("success", CONFIG.LOGIN_SUCCESS_MESSAGE);
-        req.session.token = token;
-        return res.redirect("/user/view");
+        return res.json({
+          success: true,
+          message: CONFIG.LOGIN_SUCCESS_MESSAGE,
+          data: null,
+          token:token
+        });
+      } else {
+        return res.json({
+          success: true,
+          message: CONFIG.LOGIN_SUCCESS_MESSAGE,
+          data: result,
+        });
       }
     } else {
-      req.flash("error", CONFIG.LOGIN_FAIL_MESSAGE);
-      req.flash("loginData", req.body);
-      return res.redirect("/user/auth/login");
+      return res.json({
+        success: false,
+        message: CONFIG.LOGIN_FAIL_MESSAGE,
+        data: null,
+      });
     }
   } catch (error) {
     next(error);
   }
 };
 
-// render forget password page for user email
-exports.forgetPassword = (req, res, next) => {
-  res.render("users/views/auth/forgetPwd", {
-    title: CONFIG.FORGET_PASSWORD_TITLE,
-    module_title: CONFIG.MODULE_TITLE,
-  });
-};
-
 // email OTP and URL for user for password reset
-exports.postForgetPassword = async (req, res, next) => {
+exports.forgetPassword = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("userData", req.body);
-    return res.redirect(`/user/forgetpassword/`);
+    return res.json({
+      error: res.locals.validationError,
+      data: null,
+      message: null,
+    });
   }
   try {
     let user = await userModel.findOne({ email: data.email });
@@ -92,38 +97,20 @@ exports.postForgetPassword = async (req, res, next) => {
       );
       if (result !== undefined && result !== null) {
         // await mailOtp(data.email, otp, token);
-        await sendOtpMail(data.email, otp, token)
-        req.flash("success", CONFIG.OTP_SUCCESS);
-        return res.redirect("/user/auth/login");
+        await sendOtpMail(data.email, otp, token);
+        return res.json({
+          error: null,
+          data: null,
+          message: CONFIG.OTP_SUCCESS,
+        });
       }
     } else {
-      req.flash("success", CONFIG.OTP_SUCCESS);
-      return res.redirect("/user/auth/login");
+      return res.json({
+        error: null,
+        data: null,
+        message: "OTP sent successfully",
+      });
     }
-  } catch (error) {
-    next(error);
-  }
-};
-//render form for user OTP and new password after validating URL
-
-exports.otpVerification = async (req, res, next) => {
-  try {
-    let token = req.params.token;
-    let userData = await userModel.findOne({ otpToken: token });
-    if (!userData) {
-      req.flash("error", CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
-      return res.redirect("/user/forgetpassword");
-    }
-    let isUrlTokenVal = await validateToken(token);
-    if (!isUrlTokenVal) {
-      req.flash("error", CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
-      return res.redirect("/user/forgetpassword");
-    }
-    return res.render("users/views/auth/otpValidation", {
-      data: token,
-      title: CONFIG.RESET_PASSWORD_TITLE,
-      module_title: CONFIG.MODULE_TITLE,
-    });
   } catch (error) {
     next(error);
   }
@@ -133,25 +120,32 @@ exports.otpVerification = async (req, res, next) => {
 exports.postOtpVerification = async (req, res, next) => {
   let token = req.params.token;
   if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("userData", req.body);
-    return res.redirect(`/user/pwdreset/${token}`);
+    return res.json({
+      success: false,
+      message:  res.locals.validationError,
+      data: null,
+    });
   }
   try {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
-      req.flash("error", CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
-      req.flash("userData", req.body);
-      return res.redirect("/user/forgetpassword");
+      return res.json({
+        success: false,
+        message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
+        data: null,
+      });
     }
     let userData = await decodeToken(token);
     let data = req.body;
     let user = await userModel.findOne({ email: userData.userId });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
-      req.flash("error",  CONFIG.FORGET_PASSWORD_LINK_EXPIRATED);
-      req.flash("userData", req.body);
-      return res.redirect("/user/forgetpassword");
+      return res.json({
+        success: false,
+        message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
+        data: null,
+      });
+      
     }
     if (user !== null && user !== undefined) {
       if (user.otp == data.otp) {
@@ -161,17 +155,24 @@ exports.postOtpVerification = async (req, res, next) => {
           { $set: { otp: null, password: passwordHash, otpToken: null } },
           { upsert: true }
         );
-        req.flash("success", CONFIG.PASSWORD_SUCCESS_CHANGE);
-        return res.redirect("/user/auth/login");
+        return res.json({
+          success: true,
+          message: CONFIG.PASSWORD_SUCCESS_CHANGE,
+          data: null,
+        });
       } else {
-        req.flash("error", CONFIG.WRONG_OTP);
-        req.flash("userData", req.body);
-        return res.redirect(`/user/pwdreset/${token}`);
+        return res.json({
+          success: false,
+          message: CONFIG.WRONG_OTP,
+          data: null,
+        });
       }
     } else {
-      req.flash("error", CONFIG.INVALID_EMAIL);
-      req.flash("userData", req.body);
-      return res.redirect(req.originalUrl);
+      return res.json({
+        success: false,
+        message: CONFIG.INVALID_EMAIL,
+        data: null,
+      });
     }
   } catch (error) {
     next(error);
@@ -183,80 +184,46 @@ exports.logOut = (req, res, next) => {
   return res.redirect("/user/auth/login");
 };
 
-// render change password page of logged in page
+//change password after user provide current and new password
 exports.changePassword = async (req, res, next) => {
   let userId = req.params.id;
+  let userData = req.body;
+  if (res.locals.validationError) {
+    return res.json({
+      success: false,
+      message: res.locals.validationError,
+      data: null,
+    });
+  }
   try {
     let user = await userModel.findOne({ _id: userId });
     if (user != null && user != undefined) {
-      res.render("users/views/auth/changePassword", {
-        title: "Change Password",
-        module_title: CONFIG.MODULE_TITLE,
-        userData: user._id,
+      let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
+      await userModel.findOneAndUpdate(
+        { _id: userId },
+        { $set: { password: newPasswordHash } },
+        { upsert: true }
+      );
+      return res.json({
+        success: false,
+        message: CONFIG.CHANGE_PASSWORD_SUCCESS,
+        data: null,
       });
-    }else{
-      req.flash("error",CONFIG.CHANGE_PASSWORD_ERROR )
-      res.redirect(`/user/view/${userId}`);
     }
-  } catch (error) {
-    next(error)
-  }
-};
-
-//change password after user provide current and new password
-exports.postChangePassword = async (req, res, next) => {
-  let userId = req.params.id;
-  let userData = req.body;
-  if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("userData", req.body);
-    return res.redirect(`/user/changepwd/${userId}`);
-  }
-  try {
-    let user = await userModel.findOne({ _id: userId });
-    if (user != null && user != undefined) {     
-        let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
-        await userModel.findOneAndUpdate(
-          { _id: userId },
-          { $set: { password: newPasswordHash } },
-          { upsert: true }
-        );
-        req.flash("success", CONFIG.CHANGE_PASSWORD_SUCCESS);
-        return res.redirect(`/user/view/${userId}`);
-      }
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
-
-exports.changeMyPassword =async (req,res,next)=>{
-  let userId =res.locals.user.userId
-  try {
-    let user = await userModel.findOne({ _id: userId });
-    if (user != null && user != undefined) {
-     return res.render("users/views/auth/changemyPassword", {
-        title: "Change Password",
-        module_title: CONFIG.MODULE_TITLE,
-        userData: user._id,
-      });
-    }else{
-      req.flash("error",CONFIG.CHANGE_PASSWORD_ERROR )
-      return res.redirect(`/user/view/`);
-    }
-  } catch (error) {
-    console.log("error")
-    next(error)
-  }
-}
-exports.postChangeMyPassword =async (req,res,next)=>{
+exports.changeMyPassword = async (req, res, next) => {
   let userId = res.locals.user.userId;
-  console.log(userId)
   let userData = req.body;
   if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("userData", req.body);
-    return res.redirect(`/user/change-my-password/`);
+    return res.json({
+      success: false,
+      message: res.locals.validationError,
+      data: null,
+    });
   }
   try {
     let user = await userModel.findOne({ _id: userId });
@@ -272,35 +239,19 @@ exports.postChangeMyPassword =async (req,res,next)=>{
           { $set: { password: newPasswordHash } },
           { upsert: true }
         );
-        req.flash("success", CONFIG.CHANGE_PASSWORD_SUCCESS);
-        return res.redirect(`/user/view/`);
+        return res.json({
+          success: true,
+          message: CONFIG.CHANGE_PASSWORD_SUCCESS,
+          data: null,
+        });
       }
-      req.flash("error", CONFIG.CHANGE_PASSWORD_ERROR);
-      req.flash("userData", req.body);
-      return res.redirect(`/user/change-my-password/`);
-    }
-  } catch (err) {
-    console.log("errors",err);
-  }
-}
-
-
-
-exports.myprofile =async (req,res,next)=>{
-  let user_Id = res.locals.user.userId;
-  try {
-    let result = await userModel.findById(user_Id);
-    if (result !== undefined && result !== null) {
-      return res.render("users/views/view", {
-        title: CONFIG.USER,
-        module_title: CONFIG.MODULE_TITLE,
-        results: result,
+      return res.json({
+        success: false,
+        message: CONFIG.CHANGE_PASSWORD_ERROR,
+        data: null,
       });
     }
-  } catch (error) {
-    res.render("views/error/ErrorPage", {
-      error: "Error while fecting content",
-    });
+  } catch (err) {
+    next(err);
   }
-  
-}
+};

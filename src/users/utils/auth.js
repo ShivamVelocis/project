@@ -3,11 +3,10 @@ const jwt_decode = require("jwt-decode");
 
 
 // generate JWT token 
-const genrateJWTToken = async (userId, secretKey, expiresTime) => {
+const genrateJWTToken = async (payload, secretKey, expiresTime) => {
+  // console.log({payload})
   let token = await jwt.sign(
-    {
-      userId: userId,
-    },
+    payload,
     `${secretKey}`,
     {
       expiresIn: Number(expiresTime),
@@ -20,25 +19,30 @@ const genrateJWTToken = async (userId, secretKey, expiresTime) => {
 // validates token provided by user
 const validateToken = (token) => {
   try {
+    
     return !!jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
   } catch (error) {
-    // console.log(error);
     return false;
   }
 };
 
 //extract user data from token for later use
 const decodeToken = (token) => {
-  return (userData = jwt_decode(token));
+  userData = jwt_decode(token)
+  delete userData.iat;
+  delete userData.exp
+  return userData;
   // return { id: userData.userId };
 };
 
 
 // generate new token for user so user remained logged in
 const generaterefreshToken = async (token) => {
+
   let user= decodeToken(token);
+  // console.log(user)
   let refreshtoken = await genrateJWTToken(
-    user.userId,
+    user,
     process.env.ACCESS_TOKEN_SECRET,
     process.env.REFRESH_TOKEN_LIFE
   );

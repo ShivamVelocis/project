@@ -17,4 +17,4 @@ connectToDB = async (url) => {
   }
 };
 
-connectToDB(dbPath);
+connectToDB("mongodb://localhost:27017/Vel");

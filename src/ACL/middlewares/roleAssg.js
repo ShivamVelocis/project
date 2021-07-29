@@ -1,22 +1,15 @@
-const { validateToken, decodeToken } = require("../Utils/authHelper");
-const userModel = require("../../users/models/userModel");
+const { isUserTokenValid, decodeToken, generaterefreshToken } = require("../Utils/authHelper");
 const roleModel = require("../../roleManagement/models/rolemodel");
-let roleAssignment = async (req, res, next) => {
-  // console.log(req.originalUrl)
-  // console.log(req.method)
+let assignRole = async (req, res, next) => {
   try {
-    if (req.session && req.session.token && validateToken(req.session.token)) {
-      let tokenUser = decodeToken(req.session.token);
-      let dbUser = await userModel.findOne({ _id: tokenUser.id });
-      if (!dbUser) {
-        res.locals.userRole = "anonymous";
-        return next();
-      }
-      let dbUserRole = await roleModel.findOne({ _id: dbUser.role_id });
+    if (isUserTokenValid(req)) {
+      let payload = decodeToken(req.headers.authorization.split(" ")[1]);
+      let dbUserRole = await roleModel.findOne({ _id: payload.userRole });
       if (!dbUserRole) {
         res.locals.userRole = "anonymous";
         return next();
       }
+      res.locals.accessToken = generaterefreshToken(req.headers.authorization.split(" ")[1])
       res.locals.userRole = dbUserRole.title;
       return next();
     } else {
@@ -25,11 +18,9 @@ let roleAssignment = async (req, res, next) => {
       return next();
     }
   } catch (error) {
-    console.log(error.message);
     res.locals.userRole = "anonymous";
-    req.flash("error", error.message);
-    res.redirect("/user/auth/login");
+    return next();
   }
 };
 
-module.exports = { roleAssignment };
+module.exports = { assignRole };

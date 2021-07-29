@@ -63,13 +63,13 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
 
 // -----------------------------------check allowed resources end----------------
 
-// -----------------------------------check allowed resources start----------------
+// -----------------------------------check deny resources start----------------
 /**
  * check resource user want to access.
- * @param {Array} resource List of resources allowed.
+ * @param {Array} resource List of resources deny.
  * @param {string} resourceToBeAccess Resource user want to access.
  * @param {string} method Request method user want to access.
- * @return {boolean} if allowed return True else False.
+ * @return {boolean} if deny return True else False.
  */
 const denyResource = (resource, resourceToBeAccess, method) => {
   let resourcePathIndex = null;
@@ -120,7 +120,7 @@ const denyResource = (resource, resourceToBeAccess, method) => {
   return true;
 };
 
-// -----------------------------------check allowed resources end----------------
+// -----------------------------------check deny resources end----------------
 
 // Middleware
 const isPermitted = async (req, res, next) => {
@@ -140,30 +140,7 @@ const isPermitted = async (req, res, next) => {
   }
 
   if (isAllowed) return next();
-  // console.log(req.headers.referer,  req.originalUrl)
-
-  // if (req.headers.referer && !req.headers.referer.endsWith(req.originalUrl)) {
-  //   if (
-  //     res.req.session.flash &&
-  //     res.req.session.flash.error &&
-  //     res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
-  //   ) {
-  //     return res.redirect(req.headers.referer);
-  //   }
-  //   req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
-  //   return res.redirect(req.headers.referer);
-  // } else {
-  //   if (
-  //     res.req.session.flash &&
-  //     res.req.session.flash.error &&
-  //     res.req.session.flash.error.includes(CONFIG.AUTH_FAIL_MESSAGE)
-  //   ) {
-  //     return res.redirect("/user/auth/login");
-  //   }
-  //   req.flash("error", CONFIG.AUTH_FAIL_MESSAGE);
-  //   return res.redirect("/user/auth/login");
-  // }
-  res.render("ACL/views/errors/noaccess");
+  res.json({error:"Not Authorized"});
 };
 
 module.exports = { isPermitted };

@@ -1,49 +1,55 @@
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
+const { isDate } = require("moment");
 
-const validateToken = (token) => {
+const isUserTokenValid = (req) => {
   try {
-    return !!jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  } catch (error) {
-    console.log(error);
+    if (!req.headers.authorization) {
+      return false;
+    }
+    const token = req.headers.authorization.split(" ")[1];
+    if (token === null) {
+      return false;
+    }
+    let payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if (!payload) {
+      return false;
+    }
+    return true;
+  } catch (err) {
     return false;
   }
 };
 
 //generate JWT token
-const genrateJWTToken = async (userId, secretKey, expiresTime) => {
-  // console.log(secretKey, expiresTime);
-  let token = await jwt.sign(
-    {
-      userId: userId,
-    },
-    `${secretKey}`,
-    {
-      expiresIn: Number(expiresTime),
-    }
-  );
+const genrateJWTToken = async (payload, secretKey, expiresTime) => {
+  let token = await jwt.sign(payload, `${secretKey}`, {
+    expiresIn: Number(expiresTime),
+  });
   return token;
 };
 
 //decode JWT token and return decode data
 const decodeToken = (token) => {
   let userData = jwt_decode(token);
-  return { id: userData.userId };
+  delete userData.iat;
+  delete userData.exp
+  return userData;
 };
 
 // generate refresh token for logged users.
 const generaterefreshToken = async (token) => {
-  let { id } = decodeToken(token);
+  let user = decodeToken(token);
   let refreshtoken = await genrateJWTToken(
-    id,
+    user,
     process.env.ACCESS_TOKEN_SECRET,
-    process.env.ACCESS_TOKEN_LIFE
+    process.env.REFRESH_TOKEN_LIFE
   );
   return refreshtoken;
 };
 
 module.exports = {
-  validateToken,
+  isUserTokenValid,
   decodeToken,
   generaterefreshToken,
 };
