@@ -1,8 +1,12 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
-const {generateJWTToken,validateToken,decodeToken} = require("../utils/auth");
-const { responseHandler } = require("../utils/responseHandler");
+const {
+  generateJWTToken,
+  validateToken,
+  decodeToken,
+} = require("../utils/auth");
+// const { responseHandler } = require("../utils/responseHandler");
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 //  handler for login form and redirect to users after success login
@@ -13,6 +17,8 @@ exports.userLogin = async (req, res, next) => {
       success: false,
       message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -25,6 +31,8 @@ exports.userLogin = async (req, res, next) => {
           success: false,
           message: CONFIG.LOGIN_FAIL_MESSAGE,
           data: null,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       }
       let tokenPayload = {
@@ -48,13 +56,16 @@ exports.userLogin = async (req, res, next) => {
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: null,
-          token:token
+          accesstoken: token,
+          refreshAccessToken: req.refreshAccessToken,
         });
       } else {
         return res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: result,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } else {
@@ -62,6 +73,8 @@ exports.userLogin = async (req, res, next) => {
         success: false,
         message: CONFIG.LOGIN_FAIL_MESSAGE,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -77,6 +90,8 @@ exports.forgetPassword = async (req, res, next) => {
       success: false,
       message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -99,18 +114,22 @@ exports.forgetPassword = async (req, res, next) => {
         return res.json({
           success: true,
           message: CONFIG.OTP_SUCCESS,
-          data: null
+          data: null,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } else {
       return res.json({
         success: true,
-          message: CONFIG.OTP_SUCCESS,
-          data: null
+        message: CONFIG.OTP_SUCCESS,
+        data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     next(error);
   }
 };
@@ -121,8 +140,10 @@ exports.otpVerification = async (req, res, next) => {
   if (res.locals.validationError) {
     return res.json({
       success: false,
-      message:  res.locals.validationError,
+      message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -132,6 +153,8 @@ exports.otpVerification = async (req, res, next) => {
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
     let userData = await decodeToken(token);
@@ -143,8 +166,9 @@ exports.otpVerification = async (req, res, next) => {
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
-      
     }
     if (user !== null && user !== undefined) {
       if (user.otp == data.otp) {
@@ -158,12 +182,16 @@ exports.otpVerification = async (req, res, next) => {
           success: true,
           message: CONFIG.PASSWORD_SUCCESS_CHANGE,
           data: null,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       } else {
         return res.json({
           success: false,
           message: CONFIG.WRONG_OTP,
           data: null,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } else {
@@ -171,6 +199,8 @@ exports.otpVerification = async (req, res, next) => {
         success: false,
         message: CONFIG.INVALID_EMAIL,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -192,6 +222,8 @@ exports.changePassword = async (req, res, next) => {
       success: false,
       message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -207,12 +239,15 @@ exports.changePassword = async (req, res, next) => {
         success: false,
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
-    }else{
+    } else {
       return res.json({
         success: false,
         message: "Invalid user ID",
-        data: null,
+        data: null, accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (err) {
@@ -226,12 +261,14 @@ exports.changeMyPassword = async (req, res, next) => {
       success: false,
       message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
-    let {userId} =decodeToken(res.locals.refreshAccessToken)
+    let { userId } = decodeToken(req.refreshAccessToken);
     let userData = req.body;
-    
+
     let user = await userModel.findOne({ _id: userId });
     if (user != null && user != undefined) {
       let oldPasswordVerified = await bcrypt.compare(
@@ -249,12 +286,16 @@ exports.changeMyPassword = async (req, res, next) => {
           success: true,
           message: CONFIG.CHANGE_PASSWORD_SUCCESS,
           data: null,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       }
       return res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_ERROR,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (err) {

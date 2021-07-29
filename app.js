@@ -19,7 +19,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
 const { isPermitted } = require("./src/ACL/Utils/roleTest");
 app.use(assignRole);
@@ -31,7 +30,6 @@ app.use("/user", userRoute);
 // app.use("/feedback", feedbackRoute);
 app.use("/acl", aclRouter);
 
-
 app.use((req, res, next) => {
   const error = new Error("URL not found");
   error.status = 404;
@@ -39,12 +37,14 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  console.log("Final error handle Middleware--->",error);
+  console.log("Final error handle Middleware--->", error);
   res.status(error.status || 500);
   res.json({
     message: error.message ? error.message : error,
-    status:false,
-    data: null
+    status: false,
+    data: null,
+    accesstoken: req.accesstoken,
+    refreshAccessToken: req.refreshAccessToken,
   });
 });
 

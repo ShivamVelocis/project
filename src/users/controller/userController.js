@@ -31,6 +31,8 @@ exports.addUser = async function addUser(req, res, next) {
         success: false,
         message: errorsExtract,
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     } else {
       let User = new userModel(form_data);
@@ -39,6 +41,8 @@ exports.addUser = async function addUser(req, res, next) {
         success: true,
         message: "User added successfully",
         data: saveUser,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -62,6 +66,8 @@ exports.updateUser = async (req, res) => {
       success: false,
       message: errorsExtract,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   } else {
     try {
@@ -75,6 +81,8 @@ exports.updateUser = async (req, res) => {
           success: true,
           message: "User data updated",
           data: null,
+          accesstoken: req.accesstoken,
+          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } catch (error) {
@@ -89,6 +97,8 @@ exports.getUser = async function getUser(req, res, next) {
       success: false,
       message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
   let id = req.params.id;
@@ -101,6 +111,8 @@ exports.getUser = async function getUser(req, res, next) {
         success: true,
         message: "User data",
         data: userData,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -118,12 +130,16 @@ exports.getUsers = async function getUsers(req, res, next) {
         success: true,
         message: "Users data",
         data: usersData,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     } else {
       return res.json({
         success: false,
         message: "No data present",
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -140,6 +156,8 @@ exports.removeUser = async (req, res) => {
         success: true,
         message: "Users removed",
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -163,6 +181,8 @@ exports.uploadProfilePicture = async (req, res) => {
         success: true,
         message: "Image uploaded",
         data: null,
+        accesstoken: req.accesstoken,
+        refreshAccessToken: req.refreshAccessToken,
       });
     } catch (error) {
       next(error);
@@ -172,13 +192,15 @@ exports.uploadProfilePicture = async (req, res) => {
       success: false,
       message: "No file selected",
       data: null,
+      accesstoken: req.accesstoken,
+      refreshAccessToken: req.refreshAccessToken,
     });
   }
 };
-exports.getProfilePicture = async (req, res,next) => {
+exports.getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
-    let { userId } = decodeToken(res.locals.refreshAccessToken);
+    let { userId } = decodeToken(req.refreshAccessToken);
     let user = await userModel.findOne({ _id: userId });
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
