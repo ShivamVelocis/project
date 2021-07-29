@@ -31,8 +31,6 @@ exports.userLogin = async (req, res, next) => {
           success: false,
           message: CONFIG.LOGIN_FAIL_MESSAGE,
           data: null,
-          accesstoken: req.accesstoken,
-          refreshAccessToken: req.refreshAccessToken,
         });
       }
       let tokenPayload = {
@@ -57,7 +55,6 @@ exports.userLogin = async (req, res, next) => {
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: null,
           accesstoken: token,
-          refreshAccessToken: req.refreshAccessToken,
         });
       } else {
         return res.json({
@@ -65,7 +62,6 @@ exports.userLogin = async (req, res, next) => {
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: result,
           accesstoken: req.accesstoken,
-          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } else {
@@ -74,7 +70,6 @@ exports.userLogin = async (req, res, next) => {
         message: CONFIG.LOGIN_FAIL_MESSAGE,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -246,7 +241,8 @@ exports.changePassword = async (req, res, next) => {
       return res.json({
         success: false,
         message: "Invalid user ID",
-        data: null, accesstoken: req.accesstoken,
+        data: null,
+        accesstoken: req.accesstoken,
         refreshAccessToken: req.refreshAccessToken,
       });
     }
