@@ -17,6 +17,7 @@ exports.addContent = async (req, res) => {
       status: true,
       message: CONFIG.ADD_CONTENT_SUCCESS,
       data: content,
+      accesstoken: req.accesstoken,
     });
   } catch (error) {
     next(error);
@@ -28,7 +29,12 @@ exports.getContent = async (req, res) => {
   try {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
-      return res.json({ status: true, message: "Content", data: result });
+      return res.json({
+        status: true,
+        message: "Content",
+        data: result,
+        accesstoken: req.accesstoken,
+      });
     }
   } catch (error) {
     next(error);
@@ -39,12 +45,18 @@ exports.getContents = async (req, res) => {
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
-      return res.json({ status: true, message: "All Content", data: contents });
+      return res.json({
+        status: true,
+        message: "All Content",
+        data: contents,
+        accesstoken: req.accesstoken,
+      });
     } else {
       return res.json({
         status: false,
         message: CONFIG.NO_CONTENT_FOUND,
         data: [],
+        accesstoken: req.accesstoken,
       });
     }
   } catch (error) {
@@ -61,12 +73,14 @@ exports.removeContent = async (req, res) => {
         status: true,
         message: CONFIG.DELETE_CONTENT_SUCCESS,
         data: result,
+        accesstoken: req.accesstoken,
       });
     } else {
       return res.json({
         status: false,
         message: `No content with id ${id} present for deletion`,
         data: null,
+        accesstoken: req.accesstoken,
       });
     }
   } catch (error) {
@@ -82,6 +96,7 @@ exports.updateContent = async (req, res) => {
       status: false,
       message: res.locals.validationError,
       data: null,
+      accesstoken: req.accesstoken,
     });
   }
   try {
@@ -95,6 +110,7 @@ exports.updateContent = async (req, res) => {
         status: true,
         message: CONFIG.UPDATE_CONTENT_SUCCESS,
         data: result,
+        accesstoken: req.accesstoken,
       });
     }
   } catch (error) {

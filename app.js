@@ -44,7 +44,7 @@ app.use((error, req, res, next) => {
     status: false,
     data: null,
     accesstoken: req.accesstoken,
-    refreshAccessToken: req.refreshAccessToken,
+   
   });
 });
 

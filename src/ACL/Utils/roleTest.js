@@ -140,7 +140,12 @@ const isPermitted = async (req, res, next) => {
   }
 
   if (isAllowed) return next();
-  res.json({error:"Not Authorized"});
+  res.json({
+    status: false,
+    error: "Not Authorized",
+    data: null,
+    accesstoken: req.accesstoken,
+  });
 };
 
 module.exports = { isPermitted };

@@ -11,9 +11,15 @@ const getAcl = async (req, res, next) => {
         status: false,
         message: "ACL Rule not available",
         data: null,
+        accesstoken: req.accesstoken,
       });
     }
-    return res.json({ status: true, message: "ACL Rule", data: result });
+    return res.json({
+      status: true,
+      message: "ACL Rule",
+      data: result,
+      accesstoken: req.accesstoken,
+    });
   } catch (error) {
     next(error);
   }
@@ -22,7 +28,12 @@ const getAcl = async (req, res, next) => {
 const getAcls = async (req, res, next) => {
   try {
     let result = await aclModel.find();
-    return res.json({ status: true, message: "All ACL Rules", data: result });
+    return res.json({
+      status: true,
+      message: "All ACL Rules",
+      data: result,
+      accesstoken: req.accesstoken,
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -30,7 +41,6 @@ const getAcls = async (req, res, next) => {
 };
 
 const addACl = async (req, res, next) => {
-
   try {
     let responseData;
     let dbData = await aclModel.findOne({ role: req.body.role });
@@ -48,6 +58,7 @@ const addACl = async (req, res, next) => {
       status: true,
       message: CONFIG.ACL_ADD_SUCCESS,
       data: responseData,
+      accesstoken: req.accesstoken,
     });
   } catch (error) {
     next(error);
@@ -71,6 +82,7 @@ const editACl = async (req, res, next) => {
       status: true,
       message: CONFIG.ACL_UPDATE_SUCESS,
       data: updateACLRule,
+      accesstoken: req.accesstoken,
     });
   } catch (error) {
     next(error);
@@ -86,6 +98,7 @@ const deletACl = async (req, res, next) => {
       status: true,
       message: CONFIG.ACL_DELETE_SUCCESS,
       data: null,
+      accesstoken: req.accesstoken,
     });
   } catch (error) {
     next(error);

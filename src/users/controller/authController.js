@@ -18,7 +18,6 @@ exports.userLogin = async (req, res, next) => {
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
-      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -86,7 +85,6 @@ exports.forgetPassword = async (req, res, next) => {
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
-      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -111,7 +109,6 @@ exports.forgetPassword = async (req, res, next) => {
           message: CONFIG.OTP_SUCCESS,
           data: null,
           accesstoken: req.accesstoken,
-          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } else {
@@ -120,7 +117,6 @@ exports.forgetPassword = async (req, res, next) => {
         message: CONFIG.OTP_SUCCESS,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -138,7 +134,6 @@ exports.otpVerification = async (req, res, next) => {
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
-      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -149,7 +144,6 @@ exports.otpVerification = async (req, res, next) => {
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
     let userData = await decodeToken(token);
@@ -162,7 +156,6 @@ exports.otpVerification = async (req, res, next) => {
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
     if (user !== null && user !== undefined) {
@@ -178,7 +171,6 @@ exports.otpVerification = async (req, res, next) => {
           message: CONFIG.PASSWORD_SUCCESS_CHANGE,
           data: null,
           accesstoken: req.accesstoken,
-          refreshAccessToken: req.refreshAccessToken,
         });
       } else {
         return res.json({
@@ -186,7 +178,6 @@ exports.otpVerification = async (req, res, next) => {
           message: CONFIG.WRONG_OTP,
           data: null,
           accesstoken: req.accesstoken,
-          refreshAccessToken: req.refreshAccessToken,
         });
       }
     } else {
@@ -195,7 +186,6 @@ exports.otpVerification = async (req, res, next) => {
         message: CONFIG.INVALID_EMAIL,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (error) {
@@ -218,7 +208,6 @@ exports.changePassword = async (req, res, next) => {
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
-      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -235,7 +224,6 @@ exports.changePassword = async (req, res, next) => {
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     } else {
       return res.json({
@@ -243,7 +231,6 @@ exports.changePassword = async (req, res, next) => {
         message: "Invalid user ID",
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (err) {
@@ -258,7 +245,6 @@ exports.changeMyPassword = async (req, res, next) => {
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
-      refreshAccessToken: req.refreshAccessToken,
     });
   }
   try {
@@ -283,7 +269,6 @@ exports.changeMyPassword = async (req, res, next) => {
           message: CONFIG.CHANGE_PASSWORD_SUCCESS,
           data: null,
           accesstoken: req.accesstoken,
-          refreshAccessToken: req.refreshAccessToken,
         });
       }
       return res.json({
@@ -291,7 +276,6 @@ exports.changeMyPassword = async (req, res, next) => {
         message: CONFIG.CHANGE_PASSWORD_ERROR,
         data: null,
         accesstoken: req.accesstoken,
-        refreshAccessToken: req.refreshAccessToken,
       });
     }
   } catch (err) {

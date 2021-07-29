@@ -1,7 +1,6 @@
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
 
-
 const CONFIG = require("../configs/config");
 
 // content request body validater

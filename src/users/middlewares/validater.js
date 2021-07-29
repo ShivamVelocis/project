@@ -128,7 +128,7 @@ exports.changeMyPasswordValidationRule = () => {
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
       .custom((value, { req }) => {
-        console.log(value,req.body.newPassword)
+        console.log(value, req.body.newPassword);
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
