@@ -39,6 +39,7 @@ exports.userLogin = async (req, res, next) => {
         userName: user.name.first_name,
         userRole: user.role_id.title,
       };
+      console.log(tokenPayload)
       let token = await generateJWTToken(
         tokenPayload,
         process.env.ACCESS_TOKEN_SECRET,

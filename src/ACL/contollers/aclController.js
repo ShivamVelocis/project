@@ -8,14 +8,14 @@ const getAcl = async (req, res, next) => {
     let result = await aclModel.findById(aclId);
     if (!result) {
       return res.json({
-        status: false,
+        success: false,
         message: "ACL Rule not available",
         data: null,
         accesstoken: req.accesstoken,
       });
     }
     return res.json({
-      status: true,
+      success: true,
       message: "ACL Rule",
       data: result,
       accesstoken: req.accesstoken,
@@ -29,7 +29,7 @@ const getAcls = async (req, res, next) => {
   try {
     let result = await aclModel.find();
     return res.json({
-      status: true,
+      success: true,
       message: "All ACL Rules",
       data: result,
       accesstoken: req.accesstoken,
@@ -55,7 +55,7 @@ const addACl = async (req, res, next) => {
       responseData = await acl.save();
     }
     return res.json({
-      status: true,
+      success: true,
       message: CONFIG.ACL_ADD_SUCCESS,
       data: responseData,
       accesstoken: req.accesstoken,
@@ -79,7 +79,7 @@ const editACl = async (req, res, next) => {
       { upsert: true }
     );
     return res.json({
-      status: true,
+      success: true,
       message: CONFIG.ACL_UPDATE_SUCESS,
       data: updateACLRule,
       accesstoken: req.accesstoken,
@@ -95,7 +95,7 @@ const deletACl = async (req, res, next) => {
   try {
     await aclModel.findByIdAndRemove(aclId);
     return res.json({
-      status: true,
+      success: true,
       message: CONFIG.ACL_DELETE_SUCCESS,
       data: null,
       accesstoken: req.accesstoken,

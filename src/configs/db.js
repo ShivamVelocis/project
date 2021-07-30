@@ -17,4 +17,4 @@ connectToDB = async (url) => {
   }
 };
 
-connectToDB("mongodb://localhost:27017/Vel");
+connectToDB("mongodb://localhost:27017/masterdb");

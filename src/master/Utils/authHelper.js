@@ -1,5 +1,31 @@
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
+// const { isDate } = require("moment");
+
+/**
+ * Check wheather token is valid or not
+ * @param {object} req http request.
+ * @return {boolean} return boolean.
+ */
+const isUserTokenValid = (req) => {
+  try {
+    if (!req.headers.authorization) {
+      return false;
+    }
+    const accesstoken = req.headers.authorization.split(" ")[1];
+    if (accesstoken === null) {
+      return false;
+    }
+    let payload = jwt.verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
+    if (!payload) {
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
 
 // generate JWT token
 /**
@@ -10,49 +36,32 @@ const jwt_decode = require("jwt-decode");
  * @return {string} return access token.
  */
 const generateJWTToken = async (payload, secretKey, expiresTime) => {
-  console.log(payload, secretKey, expiresTime);
   let token = await jwt.sign(payload, `${secretKey}`, {
     expiresIn: Number(expiresTime),
   });
   return token;
 };
 
-// validates token provided by user
-/**
- * Check wheather token is valid or not
- * @param {string} token JWT token.
- * @return {boolean} return boolean.
- */
-const validateToken = (token) => {
-  try {
-    return !!jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  } catch (error) {
-    return false;
-  }
-};
-
-//extract user data from token for later use
+//decode JWT token and return decode data
 /**
  * Check wheather token is valid or not
  * @param {string} token JWT token.
  * @return {object} return user data object.
  */
 const decodeToken = (token) => {
-  userData = jwt_decode(token);
+  let userData = jwt_decode(token);
   delete userData.iat;
   delete userData.exp;
   return userData;
-  // return { id: userData.userId };
 };
 
-// generate new token for user so user remained logged in
+// generate refresh token for logged users.
 /**
- * @param {string} token JWT token.
+ * @param {string} token JWT token valid token.
  * @return {string} return new token.
  */
 const generaterefreshToken = async (token) => {
   let user = decodeToken(token);
-  // console.log(user)
   let refreshtoken = await generateJWTToken(
     user,
     process.env.ACCESS_TOKEN_SECRET,
@@ -62,8 +71,7 @@ const generaterefreshToken = async (token) => {
 };
 
 module.exports = {
-  validateToken,
+  isUserTokenValid,
   decodeToken,
   generaterefreshToken,
-  generateJWTToken,
 };

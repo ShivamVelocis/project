@@ -14,7 +14,7 @@ const userRoute = require("./src/users/routes/userRouter");
 // const contactusRoute = require("./src/ContactUs/routes/contactusRoutes");
 // const feedbackRoute = require("./src/FeedbackManagement/routes/feedbackRoutes");
 const aclRouter = require("./src/ACL/Routes/aclRoutes");
-
+const masterRouter = require("./src/master/Routes/masterRouter");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -25,6 +25,7 @@ app.use(assignRole);
 app.use(isPermitted);
 app.use("/content", contentRoutes);
 app.use("/user", userRoute);
+app.use("/master", masterRouter);
 // app.use("/role", roleRoute);
 // app.use("/contactus", contactusRoute);
 // app.use("/feedback", feedbackRoute);
@@ -41,10 +42,9 @@ app.use((error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
     message: error.message ? error.message : error,
-    status: false,
+    success: false,
     data: null,
     accesstoken: req.accesstoken,
-   
   });
 });
 
@@ -58,5 +58,3 @@ mongoose.connection.on("error", function (err) {
   console.log("Could not connect to mongo server!");
   return console.error(err.message);
 });
-
-// app.listen(process.env.PORT || 5000, () => console.log(`Example app listening on port ${process.env.PORT}!`));

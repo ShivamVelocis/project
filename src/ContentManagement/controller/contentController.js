@@ -4,7 +4,7 @@ const CONFIG = require("../configs/config");
 exports.addContent = async (req, res) => {
   if (res.locals.validationError) {
     return res.json({
-      status: false,
+      success: false,
       message: res.locals.validationError,
       data: "",
     });
@@ -14,7 +14,7 @@ exports.addContent = async (req, res) => {
     let content = new Content(data);
     await content.save();
     return res.json({
-      status: true,
+      success: true,
       message: CONFIG.ADD_CONTENT_SUCCESS,
       data: content,
       accesstoken: req.accesstoken,
@@ -30,7 +30,7 @@ exports.getContent = async (req, res) => {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
       return res.json({
-        status: true,
+        success: true,
         message: "Content",
         data: result,
         accesstoken: req.accesstoken,
@@ -46,14 +46,14 @@ exports.getContents = async (req, res) => {
     let contents = await Content.find({});
     if (contents.length > 0) {
       return res.json({
-        status: true,
+        success: true,
         message: "All Content",
         data: contents,
         accesstoken: req.accesstoken,
       });
     } else {
       return res.json({
-        status: false,
+        success: false,
         message: CONFIG.NO_CONTENT_FOUND,
         data: [],
         accesstoken: req.accesstoken,
@@ -70,14 +70,14 @@ exports.removeContent = async (req, res) => {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       return res.json({
-        status: true,
+        success: true,
         message: CONFIG.DELETE_CONTENT_SUCCESS,
         data: result,
         accesstoken: req.accesstoken,
       });
     } else {
       return res.json({
-        status: false,
+        success: false,
         message: `No content with id ${id} present for deletion`,
         data: null,
         accesstoken: req.accesstoken,
@@ -93,7 +93,7 @@ exports.updateContent = async (req, res) => {
   let updatedContent = req.body;
   if (res.locals.validationError) {
     return res.json({
-      status: false,
+      success: false,
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
@@ -107,7 +107,7 @@ exports.updateContent = async (req, res) => {
     );
     if (result !== undefined && result !== null) {
       return res.json({
-        status: true,
+        success: true,
         message: CONFIG.UPDATE_CONTENT_SUCCESS,
         data: result,
         accesstoken: req.accesstoken,
