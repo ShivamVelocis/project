@@ -21,7 +21,9 @@ exports.userLogin = async (req, res, next) => {
     });
   }
   try {
-    let user = await userModel.findOne({ email: data.email, user_status: 1 });
+    let user = await userModel
+      .findOne({ email: data.email, user_status: 1 })
+      .populate("role_id");
 
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
@@ -35,7 +37,7 @@ exports.userLogin = async (req, res, next) => {
       let tokenPayload = {
         userId: user._id,
         userName: user.name.first_name,
-        userRole: user.role_id,
+        userRole: user.role_id.title,
       };
       let token = await generateJWTToken(
         tokenPayload,
