@@ -11,8 +11,8 @@ const addModule = async (req, res, next) => {
     let module = new moduleModel(moduleData);
     let result = await module.save();
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "Module added successfully",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -33,8 +33,8 @@ const getModules = async (req, res, next) => {
     });
 
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "All Modules",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -55,8 +55,8 @@ const mapResourceInModule = async (req, res, next) => {
       { new: true }
     );
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "Data mapped successfully",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -84,8 +84,8 @@ const addResource = async (req, res, next) => {
     let resource = new resourceModel(resourceData);
     let result = await resource.save();
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "Resourece  added successfully",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -101,8 +101,8 @@ const getResources = async (req, res, next) => {
       .populate("module", "_id module_name module_status")
       .populate("methods");
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "All resources data",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -131,8 +131,8 @@ const mapModuleToResource = async (req, res, next) => {
       { new: true }
     );
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "Mapped successfully",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -148,8 +148,8 @@ const addMethod = async (req, res, next) => {
     let method = new methodModel(methodData);
     let result = await method.save();
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "Method added successfully",
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -162,8 +162,8 @@ const getMethods = async (req, res, next) => {
   try {
     let result = await methodModel.find();
     res.json({
-      success: false,
-      message: "",
+      success: true,
+      message: "All methods data",
       data: result,
       accesstokon: req.accesstoken,
     });
