@@ -140,7 +140,7 @@ const isPermitted = async (req, res, next) => {
   }
 
   if (isAllowed) return next();
-  res.json({
+  return res.json({
     success: false,
     error: "Not Authorized",
     data: null,

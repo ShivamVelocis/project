@@ -14,7 +14,7 @@ const addResource = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Resourece  added successfully",
       data: result,
@@ -39,7 +39,7 @@ const getResources = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "All resources data",
       data: result,
@@ -61,7 +61,7 @@ const getResource = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Resource data",
       data: result,
@@ -88,7 +88,7 @@ const updateResource = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Resource updated",
       data: result,
@@ -111,7 +111,7 @@ const deleteResource = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Resource deleted",
       data: result,
@@ -149,7 +149,7 @@ const mapModuleToResource = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Mapped successfully",
       data: result,
@@ -186,7 +186,7 @@ const removemethodFromResource = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Method(s) removed from Resource",
       data: result,

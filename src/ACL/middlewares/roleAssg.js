@@ -6,7 +6,6 @@ let assignRole = async (req, res, next) => {
   try {
     if (isUserTokenValid(req)) {
       let payload = decodeToken(req.headers.authorization.split(" ")[1]);
-      // console.log(payload)
       if (!payload.userRole) {
         res.locals.userRole = "anonymous";
         return next();

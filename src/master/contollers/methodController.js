@@ -14,7 +14,7 @@ const addMethod = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Method added successfully",
       data: result,
@@ -36,7 +36,7 @@ const getMethods = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "All methods data",
       data: result,
@@ -58,7 +58,7 @@ const getMethod = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.json({
+    return res.json({
       success: true,
       message: "Method data",
       data: result,
@@ -100,7 +100,7 @@ const deleteMethod = async (req, res, next) => {
   try {
     let { id } = req.body;
     let result = await methodModel.findByIdAndRemove(id);
-    res.json({
+    return res.json({
       success: true,
       message: "Method deleted",
       data: result,
