@@ -8,6 +8,8 @@ const {
   getModules,
   mapResourceInModule,
   mapModuleToResource,
+  removeResouresFromModule,
+  removemethodFromResource,
 } = require("../contollers/masterControllers");
 const router = express.Router();
 
@@ -19,4 +21,6 @@ router.get("/getresources", getResources);
 router.get("/getmethods", getMethods);
 router.post("/mapmodule", mapResourceInModule);
 router.post("/mapresource", mapModuleToResource);
+router.put("/removeresource", removeResouresFromModule);
+router.put("/removemethod", removemethodFromResource);
 module.exports = router;

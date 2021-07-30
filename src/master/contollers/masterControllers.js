@@ -65,6 +65,31 @@ const mapResourceInModule = async (req, res, next) => {
   }
 };
 
+const removeResouresFromModule = async (req, res, next) => {
+  try {
+    let moduleID = req.body.id;
+    let resourceIDs = [];
+    if (Array.isArray(req.body.resourceID)) {
+      resourceIDs = req.body.resourceID;
+    } else {
+      resourceIDs.push(req.body.resourceID);
+    }
+    let result = await moduleModel.findOneAndUpdate(
+      { _id: moduleID },
+      { $pull: { module_resources: { $in: resourceIDs } } },
+      { multi: true, new: true }
+    );
+    res.json({
+      success: true,
+      message: "Resource removed from module",
+      data: result,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // }const getModule = async (req,res,next)=>{
 
 // }const getModule = async (req,res,next)=>{
@@ -141,6 +166,35 @@ const mapModuleToResource = async (req, res, next) => {
   }
 };
 
+const removemethodFromResource = async (req, res, next) => {
+  try {
+    let resourceID = req.body.id;
+    let methodIDs = [];
+
+    if (Array.isArray(req.body.methodID)) {
+      methodIDs = req.body.methodID;
+    } else {
+      methodIDs.push(req.body.methodID);
+    }
+
+    let result = await resourceModel.findOneAndUpdate(
+      { _id: resourceID },
+      {
+        $pull: { methods: { $in: methodIDs } },
+      },
+      { multi: true, new: true }
+    );
+    res.json({
+      success: true,
+      message: "Method(s) removed from Resource",
+      data: result,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Methods Controller
 const addMethod = async (req, res, next) => {
   try {
@@ -181,4 +235,6 @@ module.exports = {
   getMethods,
   mapResourceInModule,
   mapModuleToResource,
+  removeResouresFromModule,
+  removemethodFromResource,
 };
