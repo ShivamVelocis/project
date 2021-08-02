@@ -14,7 +14,7 @@ exports.addRole = async (req, res) => {
 	 //console.log(req);
     let role = new Role(req.body);
     let saveRole = await role.save();
-	console.log(saveRole);
+	// console.log(saveRole);
 	req.flash("success",Configs.ADD_ROLE_SUCCESSFULLY);
     res.redirect("/role/all");
   } catch (error) {

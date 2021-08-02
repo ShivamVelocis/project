@@ -2,7 +2,7 @@ const lodash = require("lodash");
 const aclModel = require("../models/aclModel");
 const CONFIG = require("../configs/config");
 
-// -----------------------------------check allowed resources start----------------
+// -----------------------------------check allowed resources start--------------
 /**
 /**
  * check resource user want to access.
@@ -63,7 +63,7 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
 
 // -----------------------------------check allowed resources end----------------
 
-// -----------------------------------check deny resources start----------------
+// -----------------------------------check deny resources start-----------------
 /**
  * check resource user want to access.
  * @param {Array} resource List of resources deny.
@@ -120,23 +120,48 @@ const denyResource = (resource, resourceToBeAccess, method) => {
   return true;
 };
 
-// -----------------------------------check deny resources end----------------
+// -----------------------------------check deny resources end-------------------
 
 // Middleware
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
   // console.log(req.originalUrl)
   let userRole = res.locals.userRole;
-  let dbRoleData = await aclModel.findOne({ role: userRole });
+  let dbRoleData = await aclModel
+    .findOne({ role: userRole })
+    .populate({
+      path: "allowedResources",
+      select: { module: 0, __v: 0 },
+      populate: {
+        path: "methods",
+        select: { __v: 0 },
+      },
+    })
+    .populate({
+      path: "denyResources",
+      select: { module: 0, __v: 0 },
+      populate: {
+        path: "methods",
+        select: { __v: 0 },
+      },
+    });
 
   let isAllowed = false;
   if (userRole && dbRoleData) {
+    let allowedResources = dbRoleData.allowedResources.map((resource) => {
+      let path = resource.resource_path;
+      let methods = resource.methods.map((method) => method.method_type);
+      return { path, methods };
+    });
+    let denyResources = dbRoleData.denyResources.map((resource) => {
+      let path = resource.resource_path;
+      let methods = resource.methods.map((method) => method.method_type);
+      return { path, methods };
+    });
     isAllowed =
-      allowedResource(
-        dbRoleData.allowedResources,
-        req.originalUrl,
-        req.method
-      ) && denyResource(dbRoleData.denyResources, req.originalUrl, req.method);
+      allowedResource(allowedResources, req.originalUrl, req.method) &&
+      denyResource(denyResources, req.originalUrl, req.method);
+      console.log(allowedResources)
   }
 
   if (isAllowed) return next();

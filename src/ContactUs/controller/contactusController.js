@@ -16,7 +16,7 @@ exports.addContactus = async (req, res) => {
   try {
     let contactus = new Contactus(data);
     let saveContent = await contactus.save();
-	console.log(saveContent);
+	// console.log(saveContent);
 	req.flash("success",Configs.ADD_CONTACT_US_SUCCESSFULLY);
     res.redirect("all");
   } catch (error) {

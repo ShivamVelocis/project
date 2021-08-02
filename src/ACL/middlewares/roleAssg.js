@@ -13,6 +13,7 @@ let assignRole = async (req, res, next) => {
       req.accesstoken = await generaterefreshToken(
         req.headers.authorization.split(" ")[1]
       );
+      console.log(payload)
       res.locals.userRole = payload.userRole;
       return next();
     } else {

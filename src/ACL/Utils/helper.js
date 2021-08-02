@@ -71,12 +71,7 @@ const appendACL = (dbData, newData) => {
     }
   });
 
-  console.log(
-    x,
-    reqDataAllowedPathArray.length,
-    y,
-    reqDataDenyPathArray.length
-  );
+
 
   if (
     x == reqDataAllowedPathArray.length &&

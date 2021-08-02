@@ -5,7 +5,24 @@ const { appendACL } = require("../Utils/helper");
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
   try {
-    let result = await aclModel.findById(aclId);
+    let result = await aclModel
+      .findById(aclId)
+      .populate({
+        path: "allowedResources",
+        select: { module: 0, __v: 0 },
+        populate: {
+          path: "methods",
+          select: { __v: 0 },
+        },
+      })
+      .populate({
+        path: "denyResources",
+        select: { module: 0, __v: 0 },
+        populate: {
+          path: "methods",
+          select: { __v: 0 },
+        },
+      });
     if (!result) {
       return res.json({
         success: false,
@@ -27,7 +44,25 @@ const getAcl = async (req, res, next) => {
 
 const getAcls = async (req, res, next) => {
   try {
-    let result = await aclModel.find();
+    let result = await aclModel
+      .find()
+      .populate({
+        path: "allowedResources",
+        select: { module: 0, __v: 0 },
+        populate: {
+          path: "methods",
+          select: { __v: 0 },
+        },
+      })
+      .populate({
+        path: "denyResources",
+        select: { module: 0, __v: 0 },
+        populate: {
+          path: "methods",
+          select: { __v: 0 },
+        },
+      });
+      
     return res.json({
       success: true,
       message: "All ACL Rules",
@@ -40,18 +75,31 @@ const getAcls = async (req, res, next) => {
   }
 };
 
-const addACl = async (req, res, next) => {
+const addAcl = async (req, res, next) => {
   try {
     let responseData;
+    let allowedResources = req.body.allowedResources || [];
+    let denyResources = req.body.denyResources || [];
     let dbData = await aclModel.findOne({ role: req.body.role });
     if (dbData) {
-      let result = appendACL(dbData, req.body);
+      // let result = appendACL(dbData, req.body);
       responseData = await aclModel.findOneAndUpdate(
         { role: req.body.role },
-        { $set: result }
+        {
+          $addToSet: {
+            allowedResources: { $each: allowedResources },
+            denyResources: { $each: denyResources },
+          },
+        },
+        { new: true }
       );
     } else {
-      let acl = new aclModel(req.body);
+      let newAcl = {
+        role: req.body.role,
+        allowedResources,
+        denyResources,
+      };
+      let acl = new aclModel(newAcl);
       responseData = await acl.save();
     }
     return res.json({
@@ -65,18 +113,20 @@ const addACl = async (req, res, next) => {
   }
 };
 
-const editACl = async (req, res, next) => {
+const editAcl = async (req, res, next) => {
   aclId = req.body.id;
-
+  let allowedResources = req.body.allowedResources || [];
+  let denyResources = req.body.denyResources || [];
   try {
-    let dbACLData = await aclModel.findById(aclId);
-    let updatedData = appendACL(dbACLData, req.body);
     let updateACLRule = await aclModel.findByIdAndUpdate(
       aclId,
       {
-        $set: updatedData,
+        $pull: {
+          allowedResources: { $in: allowedResources },
+          denyResources: { $in: denyResources },
+        },
       },
-      { upsert: true }
+      { new: true }
     );
     return res.json({
       success: true,
@@ -89,9 +139,8 @@ const editACl = async (req, res, next) => {
   }
 };
 
-const deletACl = async (req, res, next) => {
+const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
-  aclData = req.body;
   try {
     await aclModel.findByIdAndRemove(aclId);
     return res.json({
@@ -106,9 +155,9 @@ const deletACl = async (req, res, next) => {
 };
 
 module.exports = {
-  addACl,
-  editACl,
-  deletACl,
+  addAcl,
+  editAcl,
+  deletAcl,
   getAcls,
   getAcl,
 };

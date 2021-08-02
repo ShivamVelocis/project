@@ -4,9 +4,9 @@ const { addACLRuleValidation, isRequestValid, updateACLRuleValidation } = requir
 const router = express.Router();
 
 router.get("/",aclController.getAcls);
-router.post("/",addACLRuleValidation(), isRequestValid, aclController.addACl);
-router.put("/",updateACLRuleValidation(), isRequestValid , aclController.editACl);
-router.delete("/", aclController.deletACl);
+router.post("/", aclController.addAcl);
+router.put("/", aclController.editAcl);
+router.delete("/", aclController.deletAcl);
 router.get("/:id", aclController.getAcl);
 
 
