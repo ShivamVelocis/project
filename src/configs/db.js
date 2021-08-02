@@ -1,7 +1,13 @@
 const mongoose = require("mongoose");
-const dbPath =`${process.env.DB_HOST}//${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cbzag.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 
-
+var dbPath = null;
+if (process.env.APP_ENV === "local") {
+  console.log(process.env.DB_NAME)
+  dbPath = `${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+  console.log(dbPath)
+} else {
+  dbPath = `${process.env.DB_CONNECTION}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+}
 connectToDB = async (url) => {
   try {
     console.log("> Trying to connect to Database");
@@ -17,4 +23,4 @@ connectToDB = async (url) => {
   }
 };
 
-connectToDB("mongodb://localhost:27017/masterdb");
+connectToDB(dbPath);

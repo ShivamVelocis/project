@@ -87,6 +87,7 @@ exports.userLogin = async (req, res, next) => {
 // email OTP and URL for user for password reset
 exports.forgetPassword = async (req, res, next) => {
   let data = req.body;
+  console.log(data)
   if (res.locals.validationError) {
     res.status(400);
     res.json({
