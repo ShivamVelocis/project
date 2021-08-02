@@ -1,9 +1,6 @@
 const CONFIG = require("../configs/config");
 const lodash = require("lodash");
 
-
-
-
 // Resturcture requestbody data  //Common function
 const addACLReqBody = (rawBody) => {
   //   addACLRulRequestBodyValidator(rawBody);
@@ -70,8 +67,6 @@ const appendACL = (dbData, newData) => {
       y++;
     }
   });
-
-
 
   if (
     x == reqDataAllowedPathArray.length &&

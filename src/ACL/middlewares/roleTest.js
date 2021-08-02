@@ -161,11 +161,12 @@ const isPermitted = async (req, res, next) => {
     isAllowed =
       allowedResource(allowedResources, req.originalUrl, req.method) &&
       denyResource(denyResources, req.originalUrl, req.method);
-      console.log(allowedResources)
+    console.log(allowedResources);
   }
 
   if (isAllowed) return next();
-  return res.json({
+  res.status(401);
+  res.json({
     success: false,
     error: "Not Authorized",
     data: null,

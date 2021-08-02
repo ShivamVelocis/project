@@ -7,14 +7,16 @@ const addMethod = async (req, res, next) => {
     let method = new methodModel(methodData);
     let result = await method.save();
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "Failed to add Method",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Method added successfully",
       data: result,
@@ -29,14 +31,16 @@ const getMethods = async (req, res, next) => {
   try {
     let result = await methodModel.find();
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "No data dound",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "All methods data",
       data: result,
@@ -51,14 +55,16 @@ const getMethod = async (req, res, next) => {
   try {
     let result = await methodModel.findById(req.params.id);
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "No data found",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Method data",
       data: result,
@@ -78,14 +84,16 @@ const updateMethod = async (req, res, next) => {
       { new: true }
     );
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "Method updat failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Method updated",
       data: result,
@@ -100,7 +108,8 @@ const deleteMethod = async (req, res, next) => {
   try {
     let { id } = req.body;
     let result = await methodModel.findByIdAndRemove(id);
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Method deleted",
       data: result,

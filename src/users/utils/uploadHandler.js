@@ -24,15 +24,15 @@ const upload = multer({
 let uploadProfilePicture = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message:
           error.message == "File too large"
             ? CONFIG.TOO_LARGE_IMAGE
             : error.message,
         data: null,
-        accesstoken: req,
-        accesstoken,
+        accesstoken: req.accesstoken,
       });
     }
     return next();

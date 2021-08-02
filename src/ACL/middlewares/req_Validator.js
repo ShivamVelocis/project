@@ -70,7 +70,7 @@ const isRequestValid = (req, res, next) => {
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   if (extractedErrors) {
-    return res.json({ success: false, message: extractedErrors, data: null });
+    res.status(400); res.json({ success: false, message: extractedErrors, data: null });
   }
   next();
 };

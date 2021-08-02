@@ -13,7 +13,8 @@ const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 exports.userLogin = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -28,7 +29,8 @@ exports.userLogin = async (req, res, next) => {
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
-        return res.json({
+        res.status(401);
+        res.json({
           success: false,
           message: CONFIG.LOGIN_FAIL_MESSAGE,
           data: null,
@@ -51,15 +53,17 @@ exports.userLogin = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        // return res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
-        return res.json({
+        // res.status(); res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
+        res.status(200);
+        res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: null,
           accesstoken: token,
         });
       } else {
-        return res.json({
+        res.status(401);
+        res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: result,
@@ -67,7 +71,8 @@ exports.userLogin = async (req, res, next) => {
         });
       }
     } else {
-      return res.json({
+      res.status(401);
+      res.json({
         success: false,
         message: CONFIG.LOGIN_FAIL_MESSAGE,
         data: null,
@@ -83,7 +88,8 @@ exports.userLogin = async (req, res, next) => {
 exports.forgetPassword = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -107,7 +113,8 @@ exports.forgetPassword = async (req, res, next) => {
       if (result !== undefined && result !== null) {
         // await mailOtp(data.email, otp, token);
         await sendOtpMail(data.email, otp, token);
-        return res.json({
+        res.status(204);
+        res.json({
           success: true,
           message: CONFIG.OTP_SUCCESS,
           data: null,
@@ -115,7 +122,8 @@ exports.forgetPassword = async (req, res, next) => {
         });
       }
     } else {
-      return res.json({
+      res.status(204);
+      res.json({
         success: true,
         message: CONFIG.OTP_SUCCESS,
         data: null,
@@ -132,7 +140,8 @@ exports.forgetPassword = async (req, res, next) => {
 exports.otpVerification = async (req, res, next) => {
   let token = req.params.token;
   if (res.locals.validationError) {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -142,7 +151,8 @@ exports.otpVerification = async (req, res, next) => {
   try {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
@@ -154,7 +164,8 @@ exports.otpVerification = async (req, res, next) => {
     let user = await userModel.findOne({ email: userData.userEmail });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
@@ -169,14 +180,16 @@ exports.otpVerification = async (req, res, next) => {
           { $set: { otp: null, password: passwordHash, otpToken: null } },
           { upsert: true }
         );
-        return res.json({
+        res.status(204);
+        res.json({
           success: true,
           message: CONFIG.PASSWORD_SUCCESS_CHANGE,
           data: null,
           accesstoken: req.accesstoken,
         });
       } else {
-        return res.json({
+        res.status(400);
+        res.json({
           success: false,
           message: CONFIG.WRONG_OTP,
           data: null,
@@ -184,7 +197,8 @@ exports.otpVerification = async (req, res, next) => {
         });
       }
     } else {
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message: CONFIG.INVALID_EMAIL,
         data: null,
@@ -206,7 +220,8 @@ exports.changePassword = async (req, res, next) => {
   let userData = req.body;
   // console.log(userData)
   if (res.locals.validationError) {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -222,14 +237,16 @@ exports.changePassword = async (req, res, next) => {
         { $set: { password: newPasswordHash } },
         { upsert: true }
       );
-      return res.json({
+      res.status(200);
+      res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
         accesstoken: req.accesstoken,
       });
     } else {
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message: "Invalid user ID",
         data: null,
@@ -243,7 +260,8 @@ exports.changePassword = async (req, res, next) => {
 
 exports.changeMyPassword = async (req, res, next) => {
   if (res.locals.validationError) {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -267,14 +285,16 @@ exports.changeMyPassword = async (req, res, next) => {
           { $set: { password: newPasswordHash } },
           { upsert: true }
         );
-        return res.json({
+        res.status(204);
+        res.json({
           success: true,
           message: CONFIG.CHANGE_PASSWORD_SUCCESS,
           data: null,
           accesstoken: req.accesstoken,
         });
       }
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_ERROR,
         data: null,

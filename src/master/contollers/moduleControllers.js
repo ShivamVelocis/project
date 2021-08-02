@@ -7,14 +7,16 @@ const addModule = async (req, res, next) => {
     let module = new moduleModel(moduleData);
     let result = await module.save();
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "Adding Module failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Module added successfully",
       data: result,
@@ -36,14 +38,16 @@ const getModules = async (req, res, next) => {
       },
     });
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "No data failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "All Modules",
       data: result,
@@ -58,14 +62,16 @@ const getModule = async (req, res, next) => {
   try {
     let result = await moduleModel.findById(req.params.id);
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "No data dound",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Module data",
       data: result,
@@ -85,14 +91,16 @@ const updateModule = async (req, res, next) => {
       { new: true }
     );
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "Module update failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Module updated",
       data: result,
@@ -108,14 +116,16 @@ const deleteModule = async (req, res, next) => {
     let { id } = req.body;
     let result = await moduleModel.findByIdAndRemove(id);
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "Module deletion failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Module deleted",
       data: result,
@@ -138,14 +148,16 @@ const mapResourceInModule = async (req, res, next) => {
       { new: true }
     );
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Data mapped successfully",
       data: result,
@@ -171,14 +183,16 @@ const removeResouresFromModule = async (req, res, next) => {
       { multi: true, new: true }
     );
     if (!result) {
-      return res.json({
+      res.status();
+      res.json({
         success: false,
         message: "failed",
         data: result,
         accesstoken: req.accesstoken,
       });
     }
-    return res.json({
+    res.status();
+    res.json({
       success: true,
       message: "Resource removed from module",
       data: result,

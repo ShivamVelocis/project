@@ -1,6 +1,9 @@
-const { isUserTokenValid, decodeToken, generaterefreshToken } = require("../Utils/authHelper");
+const {
+  isUserTokenValid,
+  decodeToken,
+  generaterefreshToken,
+} = require("../Utils/authHelper");
 const roleModel = require("../../roleManagement/models/rolemodel");
-
 
 let assignRole = async (req, res, next) => {
   try {
@@ -13,7 +16,7 @@ let assignRole = async (req, res, next) => {
       req.accesstoken = await generaterefreshToken(
         req.headers.authorization.split(" ")[1]
       );
-      console.log(payload)
+      console.log(payload);
       res.locals.userRole = payload.userRole;
       return next();
     } else {

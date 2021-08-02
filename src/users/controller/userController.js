@@ -27,7 +27,8 @@ exports.addUser = async function addUser(req, res, next) {
       errors.forEach((item) => {
         errorsExtract.push(item.msg);
       });
-      return res.json({
+      res.status(400);
+      res.json({
         success: false,
         message: errorsExtract,
         data: null,
@@ -36,7 +37,8 @@ exports.addUser = async function addUser(req, res, next) {
     } else {
       let User = new userModel(form_data);
       let saveUser = await User.save();
-      return res.json({
+      res.status(201);
+      res.json({
         success: true,
         message: "User added successfully",
         data: saveUser,
@@ -60,7 +62,8 @@ exports.updateUser = async (req, res) => {
     errors.forEach((item) => {
       errorsExtract.push(item.msg);
     });
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: errorsExtract,
       data: null,
@@ -74,7 +77,8 @@ exports.updateUser = async (req, res) => {
         { upsert: true }
       );
       if (updatedData !== undefined && updatedData !== null) {
-        return res.json({
+        res.status(204);
+        res.json({
           success: true,
           message: "User data updated",
           data: null,
@@ -89,7 +93,8 @@ exports.updateUser = async (req, res) => {
 
 exports.getUser = async function getUser(req, res, next) {
   if (res.locals.validationError) {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -102,7 +107,8 @@ exports.getUser = async function getUser(req, res, next) {
       .findById(id)
       .select("name email username role_id user_status _id");
     if (userData !== undefined && userData !== null) {
-      return res.json({
+      res.status(200);
+      res.json({
         success: true,
         message: "User data",
         data: userData,
@@ -120,14 +126,16 @@ exports.getUsers = async function getUsers(req, res, next) {
       .find({})
       .select("name email username role_id user_status _id");
     if (usersData.length > 0) {
-      return res.json({
+      res.status(200);
+      res.json({
         success: true,
         message: "Users data",
         data: usersData,
         accesstoken: req.accesstoken,
       });
     } else {
-      return res.json({
+      res.status(404);
+      res.json({
         success: false,
         message: "No data present",
         data: null,
@@ -144,7 +152,8 @@ exports.removeUser = async (req, res) => {
   try {
     let result = await userModel.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
-      return res.json({
+      res.status(204);
+      res.json({
         success: true,
         message: "Users removed",
         data: null,
@@ -168,7 +177,8 @@ exports.uploadProfilePicture = async (req, res) => {
       await userModel.findByIdAndUpdate(userId, {
         $set: { profilePicture: file },
       });
-      return res.json({
+      res.status(200);
+      res.json({
         success: true,
         message: "Image uploaded",
         data: null,
@@ -178,7 +188,8 @@ exports.uploadProfilePicture = async (req, res) => {
       next(error);
     }
   } else {
-    return res.json({
+    res.status(400);
+    res.json({
       success: false,
       message: "No file selected",
       data: null,
