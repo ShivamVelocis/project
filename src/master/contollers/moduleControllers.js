@@ -98,7 +98,7 @@ const updateModule = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: "Module updated",
@@ -123,7 +123,7 @@ const deleteModule = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: "Module deleted",
@@ -155,7 +155,7 @@ const mapResourceInModule = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: "Data mapped successfully",
@@ -190,7 +190,7 @@ const removeResouresFromModule = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: "Resource removed from module",

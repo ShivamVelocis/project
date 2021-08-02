@@ -77,7 +77,7 @@ exports.updateUser = async (req, res) => {
         { upsert: true }
       );
       if (updatedData !== undefined && updatedData !== null) {
-        res.status(204);
+        res.status(200);
         res.json({
           success: true,
           message: "User data updated",
@@ -152,7 +152,7 @@ exports.removeUser = async (req, res) => {
   try {
     let result = await userModel.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
-      res.status(204);
+      res.status(200);
       res.json({
         success: true,
         message: "Users removed",

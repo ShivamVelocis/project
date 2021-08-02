@@ -91,7 +91,7 @@ const updateMethod = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: "Method updated",
@@ -107,7 +107,7 @@ const deleteMethod = async (req, res, next) => {
   try {
     let { id } = req.body;
     let result = await methodModel.findByIdAndRemove(id);
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: "Method deleted",

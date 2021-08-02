@@ -132,7 +132,7 @@ const editAcl = async (req, res, next) => {
       },
       { new: true }
     );
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: CONFIG.ACL_UPDATE_SUCESS,
@@ -148,7 +148,7 @@ const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
   try {
     await aclModel.findByIdAndRemove(aclId);
-    res.status(204);
+    res.status(200);
     res.json({
       success: true,
       message: CONFIG.ACL_DELETE_SUCCESS,

@@ -74,7 +74,7 @@ exports.removeContent = async (req, res) => {
   try {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
-      res.status(204);
+      res.status(200);
       res.json({
         success: true,
         message: CONFIG.DELETE_CONTENT_SUCCESS,
@@ -114,7 +114,7 @@ exports.updateContent = async (req, res) => {
       { new: true, upsert: true }
     );
     if (result !== undefined && result !== null) {
-      res.status(204);
+      res.status(200);
       res.json({
         success: true,
         message: CONFIG.UPDATE_CONTENT_SUCCESS,
