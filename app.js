@@ -18,6 +18,8 @@ const aclRouter = require("./src/ACL/Routes/aclRoutes");
 const moduleRouter = require("./src/master/Routes/moduleRouter");
 const resourceRouter = require("./src/master/Routes/resourceRouter");
 const methodRouter = require("./src/master/Routes/methodRouter");
+const roleRouter = require("./src/roleManagement/routes/roleRoute");
+const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
@@ -42,6 +44,8 @@ app.use("/acl", aclRouter);
 app.use("/module", moduleRouter);
 app.use("/resource", resourceRouter);
 app.use("/method", methodRouter);
+app.use("/role", roleRouter);
+app.use("/contactus", contactusRouter);
 
 //handle wild URI
 app.use((req, res, next) => {

@@ -1,92 +1,121 @@
 const Contactus = require("../models/contactusModels.js");
 const Configs = require("../configs/config");
-
-exports.contactusForm = (req, res) => {
-  res.render("ContactUs/views/addContactus", { error: null });
-};
+const { check, validationResult } = require('express-validator');
 
 exports.addContactus = async (req, res) => {
-  if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("contentData", req.body);
-    return res.redirect("/contactus/addContactus");
-  }
-  let data = req.body;
-  data.status = 1;
-  try {
-    let contactus = new Contactus(data);
-    let saveContent = await contactus.save();
-	// console.log(saveContent);
-	req.flash("success",Configs.ADD_CONTACT_US_SUCCESSFULLY);
-    res.redirect("all");
+	
+	
+	try {
+	 var form_data = {
+      title: req.body.title,
+      description: req.body.description,
+    };
+	
+	  //Validation
+    let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
+      });
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
+      });
+    } else {
+      let contactus = new Contactus(form_data);
+      let saveContent = await contactus.save();
+      return res.json({
+		       success:"Success",
+               message: "Contactus added successfully",
+              data: saveContent,
+			  
+      });
+    }
+
   } catch (error) {
-    res.render("ContactUs/views/addContactus", {
-      //error: Configs.ADD_CONTENT_FAILED,
-    });
+     console.log(error);
   }
 };
 
 exports.getContactus = async (req, res) => {
-  let id = req.params.id;
+	
+	let id = req.params.id;
   try {
     let result = await Contactus.findById(id);
-    if (result !== undefined && result !== null) {
-      return res.render("ContactUs/views/viewContactus", { Contactus: result });
-    }
-  } catch (error) {
-    req.flash("error", Configs.FETCH_CONTENT_ERROR);
-    res.render("ContactUs/views/viewContactus", { Contactus: null });
+    //console.log(result);
+	if (result !== undefined && result !== null) {
+      return res.json({
+        success: "Success",
+        message: "Contactus data",
+        data: result,
+      });
   }
+  }catch (error) {
+    console.log(error);
+  }
+	
 };
 
 exports.getAllcontactus = async (req, res) => {
-  try {
-    let contactus = await Contactus.find({});
-    if (contactus.length > 0) {
-      return res.render("ContactUs/views/allcontactus", {
-        contactus: contactus,
-        error: null,
-        success: null,
+	
+	
+	try {
+	let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
       });
-    } else {
-      req.flash("error", Configs.NO_CONTENT_FOUND);
-      return res.render("ContactUs/views/allcontactus", {
-        contactus: [],
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
       });
-    }
-  } catch (error) {
-	  console.log(error);
-    req.flash("error", Configs.DELETE_CONTENT_FAILED);
-    return res.render("ContactUs/views/allcontactus", {
-      contactus: [],
-    });
+    }else{
+    let resultdata = await Contactus.find({});
+	return res.json({
+        success: "success",
+        message: "All Contactus fetch successfully",
+        data: resultdata,
+      });
   }
+  
+  } catch (error) {
+         console.log(error);
+    }
 };
 
 exports.removeContactus = async (req, res) => {
+	
   let id = req.params.id;
   try {
-    let result = await Contactus.findOneAndRemove({ _id: id });
-    if (result !== undefined && result !== null) {
-      let title = result.title.toUpperCase();
-      req.flash("success", Configs.DELETE_CONTACT_US_SUCCESSFULLY);
-      res.redirect("/contactus/all");
-      // return res.render("ContentManagement/views/deleteContent", {
-      //   message: `Content with title ${title} deleted successfully.`,
-      // });
-    } else {
-      res.status(400);
-      req.flash("success", `No contactus with id ${id} present for deletion`);
-      res.redirect("/contactus/all");
-      // res.render("ContentManagement/views/ErrorPage", {
-      //   error: `no content with id ${id} present for deletion`,
-      // });
-    }
+    let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
+      });
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
+      }); 
+    }else{
+		 let result = await Contactus.findOneAndRemove({ _id: id });
+		 return res.json({
+		       success:"Success",
+               message: "Contactus deleted successfully", 
+      });
+	}
   } catch (error) {
-    res.status(400);
-    req.flash("success", Configs.DELETE_CONTENT_FAILED);
-    res.redirect("/contactus/all");
+	  console.log(error);
   }
+	
 };
 
 exports.contactusToUpdate = async (req, res) => {
@@ -106,28 +135,39 @@ exports.contactusToUpdate = async (req, res) => {
 };
 
 exports.updateContactus = async (req, res) => {
-  let id = req.params.id;
-  let updatedContent = req.body;
-  if (res.locals.validationError) {
-    req.flash("error", res.locals.validationError);
-    req.flash("contactusData", req.body);
-    return res.redirect(`/contactus/update/${id}`);
-  }
+	let id = req.params.id;
+  let updatedContactus = {
+      title: req.body.title,
+      description: req.body.description,
+    };
   try {
+	  let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
+      });
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
+      });
+    }else{ 
     let result = await Contactus.findOneAndUpdate(
       { _id: id },
-      { $set: updatedContent },
+      { $set: updatedContactus },
       { new: true, upsert: true }
     );
-    if (result !== undefined && result !== null) {
-      req.flash(
-        "success",
-        Configs.UPDATE_CONTACT_US_SUCCESSFULLY
-      );
-      return res.redirect("/contactus/all");
-    }
-  } catch (error) {
-    req.flash("error", Configs.UPDATE_CONTENT_FAILED);
-    return res.redirect(`/contactus/update/${id}`);
+	return res.json({
+		       success:"Success",
+               message: "Contactus updated successfully",
+			  
+      });
+	}
+  
+  }catch (error) {
+    console.log(error);
   }
+	
 };
