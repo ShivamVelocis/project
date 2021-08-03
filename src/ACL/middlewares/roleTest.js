@@ -132,32 +132,21 @@ const isPermitted = async (req, res, next) => {
     .populate({
       path: "allowedResources",
       select: { module: 0, __v: 0 },
-      populate: {
-        path: "methods",
-        select: { __v: 0 },
-      },
     })
     .populate({
       path: "denyResources",
       select: { module: 0, __v: 0 },
-      populate: {
-        path: "methods",
-        select: { __v: 0 },
-      },
     });
 
   let isAllowed = false;
   if (userRole && dbRoleData) {
     let allowedResources = dbRoleData.allowedResources.map((resource) => {
-      let path = resource.resource_path;
-      let methods = resource.methods.map((method) => method.method_type);
-      return { path, methods };
+      return { path: resource.resource_path, methods: resource.methods };
     });
     let denyResources = dbRoleData.denyResources.map((resource) => {
-      let path = resource.resource_path;
-      let methods = resource.methods.map((method) => method.method_type);
-      return { path, methods };
+      return { path: resource.resource_path, methods: resource.methods };
     });
+    // console.log(dbRoleData);
     isAllowed =
       allowedResource(allowedResources, req.originalUrl, req.method) &&
       denyResource(denyResources, req.originalUrl, req.method);

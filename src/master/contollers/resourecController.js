@@ -30,8 +30,7 @@ const getResources = async (req, res, next) => {
   try {
     let result = await resourceModel
       .find()
-      .populate("module", "_id module_name module_status")
-      .populate("methods");
+      .populate("module", "_id module_name module_status");
     if (!result) {
       res.status(404);
       res.json({
@@ -133,20 +132,10 @@ const deleteResource = async (req, res, next) => {
 
 const mapModuleToResource = async (req, res, next) => {
   try {
-    let module = {};
-    let methods = [];
-    if (req.body.moduleId) {
-      module.module = req.body.moduleId;
-    }
-    if (Array.isArray(req.body.methods)) {
-      methods = req.body.methods;
-    }
-    let resourceId = req.body.resourceId;
     let result = await resourceModel.findOneAndUpdate(
-      { _id: resourceId },
+      { _id: req.body.resourceId },
       {
-        $addToSet: { methods: { $each: methods } },
-        $set: module,
+        $set: { module: req.body.moduleId },
       },
       { new: true }
     );
@@ -171,44 +160,44 @@ const mapModuleToResource = async (req, res, next) => {
   }
 };
 
-const removemethodFromResource = async (req, res, next) => {
-  try {
-    let resourceID = req.body.id;
-    let methodIDs = [];
+// const removemethodFromResource = async (req, res, next) => {
+//   try {
+//     let resourceID = req.body.id;
+//     let methodIDs = [];
 
-    if (Array.isArray(req.body.methodID)) {
-      methodIDs = req.body.methodID;
-    } else {
-      methodIDs.push(req.body.methodID);
-    }
+//     if (Array.isArray(req.body.methodID)) {
+//       methodIDs = req.body.methodID;
+//     } else {
+//       methodIDs.push(req.body.methodID);
+//     }
 
-    let result = await resourceModel.findOneAndUpdate(
-      { _id: resourceID },
-      {
-        $pull: { methods: { $in: methodIDs } },
-      },
-      { multi: true, new: true }
-    );
-    if (!result) {
-      res.status(400);
-      res.json({
-        success: false,
-        message: "Failed",
-        data: result,
-        accesstoken: req.accesstoken,
-      });
-    }
-    res.status(200);
-    res.json({
-      success: true,
-      message: "Method(s) removed from Resource",
-      data: result,
-      accesstoken: req.accesstoken,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//     let result = await resourceModel.findOneAndUpdate(
+//       { _id: resourceID },
+//       {
+//         $pull: { methods: { $in: methodIDs } },
+//       },
+//       { multi: true, new: true }
+//     );
+//     if (!result) {
+//       res.status(400);
+//       res.json({
+//         success: false,
+//         message: "Failed",
+//         data: result,
+//         accesstoken: req.accesstoken,
+//       });
+//     }
+//     res.status(200);
+//     res.json({
+//       success: true,
+//       message: "Method(s) removed from Resource",
+//       data: result,
+//       accesstoken: req.accesstoken,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 module.exports = {
   addResource,
@@ -217,5 +206,5 @@ module.exports = {
   updateResource,
   deleteResource,
   mapModuleToResource,
-  removemethodFromResource,
+  // removemethodFromResource,
 };
