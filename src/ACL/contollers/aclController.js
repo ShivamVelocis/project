@@ -39,9 +39,7 @@ const getAcl = async (req, res, next) => {
 const getAcls = async (req, res, next) => {
   let filter = {};
   if (Object.keys(req.query).length) {
-    let role = req.query.role
-      ? (filter.role = req.query.role)
-      : null;
+    let role = req.query.role ? (filter.role = req.query.role) : null;
     let module_name = req.query.module_name
       ? (filter.module_name = {
           $regex: new RegExp(req.query.module_name, "i"),
@@ -141,8 +139,18 @@ const editAcl = async (req, res, next) => {
 
 const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
+  console.log(aclId)
   try {
-    await aclModel.findByIdAndRemove(aclId);
+    let result = await aclModel.findByIdAndRemove(aclId);
+    if (!result) {
+      res.status(200);
+      return res.json({
+        success: false,
+        message: "Invalid Acl ID",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
     res.status(200);
     return res.json({
       success: true,
