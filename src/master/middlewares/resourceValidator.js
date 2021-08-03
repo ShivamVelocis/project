@@ -7,12 +7,19 @@ let resourceMethods = ["GET", "POST", "PUT", "DELETE"];
 const addResource = () => {
   return [
     body("*.resource_name").exists().isString(),
-    body("*.resource_path").exists().isURL(),
+    body("*.resource_path").exists().isString(),
     body("*.resource_status")
       .exists()
       .isIn([0, 1])
       .withMessage("Status should be 1 or 0"),
-    body("*.module").exists().isString(),
+    body("*.module")
+      .exists()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error("Please enter valid  MongoDB ID");
+        }
+        return true;
+      }),
     body("*.methods").exists().isArray(),
     body("*.methods.*")
       .isIn(["GET", "POST", "PUT", "DELETE"])
@@ -31,12 +38,19 @@ const updateResource = () => {
         return true;
       }),
     body("resource_name").optional().isString(),
-    body("resource_path").optional().isURL(),
+    body("resource_path").optional().isString(),
     body("resource_status")
       .optional()
       .isIn([0, 1])
       .withMessage("Status should be 1 or 0"),
-    body("module").optional().isString(),
+    body("module")
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error("Please enter valid  MongoDB ID");
+        }
+        return true;
+      }),
     body("methods")
       .optional()
       .isArray()

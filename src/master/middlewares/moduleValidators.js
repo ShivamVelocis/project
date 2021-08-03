@@ -59,7 +59,7 @@ const removeModuleResource = () => {
       .withMessage("id should not be empty")
       .isArray()
       .withMessage("resourceID should be a array"),
-      body("resourceID.*").custom((value) => {
+    body("resourceID.*").custom((value) => {
       if (!ObjectId(value)) {
         throw new Error("Please enter valid  MongoDB ID");
       }
@@ -79,7 +79,7 @@ const addModuleResource = () => {
       .withMessage("id should not be empty")
       .isArray()
       .withMessage("resourcesId should be a array"),
-      body("resourcesId.*").custom((value) => {
+    body("resourcesId.*").custom((value) => {
       if (!ObjectId(value)) {
         throw new Error("Please enter valid  MongoDB ID");
       }
