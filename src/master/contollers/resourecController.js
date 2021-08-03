@@ -27,11 +27,28 @@ const addResource = async (req, res, next) => {
 };
 
 const getResources = async (req, res, next) => {
+  let filter = {};
+  if (Object.keys(req.query).length) {
+    let module = req.query.module ? (filter.module = req.query.module) : null;
+    let resource_status = req.query.resource_status
+      ? (filter.resource_status = req.query.resource_status)
+      : null;
+    let resource_name = req.query.resource_name
+      ? (filter.resource_name = {
+          $regex: new RegExp(req.query.resource_name, "i"),
+        })
+      : null;
+    let resource_path = req.query.resource_path
+      ? (filter.resource_path = req.query.resource_path)
+      : null;
+  }
+
   try {
     let result = await resourceModel
-      .find()
+      .find(filter)
       .populate("module", "_id module_name module_status");
-    if (!result) {
+    // console.log(!JSON.parse(result));
+    if (!result || result.length <= 0) {
       res.status(404);
       res.json({
         success: false,

@@ -27,8 +27,19 @@ const addModule = async (req, res, next) => {
 };
 
 const getModules = async (req, res, next) => {
+  let filter = {};
+  if (Object.keys(req.query).length) {
+    let module_status = req.query.module_status
+      ? (filter.module_status = req.query.module_status)
+      : null;
+    let module_name = req.query.module_name
+      ? (filter.module_name = {
+          $regex: new RegExp(req.query.module_name, "i"),
+        })
+      : null;
+  }
   try {
-    let result = await moduleModel.find().populate({
+    let result = await moduleModel.find(filter).populate({
       path: "module_resources",
       select: { module: 0, __v: 0 },
       populate: {
@@ -36,7 +47,7 @@ const getModules = async (req, res, next) => {
         select: { __v: 0 },
       },
     });
-    if (!result) {
+    if (!result || result.length <= 0) {
       res.status(404);
       res.json({
         success: false,

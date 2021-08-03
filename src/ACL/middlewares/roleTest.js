@@ -150,7 +150,7 @@ const isPermitted = async (req, res, next) => {
     isAllowed =
       allowedResource(allowedResources, req.originalUrl, req.method) &&
       denyResource(denyResources, req.originalUrl, req.method);
-    // console.log(allowedResources);
+    console.log(allowedResources, req.originalUrl, req.method);
   }
 
   if (isAllowed) return next();

@@ -37,9 +37,20 @@ const getAcl = async (req, res, next) => {
 };
 
 const getAcls = async (req, res, next) => {
+  let filter = {};
+  if (Object.keys(req.query).length) {
+    let role = req.query.role
+      ? (filter.role = req.query.role)
+      : null;
+    let module_name = req.query.module_name
+      ? (filter.module_name = {
+          $regex: new RegExp(req.query.module_name, "i"),
+        })
+      : null;
+  }
   try {
     let result = await aclModel
-      .find()
+      .find(filter)
       .populate({
         path: "allowedResources",
         select: { module: 0, __v: 0 },
