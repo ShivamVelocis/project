@@ -3,7 +3,6 @@ const {
   decodeToken,
   generaterefreshToken,
 } = require("../Utils/authHelper");
-const roleModel = require("../../roleManagement/models/rolemodel");
 
 let assignRole = async (req, res, next) => {
   try {

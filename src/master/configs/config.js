@@ -2,16 +2,16 @@ require("dotenv").config(); //instatiate environment variables
 
 let CONFIG = {}; //Make this global to use all over the application
 
-CONFIG.MODULE_TITLE = "ACL Mangement";
-CONFIG.ADD_ACL = "ACL Rule";
-CONFIG.UPDATE_ACL = "Edit ACL Rule";
+CONFIG.MODULE_TITLE = "MODULE Mangement";
+CONFIG.ADD_MODULE = "MODULE Rule";
+CONFIG.UPDATE_MODULE = "Edit MODULE Rule";
 CONFIG.AUTH_FAIL_MESSAGE = "Not authorized to access the resource";
-CONFIG.ACL_ADD_SUCCESS = "ACL RULE added successfully";
-CONFIG.ACL_UPDATE_SUCESS = "ACL RULE updated successfully";
-CONFIG.ACL_DELETE_SUCCESS = "ACL RULE deleted successfully";
-CONFIG.ACL_ADD_FAILED = "";
-CONFIG.ACL_UPDATE_FAILED = "";
-CONFIG.ACL_DELETE_FAILED = "";
+CONFIG.MODULE_ADD_SUCCESS = "MODULE RULE added successfully";
+CONFIG.MODULE_UPDATE_SUCESS = "MODULE RULE updated successfully";
+CONFIG.MODULE_DELETE_SUCCESS = "MODULE RULE deleted successfully";
+CONFIG.MODULE_ADD_FAILED = "";
+CONFIG.MODULE_UPDATE_FAILED = "";
+CONFIG.MODULE_DELETE_FAILED = "";
 CONFIG.NO_RULE_FOUND = "No record found"
 
 

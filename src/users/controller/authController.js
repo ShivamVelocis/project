@@ -10,7 +10,7 @@ const {
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 //  handler for login form and redirect to users after success login
-exports.userLogin = async (req, res, next) => {
+const userLogin = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
     res.status(400);
@@ -38,6 +38,7 @@ exports.userLogin = async (req, res, next) => {
         userId: user._id,
         userName: user.name.first_name,
         userRole: user.role_id.title,
+        userRoleId: user.role_id._id,
       };
       // console.log(tokenPayload)
       let token = await generateJWTToken(
@@ -82,7 +83,7 @@ exports.userLogin = async (req, res, next) => {
 };
 
 // email OTP and URL for user for password reset
-exports.forgetPassword = async (req, res, next) => {
+const forgetPassword = async (req, res, next) => {
   let data = req.body;
   console.log(data);
   if (res.locals.validationError) {
@@ -132,7 +133,7 @@ exports.forgetPassword = async (req, res, next) => {
 };
 
 // reset user password after valid OTP and URL
-exports.otpVerification = async (req, res, next) => {
+const otpVerification = async (req, res, next) => {
   let token = req.params.token;
   if (res.locals.validationError) {
     res.status(400);
@@ -199,9 +200,8 @@ exports.otpVerification = async (req, res, next) => {
   }
 };
 
-
 //change password after user provide current and new password
-exports.changePassword = async (req, res, next) => {
+const changePassword = async (req, res, next) => {
   let userData = req.body;
   // console.log(userData)
   if (res.locals.validationError) {
@@ -233,7 +233,7 @@ exports.changePassword = async (req, res, next) => {
       res.status(400);
       res.json({
         success: false,
-        message: "Invalid user ID",
+        message: CONFIG.INVALID_USER_ID,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -243,7 +243,7 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
-exports.changeMyPassword = async (req, res, next) => {
+const changeMyPassword = async (req, res, next) => {
   if (res.locals.validationError) {
     res.status(400);
     res.json({
@@ -289,4 +289,12 @@ exports.changeMyPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+module.exports = {
+  userLogin,
+  forgetPassword,
+  otpVerification,
+  changePassword,
+  changeMyPassword,
 };

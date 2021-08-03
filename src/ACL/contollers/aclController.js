@@ -1,6 +1,6 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
-const { appendACL } = require("../Utils/helper");
+// const { appendACL } = require("../Utils/helper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -10,18 +10,10 @@ const getAcl = async (req, res, next) => {
       .populate({
         path: "allowedResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       })
       .populate({
         path: "denyResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       });
     if (!result) {
       res.status(404);
@@ -51,18 +43,10 @@ const getAcls = async (req, res, next) => {
       .populate({
         path: "allowedResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       })
       .populate({
         path: "denyResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       });
 
     res.status(200);

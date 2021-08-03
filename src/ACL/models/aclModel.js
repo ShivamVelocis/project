@@ -10,5 +10,10 @@ let aclSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+aclSchema.statics.findAclByResource = function (resourceId, cb) {
+  let id = Array.isArray(resourceId) ? resourceId : [resourceId];
+  return this.find({
+    $or: [{ allowedResources: { $in: id } }, { denyResources: { $in: id } }],
+  }).exec(cb);
+};
 module.exports = mongoose.model("acl", aclSchema);
