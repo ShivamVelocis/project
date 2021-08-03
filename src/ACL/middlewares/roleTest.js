@@ -126,7 +126,7 @@ const denyResource = (resource, resourceToBeAccess, method) => {
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
   // console.log(req.originalUrl)
-  let userRole = res.locals.userRole;
+  let userRole = req.userRole;
   let dbRoleData = await aclModel
     .findOne({ role: userRole })
     .populate({
@@ -150,7 +150,7 @@ const isPermitted = async (req, res, next) => {
     isAllowed =
       allowedResource(allowedResources, req.originalUrl, req.method) &&
       denyResource(denyResources, req.originalUrl, req.method);
-    console.log(allowedResources, req.originalUrl, req.method);
+    // console.log(allowedResources, req.originalUrl, req.method);
   }
 
   if (isAllowed) return next();

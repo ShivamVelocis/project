@@ -7,7 +7,7 @@ const addResource = async (req, res, next) => {
     let result = await resourceModel.insertMany(resourceData);
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: "Failed",
         data: result,
@@ -15,7 +15,7 @@ const addResource = async (req, res, next) => {
       });
     }
     res.status(201);
-    res.json({
+    return res.json({
       success: true,
       message: "Resourece  added successfully",
       data: result,
@@ -50,7 +50,7 @@ const getResources = async (req, res, next) => {
     // console.log(!JSON.parse(result));
     if (!result || result.length <= 0) {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
         message: "No data found",
         data: result,
@@ -58,7 +58,7 @@ const getResources = async (req, res, next) => {
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "All resources data",
       data: result,
@@ -74,7 +74,7 @@ const getResource = async (req, res, next) => {
     let result = await resourceModel.findById(req.params.id);
     if (!result) {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
         message: "No data found",
         data: result,
@@ -82,7 +82,7 @@ const getResource = async (req, res, next) => {
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "Resource data",
       data: result,
@@ -103,7 +103,7 @@ const updateResource = async (req, res, next) => {
     );
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: "Resource update failed",
         data: result,
@@ -111,7 +111,7 @@ const updateResource = async (req, res, next) => {
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "Resource updated",
       data: result,
@@ -128,7 +128,7 @@ const deleteResource = async (req, res, next) => {
     let result = await resourceModel.findByIdAndRemove(id);
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: "Resource deletion failed",
         data: result,
@@ -136,7 +136,7 @@ const deleteResource = async (req, res, next) => {
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "Resource deleted",
       data: result,
@@ -158,7 +158,7 @@ const mapModuleToResource = async (req, res, next) => {
     );
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: "failed",
         data: result,
@@ -166,7 +166,7 @@ const mapModuleToResource = async (req, res, next) => {
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "Mapped successfully",
       data: result,
@@ -197,7 +197,7 @@ const mapModuleToResource = async (req, res, next) => {
 //     );
 //     if (!result) {
 //       res.status(400);
-//       res.json({
+//       return res.json({
 //         success: false,
 //         message: "Failed",
 //         data: result,
@@ -205,7 +205,7 @@ const mapModuleToResource = async (req, res, next) => {
 //       });
 //     }
 //     res.status(200);
-//     res.json({
+//     return res.json({
 //       success: true,
 //       message: "Method(s) removed from Resource",
 //       data: result,

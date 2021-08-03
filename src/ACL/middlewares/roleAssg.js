@@ -9,21 +9,21 @@ let assignRole = async (req, res, next) => {
     if (isUserTokenValid(req)) {
       let payload = decodeToken(req.headers.authorization.split(" ")[1]);
       if (!payload.userRole) {
-        res.locals.userRole = "anonymous";
+        req.userRole = "anonymous";
         return next();
       }
       req.accesstoken = await generaterefreshToken(
         req.headers.authorization.split(" ")[1]
       );
-      res.locals.userRole = payload.userRole;
+      req.userRole = payload.userRole;
       return next();
     } else {
       console.log("Anonymous user");
-      res.locals.userRole = "anonymous";
+      req.userRole = "anonymous";
       return next();
     }
   } catch (error) {
-    res.locals.userRole = "anonymous";
+    req.userRole = "anonymous";
     return next();
   }
 };

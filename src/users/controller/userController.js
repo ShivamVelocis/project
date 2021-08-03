@@ -28,7 +28,7 @@ const addUser = async function addUser(req, res, next) {
         errorsExtract.push(item.msg);
       });
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: errorsExtract,
         data: null,
@@ -38,7 +38,7 @@ const addUser = async function addUser(req, res, next) {
       let User = new userModel(form_data);
       let saveUser = await User.save();
       res.status(201);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.USER_ADD_SUCCESS,
         data: saveUser,
@@ -63,7 +63,7 @@ const updateUser = async (req, res) => {
       errorsExtract.push(item.msg);
     });
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: errorsExtract,
       data: null,
@@ -78,7 +78,7 @@ const updateUser = async (req, res) => {
       );
       if (updatedData !== undefined && updatedData !== null) {
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.USER_UPDATE_SUCCESS,
           data: null,
@@ -94,7 +94,7 @@ const updateUser = async (req, res) => {
 const getUser = async function getUser(req, res, next) {
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -108,7 +108,7 @@ const getUser = async function getUser(req, res, next) {
       .select("name email username role_id user_status _id");
     if (userData !== undefined && userData !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.USER_USER_DATA,
         data: userData,
@@ -127,7 +127,7 @@ const getUsers = async function getUsers(req, res, next) {
       .select("name email username role_id user_status _id");
     if (usersData.length > 0) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.USER_USER_DATA,
         data: usersData,
@@ -135,7 +135,7 @@ const getUsers = async function getUsers(req, res, next) {
       });
     } else {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.NO_DATA_FOUND,
         data: null,
@@ -153,7 +153,7 @@ const removeUser = async (req, res) => {
     let result = await userModel.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.USER_REMOVE_SUCCESS,
         data: null,
@@ -178,7 +178,7 @@ const uploadProfilePicture = async (req, res) => {
         $set: { profilePicture: file },
       });
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.USER_IMAGE_UPLOADED,
         data: null,
@@ -189,7 +189,7 @@ const uploadProfilePicture = async (req, res) => {
     }
   } else {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: CONFIG.NO_FILE_SELECTED,
       data: null,
@@ -201,7 +201,7 @@ const getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
     let { userId } = decodeToken(req.refreshAccessToken);
-    let user = await userModel.findOne({ _id: userId });
+    let user = await userModel.findOne({ _id: userId, user_status: 1 });
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
       return res.send(user.profilePicture);

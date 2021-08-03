@@ -14,7 +14,7 @@ const userLogin = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
     });
@@ -23,13 +23,13 @@ const userLogin = async (req, res, next) => {
     let user = await userModel
       .findOne({ email: data.email, user_status: 1 })
       .populate("role_id");
-      console.log(user)
+    console.log(user);
 
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
         res.status(401);
-        res.json({
+        return res.json({
           success: false,
           message: CONFIG.LOGIN_FAIL_MESSAGE,
           data: null,
@@ -53,9 +53,9 @@ const userLogin = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        // res.status(); res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
+        // res.status(); return res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: null,
@@ -63,7 +63,7 @@ const userLogin = async (req, res, next) => {
         });
       } else {
         res.status(401);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: result,
@@ -72,7 +72,7 @@ const userLogin = async (req, res, next) => {
       }
     } else {
       res.status(401);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.LOGIN_FAIL_MESSAGE,
         data: null,
@@ -86,17 +86,16 @@ const userLogin = async (req, res, next) => {
 // email OTP and URL for user for password reset
 const forgetPassword = async (req, res, next) => {
   let data = req.body;
-  console.log(data);
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
     });
   }
   try {
-    let user = await userModel.findOne({ email: data.email });
+    let user = await userModel.findOne({ email: data.email, user_status: 1 });
     if (user !== null && user !== undefined) {
       let otp = Math.floor(1000 + Math.random() * 9000);
       let token = await generateJWTToken(
@@ -113,7 +112,7 @@ const forgetPassword = async (req, res, next) => {
         // await mailOtp(data.email, otp, token);
         await sendOtpMail(data.email, otp, token);
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.OTP_SUCCESS,
           data: null,
@@ -121,7 +120,7 @@ const forgetPassword = async (req, res, next) => {
       }
     } else {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.OTP_SUCCESS,
         data: null,
@@ -138,7 +137,7 @@ const otpVerification = async (req, res, next) => {
   let token = req.params.token;
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -148,7 +147,7 @@ const otpVerification = async (req, res, next) => {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
@@ -156,11 +155,11 @@ const otpVerification = async (req, res, next) => {
     }
     let userData = await decodeToken(token);
     let data = req.body;
-    let user = await userModel.findOne({ email: userData.userEmail });
+    let user = await userModel.findOne({ email: userData.userEmail, user_status: 1 });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
@@ -175,14 +174,14 @@ const otpVerification = async (req, res, next) => {
           { upsert: true }
         );
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.PASSWORD_SUCCESS_CHANGE,
           data: null,
         });
       } else {
         res.status(400);
-        res.json({
+        return res.json({
           success: false,
           message: CONFIG.WRONG_OTP,
           data: null,
@@ -190,7 +189,7 @@ const otpVerification = async (req, res, next) => {
       }
     } else {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.INVALID_EMAIL,
         data: null,
@@ -207,7 +206,7 @@ const changePassword = async (req, res, next) => {
   // console.log(userData)
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -224,7 +223,7 @@ const changePassword = async (req, res, next) => {
         { upsert: true }
       );
       res.status(200);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
@@ -232,7 +231,7 @@ const changePassword = async (req, res, next) => {
       });
     } else {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.INVALID_USER_ID,
         data: null,
@@ -247,7 +246,7 @@ const changePassword = async (req, res, next) => {
 const changeMyPassword = async (req, res, next) => {
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -258,7 +257,7 @@ const changeMyPassword = async (req, res, next) => {
     let { userId } = decodeToken(req.accesstoken);
     let userData = req.body;
 
-    let user = await userModel.findOne({ _id: userId });
+    let user = await userModel.findOne({ _id: userId, user_status: 1 });
     if (user != null && user != undefined) {
       let oldPasswordVerified = await bcrypt.compare(
         userData.currentPassword,
@@ -272,7 +271,7 @@ const changeMyPassword = async (req, res, next) => {
           { upsert: true }
         );
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.CHANGE_PASSWORD_SUCCESS,
           data: null,
@@ -280,7 +279,7 @@ const changeMyPassword = async (req, res, next) => {
         });
       }
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_ERROR,
         data: null,
