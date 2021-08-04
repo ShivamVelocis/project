@@ -62,7 +62,7 @@ CONFIG.NO_DATA_FOUND = "No data found";
 CONFIG.USER_REMOVE_SUCCESS = "Users removed";
 CONFIG.USER_IMAGE_UPLOADED = "Image uploaded";
 CONFIG.NO_FILE_SELECTED = "No file selected";
-CONFIG.INVALID_MONGODB_ID ="Invalid mongodb ID"
+CONFIG.INVALID_MONGODB_ID = "Invalid mongodb ID";
 
 CONFIG.LIMIT = 5;
 
@@ -75,5 +75,12 @@ CONFIG.PASSWORD_PATTERN =
 CONFIG.EMAIL_PATTERN =
   GLOBAL_CONFIG.EMAIL_PATTERN ||
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+CONFIG.NUMBERONLYREGEX = /^[ 0-9]*$/;
+CONFIG.CHARONLYREGEX = /^[ A-Za-z]*$/;
+CONFIG.ALPHANUMERICONLYREGEX = /^[ A-Za-z0-9]*$/;
+CONFIG.TEXTFIELDREGEX = /^[ A-Za-z0-9_.\/,]*$/;
+CONFIG.TEXTAREAREGEX = /^[ A-Za-z0-9_.\/,<>]*$/;
+CONFIG.EMAILREGEX = /^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/;
 
 module.exports = CONFIG;

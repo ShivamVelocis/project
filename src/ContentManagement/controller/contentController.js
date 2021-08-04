@@ -2,14 +2,6 @@ const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
 
 exports.addContent = async (req, res) => {
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: "",
-    });
-  }
   let data = req.body;
   try {
     let content = new Content(data);
@@ -98,15 +90,6 @@ exports.removeContent = async (req, res) => {
 exports.updateContent = async (req, res) => {
   let id = req.body.id;
   let updatedContent = req.body;
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
   try {
     let result = await Content.findOneAndUpdate(
       { _id: id },
