@@ -62,6 +62,7 @@ CONFIG.NO_DATA_FOUND = "No data found";
 CONFIG.USER_REMOVE_SUCCESS = "Users removed";
 CONFIG.USER_IMAGE_UPLOADED = "Image uploaded";
 CONFIG.NO_FILE_SELECTED = "No file selected";
+CONFIG.INVALID_MONGODB_ID ="Invalid mongodb ID"
 
 CONFIG.LIMIT = 5;
 

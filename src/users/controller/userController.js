@@ -101,6 +101,7 @@ const getUser = async function getUser(req, res, next) {
       accesstoken: req.accesstoken,
     });
   }
+  console.log(res.locals.validationError)
   let id = req.params.id;
   try {
     let userData = await userModel
@@ -166,7 +167,7 @@ const removeUser = async (req, res) => {
 };
 
 const uploadProfilePicture = async (req, res) => {
-  console.log("user profile");
+  // console.log("user profile");
   let userId = req.body.id;
   if (req.file && req.file.buffer) {
     try {

@@ -139,7 +139,7 @@ const editAcl = async (req, res, next) => {
 
 const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
-  console.log(aclId)
+  // console.log(aclId)
   try {
     let result = await aclModel.findByIdAndRemove(aclId);
     if (!result) {

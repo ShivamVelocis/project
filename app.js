@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 const app = express();
+
+
 //Environment File handle
 dotenv.config();
 
@@ -17,7 +19,6 @@ const userRoute = require("./src/users/routes/userRouter");
 const aclRouter = require("./src/ACL/Routes/aclRoutes");
 const moduleRouter = require("./src/master/Routes/moduleRouter");
 const resourceRouter = require("./src/master/Routes/resourceRouter");
-// const methodRouter = require("./src/master/Routes/methodRouter");
 const roleRouter = require("./src/roleManagement/routes/roleRoute");
 const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
 
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //assign role to every incoming resquest
 app.use(assignRole);
+
 //Authentication request
 app.use(isPermitted);
 
@@ -43,9 +45,9 @@ app.use("/user", userRoute);
 app.use("/acl", aclRouter);
 app.use("/module", moduleRouter);
 app.use("/resource", resourceRouter);
-// app.use("/method", methodRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
+
 
 //handle wild URI
 app.use((req, res, next) => {
@@ -53,6 +55,7 @@ app.use((req, res, next) => {
   error.status = 404;
   next(error);
 });
+
 
 //Error handler
 app.use((error, req, res, next) => {
@@ -66,12 +69,14 @@ app.use((error, req, res, next) => {
   });
 });
 
+
 //Server start after mongoose connection open
 mongoose.connection.once("open", function callback() {
   app.listen(process.env.APP_PORT || 5000, () =>
     console.log(`Example app listening on port ${process.env.PORT}!`)
   );
 });
+
 
 //Error on mongoose connection
 mongoose.connection.on("error", function (err) {

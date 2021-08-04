@@ -128,7 +128,7 @@ exports.changeMyPasswordValidationRule = () => {
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
       .custom((value, { req }) => {
-        console.log(value, req.body.newPassword);
+        // console.log(value, req.body.newPassword);
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -229,17 +229,33 @@ exports.forgetpasswordEmailValidation = () => {
 
 // mongodb id validater for get request
 exports.mongoIDValidationRules = () => {
-  return param("id")
-    .exists()
-    .withMessage(CONFIG.INVALID_MONGO_ID)
-    .bail()
-    .custom((value) => {
-      // console.log(value);
-      if (!ObjectId(value)) {
-        throw new Error(CONFIG.INVALID_MONGO_ID);
-      }
-      return true;
-    });
+  return [
+    param("id")
+      .exists()
+      .withMessage(CONFIG.INVALID_MONGO_ID)
+      .custom((value) => {
+        // console.log(value)
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+  ];
+};
+
+exports.mongoIDValidate = () => {
+  return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.INVALID_MONGO_ID)
+      .custom((value) => {
+        // console.log(value)
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+  ];
 };
 
 // middleware to check if any error encouter during validation
@@ -249,7 +265,7 @@ exports.isRequestValid = (req, res, next) => {
     return next();
   }
   const extractedErrors = [];
-  // console.log(errors)
+  console.log(errors)
   errors.array().map((err) => extractedErrors.push(err.msg));
   res.locals.validationError =
     extractedErrors.length > 0 ? extractedErrors : null;

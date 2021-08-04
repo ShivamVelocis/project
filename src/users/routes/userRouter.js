@@ -4,7 +4,7 @@ const router = express.Router();
 
 const userController = require("./../controller/userController");
 const authController = require("./../controller/authController");
-const { updateUserValidationRules,changePasswordValidationRule,changeMyPasswordValidationRule,otpPasswordValidationRule,forgetpasswordEmailValidation, mongoIDValidationRules,isRequestValid } = require("../middlewares/validater");
+const { updateUserValidationRules,changePasswordValidationRule,changeMyPasswordValidationRule,otpPasswordValidationRule,forgetpasswordEmailValidation, mongoIDValidationRules,isRequestValid, mongoIDValidate } = require("../middlewares/validater");
 const userValidationRules = require('./../validations/UserValidation');
 const { uploadProfilePicture } = require("../utils/uploadHandler");
 
@@ -12,7 +12,7 @@ const { uploadProfilePicture } = require("../utils/uploadHandler");
 router.get("/", userController.getUsers); 
 router.post("/", userValidationRules.validateUserAdd, userController.addUser);
 router.put("/",updateUserValidationRules(),isRequestValid,userValidationRules.validateUserUpdate, userController.updateUser);
-router.delete("/", mongoIDValidationRules(), isRequestValid , userController.removeUser); 
+router.delete("/", mongoIDValidate(), isRequestValid , userController.removeUser); 
 
 //Auth
 router.post("/login", authController.userLogin); //genrate token and send to user in session also store in db
@@ -36,6 +36,6 @@ router.post('/profile/',uploadProfilePicture,userController.uploadProfilePicture
 
 
 //get user by id
-router.get("/:id", mongoIDValidationRules(),userController.getUser); 
+router.get("/:id",mongoIDValidationRules(), isRequestValid ,userController.getUser); 
 
 module.exports = router;
