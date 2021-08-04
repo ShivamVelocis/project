@@ -9,7 +9,7 @@ const addModule = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "Adding Module failed",
+        message: CONFIG.MODULE_ADD_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -17,7 +17,7 @@ const addModule = async (req, res, next) => {
     res.status(201);
     return res.json({
       success: true,
-      message: "Module added successfully",
+      message: CONFIG.MODULE_ADD_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -51,7 +51,7 @@ const getModules = async (req, res, next) => {
       res.status(404);
       return res.json({
         success: false,
-        message: "No data failed",
+        message: CONFIG.NO_RULE_FOUND,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -59,7 +59,7 @@ const getModules = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "All Modules",
+      message: CONFIG.MODULES_FETCH_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -75,7 +75,7 @@ const getModule = async (req, res, next) => {
       res.status(404);
       return res.json({
         success: false,
-        message: "No data dound",
+        message: CONFIG.NO_RULE_FOUND,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -83,7 +83,7 @@ const getModule = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Module data",
+      message: CONFIG.MODULE_FETCH_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -104,7 +104,7 @@ const updateModule = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "Module update failed",
+        message: CONFIG.MODULE_UPDATE_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -112,7 +112,7 @@ const updateModule = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Module updated",
+      message: CONFIG.MODULE_UPDATE_SUCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -129,7 +129,7 @@ const deleteModule = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "Module deletion failed",
+        message: CONFIG.MODULE_DELETE_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -137,7 +137,7 @@ const deleteModule = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Module deleted",
+      message: CONFIG.MODULE_DELETE_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -161,7 +161,7 @@ const mapResourceInModule = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "failed",
+        message: CONFIG.RESOURSCE_MAPPING_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -169,7 +169,7 @@ const mapResourceInModule = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Data mapped successfully",
+      message: CONFIG.RESOURSCE_MAPPING_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -196,7 +196,7 @@ const removeResouresFromModule = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "failed",
+        message: CONFIG.RESOURSCE_UNLINKED_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -204,7 +204,7 @@ const removeResouresFromModule = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Resource removed from module",
+      message: CONFIG.RESOURSCE_UNLINKED_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });

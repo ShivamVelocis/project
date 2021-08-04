@@ -7,28 +7,28 @@ const addACLRuleValidation = () => {
     body("allowedResources")
       .optional()
       .isArray()
-      .withMessage("allowedResources should be a array"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
     body("allowedResources.*")
       .optional()
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
     body("denyResources")
       .optional()
       .isArray()
-      .withMessage("denyResources should be a array"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
     body("denyResources")
       .optional()
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
-    body("role").isString().withMessage("Role should not be empty"),
+    body("role").isString().withMessage(CONFIG.INVALID_ROLE),
   ];
 };
 const updateACLRuleValidation = () => {
@@ -36,34 +36,34 @@ const updateACLRuleValidation = () => {
     body("allowedResources")
       .optional()
       .isArray()
-      .withMessage("allowedResources should be a array"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
     body("allowedResources.*")
       .optional()
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
     body("denyResources")
       .optional()
       .isArray()
-      .withMessage("denyResources should be a array"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
     body("denyResources")
       .optional()
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
-    body("role").optional().isString().withMessage("Role should not be empty"),
+    body("role").optional().isString().withMessage(CONFIG.INVALID_ROLE),
     body("id")
       .exists()
       .withMessage("id should not be empty")
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
@@ -74,10 +74,10 @@ const deleteACLRuleValidation = () => {
   return [
     body("id")
       .exists()
-      .withMessage("id is required")
+      .withMessage(CONFIG.EMPTY_ID)
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),

@@ -4,39 +4,38 @@ const ObjectId = require("mongoose").isValidObjectId;
 
 const addModule = () => {
   return [
-    body("module_name").exists().withMessage("").isString().withMessage(""),
+    body("module_name").exists().isString(),
     body("module_status")
       .exists()
-      .withMessage("")
       .isIn([0, 1])
-      .withMessage("Status should be 1 or 0"),
+      .withMessage(CONFIG.INVALID_STATUS),
   ];
 };
+
 const updateModule = () => {
   return [
     body("id")
       .exists()
-      .withMessage("id should not be empty")
+      .withMessage(CONFIG.EMPTY_ID)
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
-    body("module_name").isString().withMessage(""),
-    body("module_status")
-      .isIn([1, 0, 1])
-      .withMessage("Methods should be valid http methods"),
+    body("module_name").isString(),
+    body("module_status").isIn([1, 0]).withMessage(CONFIG.INVALID_STATUS),
   ];
 };
+
 const deleteModule = () => {
   return [
     body("id")
       .exists()
-      .withMessage("id should not be empty")
+      .withMessage(CONFIG.EMPTY_ID)
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
@@ -47,21 +46,21 @@ const removeModuleResource = () => {
   return [
     body("id")
       .exists()
-      .withMessage("id should not be empty")
+      .withMessage(CONFIG.EMPTY_ID)
       .custom((value) => {
         if (!ObjectId(value)) {
-          throw new Error("Please enter valid  MongoDB ID");
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
     body("resourceID")
       .exists()
-      .withMessage("id should not be empty")
+      .withMessage(CONFIG.EMPTY_ID)
       .isArray()
-      .withMessage("resourceID should be a array"),
+      .withMessage(CONFIG.INVALID_RESOURSCE_ID),
     body("resourceID.*").custom((value) => {
       if (!ObjectId(value)) {
-        throw new Error("Please enter valid  MongoDB ID");
+        throw new Error(CONFIG.INVALID_MONGODB_ID);
       }
       return true;
     }),
@@ -70,18 +69,15 @@ const removeModuleResource = () => {
 
 const addModuleResource = () => {
   return [
-    body("moduleName")
-      .exists()
-      .withMessage("id should not be empty")
-      .isString(),
+    body("moduleName").exists().withMessage(CONFIG.EMPTY_ID).isString(),
     body("resourcesId")
       .exists()
-      .withMessage("id should not be empty")
+      .withMessage(CONFIG.EMPTY_ID)
       .isArray()
-      .withMessage("resourcesId should be a array"),
+      .withMessage(CONFIG.INVALID_RESOURSCE_ID),
     body("resourcesId.*").custom((value) => {
       if (!ObjectId(value)) {
-        throw new Error("Please enter valid  MongoDB ID");
+        throw new Error(CONFIG.INVALID_MONGODB_ID);
       }
       return true;
     }),

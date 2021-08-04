@@ -9,7 +9,7 @@ const addResource = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "Failed",
+        message: CONFIG.RESOURCE_ADD_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -17,7 +17,7 @@ const addResource = async (req, res, next) => {
     res.status(201);
     return res.json({
       success: true,
-      message: "Resourece  added successfully",
+      message: CONFIG.RESOURCE_ADD_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -52,7 +52,7 @@ const getResources = async (req, res, next) => {
       res.status(404);
       return res.json({
         success: false,
-        message: "No data found",
+        message: CONFIG.NO_RESOURCE_FOUND,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -60,7 +60,7 @@ const getResources = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "All resources data",
+      message: CONFIG.RESOURCE_FETCH_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -76,7 +76,7 @@ const getResource = async (req, res, next) => {
       res.status(404);
       return res.json({
         success: false,
-        message: "No data found",
+        message: CONFIG.NO_RESOURCE_FOUND,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -84,7 +84,7 @@ const getResource = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Resource data",
+      message: RESOURCE_FETCH_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -105,7 +105,7 @@ const updateResource = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "Resource update failed",
+        message: CONFIG.RESOURCE_UPDATE_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -113,7 +113,7 @@ const updateResource = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Resource updated",
+      message: CONFIG.RESOURCE_UPDATE_SUCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -130,7 +130,7 @@ const deleteResource = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "Resource deletion failed",
+        message: CONFIG.RESOURCE_DELETE_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -138,7 +138,7 @@ const deleteResource = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Resource deleted",
+      message: CONFIG.RESOURCE_DELETE_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -160,7 +160,7 @@ const mapModuleToResource = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: "failed",
+        message: CONFIG.MODULE_MAPPING_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -168,7 +168,7 @@ const mapModuleToResource = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "Mapped successfully",
+      message: CONFIG.RESOURCE_FETCH_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
