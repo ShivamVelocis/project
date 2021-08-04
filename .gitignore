@@ -75,3 +75,8 @@ typings/
 # FuseBox cache
 .fusebox/
 
+mongocollection/acls.json
+mongocollection/modules.json
+mongocollection/resourese.json
+mongocollection/roles.json
+mongocollection/users.json
