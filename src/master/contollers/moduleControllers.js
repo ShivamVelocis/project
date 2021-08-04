@@ -1,7 +1,7 @@
 const CONFIG = require("../configs/config");
 const { moduleModel } = require("../models/moduleModels");
 
-// Module controllers
+// Add new module
 const addModule = async (req, res, next) => {
   try {
     let moduleData = Array.isArray(req.body) ? req.body : [req.body];
@@ -27,6 +27,7 @@ const addModule = async (req, res, next) => {
   }
 };
 
+// Fetch all module data
 const getModules = async (req, res, next) => {
   let filter = {};
   if (Object.keys(req.query).length) {
@@ -69,6 +70,7 @@ const getModules = async (req, res, next) => {
   }
 };
 
+// Fectch module with module id(mongodb id)
 const getModule = async (req, res, next) => {
   try {
     let result = await moduleModel.findById(req.params.id);
@@ -93,6 +95,7 @@ const getModule = async (req, res, next) => {
   }
 };
 
+// Update module data provided id(mongodb id)
 const updateModule = async (req, res, next) => {
   try {
     let { id, ...updateData } = req.body;
@@ -122,6 +125,7 @@ const updateModule = async (req, res, next) => {
   }
 };
 
+// Delete module provided id
 const deleteModule = async (req, res, next) => {
   try {
     let { id } = req.body;
@@ -147,6 +151,7 @@ const deleteModule = async (req, res, next) => {
   }
 };
 
+// Map resource to module
 const mapResourceInModule = async (req, res, next) => {
   let resourceId = [];
   if (Array.isArray(req.body.resourcesId)) resourceId = req.body.resourcesId;
@@ -179,6 +184,7 @@ const mapResourceInModule = async (req, res, next) => {
   }
 };
 
+// Delete resource from module
 const removeResouresFromModule = async (req, res, next) => {
   try {
     let moduleID = req.body.id;

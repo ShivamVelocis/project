@@ -27,6 +27,7 @@ const addResource = async (req, res, next) => {
   }
 };
 
+// Fetch all resiurce data
 const getResources = async (req, res, next) => {
   let filter = {};
   if (Object.keys(req.query).length) {
@@ -70,6 +71,7 @@ const getResources = async (req, res, next) => {
   }
 };
 
+// Fetch specific resource data
 const getResource = async (req, res, next) => {
   try {
     let result = await resourceModel.findById(req.params.id);
@@ -94,6 +96,7 @@ const getResource = async (req, res, next) => {
   }
 };
 
+// Update resource data
 const updateResource = async (req, res, next) => {
   try {
     let { id, ...updateData } = req.body;
@@ -123,6 +126,7 @@ const updateResource = async (req, res, next) => {
   }
 };
 
+// Delete resource
 const deleteResource = async (req, res, next) => {
   try {
     let { id } = req.body;
@@ -148,6 +152,7 @@ const deleteResource = async (req, res, next) => {
   }
 };
 
+// Add module id to resource
 const mapModuleToResource = async (req, res, next) => {
   try {
     let result = await resourceModel.findOneAndUpdate(
@@ -178,44 +183,6 @@ const mapModuleToResource = async (req, res, next) => {
   }
 };
 
-// const removemethodFromResource = async (req, res, next) => {
-//   try {
-//     let resourceID = req.body.id;
-//     let methodIDs = [];
-
-//     if (Array.isArray(req.body.methodID)) {
-//       methodIDs = req.body.methodID;
-//     } else {
-//       methodIDs.push(req.body.methodID);
-//     }
-
-//     let result = await resourceModel.findOneAndUpdate(
-//       { _id: resourceID },
-//       {
-//         $pull: { methods: { $in: methodIDs } },
-//       },
-//       { multi: true, new: true }
-//     );
-//     if (!result) {
-//       res.status(400);
-//       return res.json({
-//         success: false,
-//         message: "Failed",
-//         data: result,
-//         accesstoken: req.accesstoken,
-//       });
-//     }
-//     res.status(200);
-//     return res.json({
-//       success: true,
-//       message: "Method(s) removed from Resource",
-//       data: result,
-//       accesstoken: req.accesstoken,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 module.exports = {
   addResource,
@@ -224,5 +191,4 @@ module.exports = {
   updateResource,
   deleteResource,
   mapModuleToResource,
-  // removemethodFromResource,
 };

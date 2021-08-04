@@ -4,6 +4,8 @@ const ObjectId = require("mongoose").isValidObjectId;
 
 let resourceMethods = ["GET", "POST", "PUT", "DELETE"];
 
+
+// Validate request body 
 const addResource = () => {
   return [
     body("*.resource_name").exists().isString(),
@@ -26,6 +28,8 @@ const addResource = () => {
       .withMessage(CONFIG.INVALID_METHOD),
   ];
 };
+
+
 const updateResource = () => {
   return [
     body("id")
@@ -63,6 +67,8 @@ const updateResource = () => {
       }),
   ];
 };
+
+
 const deleteResource = () => {
   return [
     body("id")
@@ -76,6 +82,7 @@ const deleteResource = () => {
       }),
   ];
 };
+
 
 const addResourceModule = () => {
   return [
