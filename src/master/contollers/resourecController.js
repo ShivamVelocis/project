@@ -1,3 +1,4 @@
+const CONFIG = require("../configs/config");
 const { resourceModel } = require("../models/resourceModel");
 
 // Resource Controllers
@@ -9,7 +10,7 @@ const addResource = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: CONFIG.RESOURCE_ADD_FAILED,
+        message: CONFIGG.RESOURCE_ADD_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });

@@ -1,3 +1,4 @@
+const CONFIG = require("../configs/config");
 const { moduleModel } = require("../models/moduleModels");
 
 // Module controllers
@@ -161,7 +162,7 @@ const mapResourceInModule = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: CONFIG.RESOURSCE_MAPPING_FAILED,
+        message: CONFIGG.RESOURSCE_MAPPING_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });

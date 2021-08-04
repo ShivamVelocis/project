@@ -1,11 +1,12 @@
 const { body, validationResult } = require("express-validator");
 const CONFIG = require("../configs/config");
 const ObjectId = require("mongoose").isValidObjectId;
+// console.log(CONFIG)
 
 const addModule = () => {
   return [
-    body("module_name").exists().isString(),
-    body("module_status")
+    body("*.module_name").exists().isString(),
+    body("*.module_status")
       .exists()
       .isIn([0, 1])
       .withMessage(CONFIG.INVALID_STATUS),
