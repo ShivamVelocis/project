@@ -22,5 +22,5 @@ connectToDB = async (url) => {
     console.log("> error occurred from the database");
   }
 };
-
+console.log(dbPath)
 connectToDB(dbPath);
