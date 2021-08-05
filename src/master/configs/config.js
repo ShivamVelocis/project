@@ -2,7 +2,7 @@ require("dotenv").config(); //instatiate environment variables
 
 let CONFIG = {}; //Make this global to use all over the application
 
-//MODULE CONFIGS
+//---------------------MODULE CONFIGS-------------------------
 CONFIG.MODULE_TITLE = "MODULE Mangement";
 CONFIG.ADD_MODULE = "MODULE Rule";
 CONFIG.UPDATE_MODULE = "Edit MODULE";
@@ -21,7 +21,7 @@ CONFIG.RESOURSCE_MAPPING_FAILED = "Resource Mapped failed";
 CONFIG.RESOURSCE_UNLINKED_SUCCESS = "Resource unlinked successfully";
 CONFIG.RESOURSCE_UNLINKED_FAILED = "Resource unlinked failed";
 
-//RESOURCE CONFIG
+//-----------------------RESOURCE CONFIG----------------------------
 CONFIG.RESOURCE_ADD_SUCCESS = "Resource  added successfully";
 CONFIG.RESOURCE_UPDATE_SUCESS = "Resource  updated successfully";
 CONFIG.RESOURCE_DELETE_SUCCESS = "Resource  deleted successfully";
@@ -36,7 +36,7 @@ CONFIG.MODULE_MAPPING_FAILED = "Module Mapped failed";
 // CONFIG.MODULE_UNLINKED_SUCCESS = "Module unlinked successfully";
 // CONFIG.MODULE_UNLINKED_FAILED = "Module unlinked failed";
 
-//request validation errors
+//----------------------Request validation errors-------------------------
 CONFIG.NO_RESOURCE_OR_METHOD =
   "Please select resource/method for selected Module(s)";
 CONFIG.MODULE_NOT_SELECTED = "Please select atleast a Module";
