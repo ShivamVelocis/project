@@ -125,7 +125,7 @@ const denyResource = (resource, resourceToBeAccess, method) => {
 // Middleware
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
-  // console.log(req.originalUrl)
+  console.log(req.originalUrl)
   let userRole = req.userRole;
   let dbRoleData = await aclModel
     .findOne({ role: userRole })
@@ -163,4 +163,9 @@ const isPermitted = async (req, res, next) => {
   });
 };
 
-module.exports = { isPermitted };
+const auth = () => {
+  isPermitted.unless = require("express-unless");
+  return isPermitted;
+};
+
+module.exports = { isPermitted, auth };
