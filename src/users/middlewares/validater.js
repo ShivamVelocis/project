@@ -252,16 +252,18 @@ exports.forgetpasswordRule = () => {
 
 /**--------------------Auth Validator--------------------------------- */
 
-exports.validateUserLogin = [
-  check("password")
-    .isLength({ min: 5 })
-    .withMessage("The password must be 5+ chars long and contain a number"),
-  check("email")
-    .normalizeEmail()
-    .isEmail()
-    .withMessage("The valid email require"),
-  check("username").notEmpty().withMessage("The Username is require"),
-];
+exports.validateUserLogin = () => {
+  return [
+    check("password")
+      .isLength({ min: 5 })
+      .withMessage("The password must be 5+ chars long and contain a number"),
+    check("email")
+      .normalizeEmail()
+      .isEmail()
+      .withMessage("The valid email require"),
+    check("username").notEmpty().withMessage("The Username is require"),
+  ];
+};
 
 // middleware to check if any error encouter during validation
 exports.isRequestValid = (req, res, next) => {

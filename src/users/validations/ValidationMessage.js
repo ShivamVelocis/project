@@ -1,20 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const { body, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
 

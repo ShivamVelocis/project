@@ -5,6 +5,8 @@ const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
 const { decodeToken } = require("../utils/auth");
 
+
+//Added new user
 const addUser = async function addUser(req, res, next) {
   try {
     var form_data = {
@@ -50,6 +52,7 @@ const addUser = async function addUser(req, res, next) {
   }
 };
 
+//Update exist user
 const updateUser = async (req, res) => {
   let id = req.body.id;
   let updatedContent = req.body;
@@ -91,6 +94,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+//Fetch user with id
 const getUser = async function getUser(req, res, next) {
   if (res.locals.validationError) {
     res.status(400);
@@ -121,6 +125,7 @@ const getUser = async function getUser(req, res, next) {
   }
 };
 
+//Fetch all users
 const getUsers = async function getUsers(req, res, next) {
   try {
     let usersData = await userModel
@@ -148,6 +153,7 @@ const getUsers = async function getUsers(req, res, next) {
   }
 };
 
+// Delete user
 const removeUser = async (req, res) => {
   let id = req.body.id;
   try {
@@ -166,6 +172,7 @@ const removeUser = async (req, res) => {
   }
 };
 
+//Upload user profile picture
 const uploadProfilePicture = async (req, res) => {
   // console.log("user profile");
   let userId = req.body.id;
@@ -199,11 +206,11 @@ const uploadProfilePicture = async (req, res) => {
   }
 };
 
+//Get user profile picture 
 const getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
     let { userId } = decodeToken(req.accesstoken);
-    console.log(userId)
     let user = await userModel.findOne({ _id: userId, user_status: 1 });
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
