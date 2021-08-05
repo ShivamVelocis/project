@@ -198,10 +198,12 @@ const uploadProfilePicture = async (req, res) => {
     });
   }
 };
+
 const getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
-    let { userId } = decodeToken(req.refreshAccessToken);
+    let { userId } = decodeToken(req.accesstoken);
+    console.log(userId)
     let user = await userModel.findOne({ _id: userId, user_status: 1 });
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
