@@ -1,63 +1,86 @@
 const { body, validationResult } = require("express-validator");
 const CONFIG = require("../configs/config");
+const ObjectId = require("mongoose").isValidObjectId;
 
 const addACLRuleValidation = () => {
   return [
     body("allowedResources")
+      .optional()
       .isArray()
-      .withMessage("allowedResources should be a array"),
-    body("allowedResources.*.path").custom((value, { req }) => {
-      if (value == "") {
-        throw new Error("Resource path should not be empty");
-      }
-      return true;
-    }),
-    body("allowedResources.*.methods")
-      .isIn(["GET", "POST", "PUT", "DELETE"])
-      .withMessage("Methods should be valid http methods"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
+    body("allowedResources.*")
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
     body("denyResources")
+      .optional()
       .isArray()
-      .withMessage("denyResources should be a array"),
-    body("denyResources.*.path").custom((value, { req }) => {
-      if (value == "") {
-        throw new Error("Resource path should not be empty");
-      }
-      return true;
-    }),
-    body("denyResources.*.methods")
-      .isIn(["GET", "POST", "PUT", "DELETE"])
-      .withMessage("Methods should be valid http methods"),
-    body("role").exists().withMessage("Role should not be empty"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
+    body("denyResources")
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("role").isString().withMessage(CONFIG.INVALID_ROLE),
   ];
 };
 const updateACLRuleValidation = () => {
   return [
     body("allowedResources")
+      .optional()
       .isArray()
-      .withMessage("allowedResources should be a array"),
-    body("allowedResources.*.path").custom((value, { req }) => {
-      if (value == "") {
-        throw new Error("Resource path should not be empty");
-      }
-      return true;
-    }),
-    body("allowedResources.*.methods")
-      .isIn(["GET", "POST", "PUT", "DELETE"])
-      .withMessage("Methods should be valid http methods"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
+    body("allowedResources.*")
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
     body("denyResources")
+      .optional()
       .isArray()
-      .withMessage("denyResources should be a array"),
-    body("denyResources.*.path").custom((value, { req }) => {
-      if (value == "") {
-        throw new Error("Resource path should not be empty");
-      }
-      return true;
-    }),
-    body("denyResources.*.methods")
-      .isIn(["GET", "POST", "PUT", "DELETE"])
-      .withMessage("Methods should be valid http methods"),
-    body("role").exists().withMessage("Role should not be empty"),
-    body("id").exists().withMessage("id should not be empty"),
+      .withMessage(CONFIG.INVALID_RESOURCE),
+    body("denyResources")
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("role").optional().isString().withMessage(CONFIG.INVALID_ROLE),
+    body("id")
+      .exists()
+      .withMessage("id should not be empty")
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+  ];
+};
+
+const deleteACLRuleValidation = () => {
+  return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
   ];
 };
 
@@ -70,7 +93,8 @@ const isRequestValid = (req, res, next) => {
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   if (extractedErrors) {
-    res.status(400); res.json({ success: false, message: extractedErrors, data: null });
+    res.status(400);
+    return res.json({ success: false, message: extractedErrors, data: null });
   }
   next();
 };
@@ -78,5 +102,6 @@ const isRequestValid = (req, res, next) => {
 module.exports = {
   addACLRuleValidation,
   updateACLRuleValidation,
+  deleteACLRuleValidation,
   isRequestValid,
 };

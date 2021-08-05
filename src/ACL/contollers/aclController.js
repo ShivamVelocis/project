@@ -1,6 +1,6 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
-const { appendACL } = require("../Utils/helper");
+// const { appendACL } = require("../Utils/helper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -10,22 +10,14 @@ const getAcl = async (req, res, next) => {
       .populate({
         path: "allowedResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       })
       .populate({
         path: "denyResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       });
     if (!result) {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
         message: "ACL Rule not available",
         data: null,
@@ -33,7 +25,7 @@ const getAcl = async (req, res, next) => {
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "ACL Rule",
       data: result,
@@ -45,28 +37,29 @@ const getAcl = async (req, res, next) => {
 };
 
 const getAcls = async (req, res, next) => {
+  let filter = {};
+  if (Object.keys(req.query).length) {
+    let role = req.query.role ? (filter.role = req.query.role) : null;
+    let module_name = req.query.module_name
+      ? (filter.module_name = {
+          $regex: new RegExp(req.query.module_name, "i"),
+        })
+      : null;
+  }
   try {
     let result = await aclModel
-      .find()
+      .find(filter)
       .populate({
         path: "allowedResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       })
       .populate({
         path: "denyResources",
         select: { module: 0, __v: 0 },
-        populate: {
-          path: "methods",
-          select: { __v: 0 },
-        },
       });
 
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: "All ACL Rules",
       data: result,
@@ -106,7 +99,7 @@ const addAcl = async (req, res, next) => {
       responseData = await acl.save();
     }
     res.status(201);
-    res.json({
+    return res.json({
       success: true,
       message: CONFIG.ACL_ADD_SUCCESS,
       data: responseData,
@@ -133,7 +126,7 @@ const editAcl = async (req, res, next) => {
       { new: true }
     );
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: CONFIG.ACL_UPDATE_SUCESS,
       data: updateACLRule,
@@ -146,10 +139,20 @@ const editAcl = async (req, res, next) => {
 
 const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
+  // console.log(aclId)
   try {
-    await aclModel.findByIdAndRemove(aclId);
+    let result = await aclModel.findByIdAndRemove(aclId);
+    if (!result) {
+      res.status(200);
+      return res.json({
+        success: false,
+        message: "Invalid Acl ID",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
       message: CONFIG.ACL_DELETE_SUCCESS,
       data: null,

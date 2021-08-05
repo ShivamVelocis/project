@@ -1,9 +1,9 @@
-const { body, validationResult, param } = require("express-validator");
+const { body, check, validationResult, param } = require("express-validator");
 const ObjectId = require("mongoose").isValidObjectId;
 const CONFIG = require("../configs/config");
 
 // add new user request body validater
-exports.addUserValidationRules = () => {
+exports.addUserRules = () => {
   return [
     body("email")
       .exists()
@@ -11,36 +11,28 @@ exports.addUserValidationRules = () => {
       .isEmail()
       .withMessage(CONFIG.INVALID_EMAIL),
 
-    body("password")
-      .exists()
-      .withMessage(CONFIG.INVALID_PASSWORD)
-      .bail()
-      .custom((value, { req }) => {
-        if (value == "") {
-          throw new Error(CONFIG.EMPTY_PASSWORD);
-        }
-        if (value.match(CONFIG.PASSWORD_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_PASSWORD);
-        }
-        return true;
-      }),
+    check("password")
+      .matches(CONFIG.PASSWORD_PATTERN)
+      .withMessage(
+        "Password must contain at least one uppercase letter, one lowercase letter and one number"
+      ),
 
     body("role_id")
       .exists()
       .withMessage(CONFIG.INVALID_ROLE)
       .bail()
-      .custom((value, { req }) => {
-        if (value) {
-          return true;
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
-        throw new Error(CONFIG.INVALID_ROLE);
+        return true;
       }),
 
     body("username")
       .exists()
       .withMessage(CONFIG.EMPTY_USER_NAME)
       .bail()
-      .custom((value, { req }) => {
+      .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_USER_NAME);
         }
@@ -54,50 +46,89 @@ exports.addUserValidationRules = () => {
       .exists()
       .withMessage(CONFIG.INVALID_STATUS)
       .bail()
-      .custom((value, { req }) => {
-        if (value == 1 || value == 2) {
-          return true;
-        }
-        throw new Error(CONFIG.INVALID_STATUS);
-      }),
+      .isIn([0, 1]),
+
+    check("first_name")
+      .notEmpty()
+      .withMessage("The first name is require")
+      .matches(CONFIG.CHARONLYREGEX)
+      .withMessage("Only allow characters"),
   ];
 };
 
 // updating user request body validater
-exports.updateUserValidationRules = () => {
+exports.updateUsernRules = () => {
   return [
-    body("email")
+    body("id")
       .exists()
-      .withMessage(CONFIG.INVALID_EMAIL)
-      .isEmail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("email")
+      .optional()
+      .matches(/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/)
+      .withMessage("Email is not valid.")
       .withMessage(CONFIG.INVALID_EMAIL),
 
     body("role_id")
-      .exists()
-      .withMessage(CONFIG.INVALID_ROLE)
-      .bail()
-      .custom((value, { req }) => {
-        if (value) {
-          return true;
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
-        throw new Error(CONFIG.INVALID_ROLE);
+        return true;
       }),
 
-    body("user_status")
-      .exists()
-      .withMessage(CONFIG.INVALID_STATUS)
-      .bail()
-      .custom((value, { req }) => {
-        if (value == 1 || value == 2) {
-          return true;
-        }
-        throw new Error(CONFIG.INVALID_STATUS);
-      }),
+    body("user_status").optional().isIn([0, 1]),
+
+    check("first_name")
+      .notEmpty()
+      .withMessage("The first name is require")
+      .matches(CONFIG.CHARONLYREGEX)
+      .withMessage(
+        "Special characters are not allowed in the first name field"
+      ),
+  ];
+};
+
+exports.getUserRule = () => {
+  return [
+    param("id").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    }),
+  ];
+};
+
+exports.deleteUserRule = () => {
+  return [
+    body("id").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    }),
+  ];
+};
+
+exports.getUserProfileRule = () => {
+  return [
+    body("id").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    }),
   ];
 };
 
 //change my password request body validator
-exports.changeMyPasswordValidationRule = () => {
+exports.changeMyPasswordRule = () => {
   return [
     body("currentPassword")
       .exists()
@@ -105,7 +136,7 @@ exports.changeMyPasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
@@ -116,7 +147,7 @@ exports.changeMyPasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
@@ -127,8 +158,7 @@ exports.changeMyPasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .custom((value, { req }) => {
-        console.log(value, req.body.newPassword);
+      .custom((value) => {
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -137,7 +167,7 @@ exports.changeMyPasswordValidationRule = () => {
   ];
 };
 //change password request body validator
-exports.changePasswordValidationRule = () => {
+exports.changePasswordRule = () => {
   return [
     body("newPassword")
       .exists()
@@ -146,7 +176,7 @@ exports.changePasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
@@ -157,8 +187,7 @@ exports.changePasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .custom((value, { req }) => {
-        // console.log(value , req.body.newPassword)
+      .custom((value) => {
         if (value != req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -167,18 +196,17 @@ exports.changePasswordValidationRule = () => {
   ];
 };
 //change password request body validator with otp
-exports.otpPasswordValidationRule = () => {
+exports.otpPasswordRule = () => {
   return [
     body("otp")
       .exists()
       .withMessage(CONFIG.EMPTY_OTP)
       .bail()
-      .custom((value, { req }) => {
+      .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_OTP);
         }
         if (value.length !== 4) {
-          // console.log(value.length);
           throw new Error(CONFIG.INVALID_OTP);
         }
         return true;
@@ -190,7 +218,7 @@ exports.otpPasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
+      .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
@@ -201,12 +229,7 @@ exports.otpPasswordValidationRule = () => {
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/)
-      .withMessage(
-        "Password must contain at least one uppercase letter, one lowercase letter and one number"
-      )
-      .bail()
-      .custom((value, { req }) => {
+      .custom((value) => {
         // console.log(value , req.body.password)
         if (value != req.body.password) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
@@ -217,7 +240,7 @@ exports.otpPasswordValidationRule = () => {
 };
 
 //forget password email validation in request body
-exports.forgetpasswordEmailValidation = () => {
+exports.forgetpasswordRule = () => {
   return [
     body("email")
       .exists()
@@ -227,19 +250,19 @@ exports.forgetpasswordEmailValidation = () => {
   ];
 };
 
-// mongodb id validater for get request
-exports.mongoIDValidationRules = () => {
-  return param("id")
-    .exists()
-    .withMessage(CONFIG.INVALID_MONGO_ID)
-    .bail()
-    .custom((value) => {
-      // console.log(value);
-      if (!ObjectId(value)) {
-        throw new Error(CONFIG.INVALID_MONGO_ID);
-      }
-      return true;
-    });
+/**--------------------Auth Validator--------------------------------- */
+
+exports.validateUserLogin = () => {
+  return [
+    check("password")
+      .isLength({ min: 5 })
+      .withMessage("The password must be 5+ chars long and contain a number"),
+    check("email")
+      .normalizeEmail()
+      .isEmail()
+      .withMessage("The valid email require"),
+    check("username").notEmpty().withMessage("The Username is require"),
+  ];
 };
 
 // middleware to check if any error encouter during validation
@@ -249,9 +272,10 @@ exports.isRequestValid = (req, res, next) => {
     return next();
   }
   const extractedErrors = [];
-  // console.log(errors)
-  errors.array().map((err) => extractedErrors.push(err.msg));
-  res.locals.validationError =
-    extractedErrors.length > 0 ? extractedErrors : null;
+  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
+  if (extractedErrors) {
+    res.status(400);
+    return res.json({ success: false, message: extractedErrors, data: null });
+  }
   next();
 };

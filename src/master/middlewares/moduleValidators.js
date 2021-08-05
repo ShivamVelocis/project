@@ -1,41 +1,87 @@
 const { body, validationResult } = require("express-validator");
 const CONFIG = require("../configs/config");
+const ObjectId = require("mongoose").isValidObjectId;
+// console.log(CONFIG)
 
 const addModule = () => {
   return [
-    body("module_name").exists().withMessage("").isString().withMessage(""),
-    body("module_status")
+    body("*.module_name").exists().isString(),
+    body("*.module_status")
       .exists()
-      .withMessage("")
-      .isIn([1, 0, 1])
-      .withMessage("Methods should be valid http methods"),
+      .isIn([0, 1])
+      .withMessage(CONFIG.INVALID_STATUS),
   ];
 };
+
 const updateModule = () => {
   return [
-    body("id").exists().withMessage("id should not be empty"),
-    body("module_name").isString().withMessage(""),
-    body("module_status")
-      .isIn([1, 0, 1])
-      .withMessage("Methods should be valid http methods"),
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("module_name").isString(),
+    body("module_status").isIn([1, 0]).withMessage(CONFIG.INVALID_STATUS),
+  ];
+};
+
+const deleteModule = () => {
+  return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
   ];
 };
 
 const removeModuleResource = () => {
   return [
-    body("id").exists().withMessage("id should not be empty"),
-    body("resourceID").exists().withMessage("id should not be empty"),
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("resourceID")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .isArray()
+      .withMessage(CONFIG.INVALID_RESOURSCE_ID),
+    body("resourceID.*").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGODB_ID);
+      }
+      return true;
+    }),
   ];
 };
 
 const addModuleResource = () => {
   return [
-    body("moduleName")
+    body("moduleName").exists().withMessage(CONFIG.EMPTY_ID).isString(),
+    body("resourcesId")
       .exists()
-      .withMessage("id should not be empty")
-      .isString()
-      .withMessage(""),
-    body("resourcesId").exists().withMessage("id should not be empty"),
+      .withMessage(CONFIG.EMPTY_ID)
+      .isArray()
+      .withMessage(CONFIG.INVALID_RESOURSCE_ID),
+    body("resourcesId.*").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGODB_ID);
+      }
+      return true;
+    }),
   ];
 };
 
@@ -49,7 +95,7 @@ const isRequestValid = (req, res, next) => {
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   if (extractedErrors) {
     res.status(400);
-    res.json({ success: false, message: extractedErrors, data: null });
+    return res.json({ success: false, message: extractedErrors, data: null });
   }
   next();
 };
@@ -57,6 +103,8 @@ const isRequestValid = (req, res, next) => {
 module.exports = {
   addModule,
   updateModule,
+  deleteModule,
   removeModuleResource,
   addModuleResource,
+  isRequestValid,
 };

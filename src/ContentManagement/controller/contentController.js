@@ -2,20 +2,12 @@ const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
 
 exports.addContent = async (req, res) => {
-  if (res.locals.validationError) {
-    res.status(400);
-    res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: "",
-    });
-  }
   let data = req.body;
   try {
     let content = new Content(data);
     await content.save();
     res.status(201);
-    res.json({
+    return res.json({
       success: true,
       message: CONFIG.ADD_CONTENT_SUCCESS,
       data: content,
@@ -32,7 +24,7 @@ exports.getContent = async (req, res) => {
     let result = await Content.findById(id);
     if (result !== undefined && result !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: "Content",
         data: result,
@@ -49,7 +41,7 @@ exports.getContents = async (req, res) => {
     let contents = await Content.find({});
     if (contents.length > 0) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: "All Content",
         data: contents,
@@ -57,7 +49,7 @@ exports.getContents = async (req, res) => {
       });
     } else {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.NO_CONTENT_FOUND,
         data: [],
@@ -75,7 +67,7 @@ exports.removeContent = async (req, res) => {
     let result = await Content.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.DELETE_CONTENT_SUCCESS,
         data: result,
@@ -83,7 +75,7 @@ exports.removeContent = async (req, res) => {
       });
     } else {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
         message: `No content with id ${id} present for deletion`,
         data: null,
@@ -98,15 +90,6 @@ exports.removeContent = async (req, res) => {
 exports.updateContent = async (req, res) => {
   let id = req.body.id;
   let updatedContent = req.body;
-  if (res.locals.validationError) {
-    res.status(400);
-    res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
   try {
     let result = await Content.findOneAndUpdate(
       { _id: id },
@@ -115,7 +98,7 @@ exports.updateContent = async (req, res) => {
     );
     if (result !== undefined && result !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.UPDATE_CONTENT_SUCCESS,
         data: result,

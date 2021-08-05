@@ -4,7 +4,7 @@ const ObjectId = require("mongoose").isValidObjectId;
 const CONFIG = require("../configs/config");
 
 // content request body validater
-const contentValidationRules = () => {
+const addContentRules = () => {
   return [
     body("title")
       .exists()
@@ -14,7 +14,6 @@ const contentValidationRules = () => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_TITLE);
         }
-        // console.log(value.match(CONFIG.TITLE_PATTERN))
         if (value.match(CONFIG.TITLE_PATTERN) == null) {
           throw new Error(CONFIG.INVALID_TITLE);
         }
@@ -48,14 +47,68 @@ const contentValidationRules = () => {
   ];
 };
 
-// mongodb id validater for get request
-const mongoIDValidationRules = () => {
-  return param("id").custom((value) => {
-    if (!ObjectId(value)) {
-      throw new Error("Please enter valid  MongoDB ID");
-    }
-    return true;
-  });
+// content request body validater
+const updateContentRule = () => {
+  return [
+    body("title")
+      .optional()
+      .custom((value) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_TITLE);
+        }
+        if (value.match(CONFIG.TITLE_PATTERN) == null) {
+          throw new Error(CONFIG.INVALID_TITLE);
+        }
+        return true;
+      }),
+    body("description")
+      .optional()
+      .custom((value) => {
+        if (value == "") {
+          throw new Error(CONFIG.EMPTY_DESCRIPTION);
+        }
+        if (value && value.match(CONFIG.TEXTAREA_PATTERN == null)) {
+          throw new Error(CONFIG.INVALID_DESCRIPTION);
+        }
+        return true;
+      }),
+    body("content_status")
+      .optional()
+      .custom((value) => {
+        if (value && (value == 1 || value == 2)) {
+          return true;
+        }
+        throw new Error(CONFIG.INVALID_STATUS);
+      }),
+    body("id").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    }),
+  ];
+};
+
+const deleteContentRule = () => {
+  return [
+    body("id").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    }),
+  ];
+};
+
+const getContentRule = () => {
+  return [
+    param("id").custom((value) => {
+      if (!ObjectId(value)) {
+        throw new Error(CONFIG.INVALID_MONGO_ID);
+      }
+      return true;
+    }),
+  ];
 };
 
 // middleware to check if any error encouter during validation
@@ -65,14 +118,18 @@ const isRequestValid = (req, res, next) => {
     return next();
   }
   const extractedErrors = [];
-  errors.array().map((err) => extractedErrors.push(err.msg));
-  res.locals.validationError =
-    extractedErrors.length > 0 ? extractedErrors : null;
+  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
+  if (extractedErrors) {
+    res.status(400);
+    return res.json({ success: false, message: extractedErrors, data: null });
+  }
   next();
 };
 
 module.exports = {
-  contentValidationRules,
-  mongoIDValidationRules,
+  addContentRules,
+  updateContentRule,
+  deleteContentRule,
+  getContentRule,
   isRequestValid,
 };

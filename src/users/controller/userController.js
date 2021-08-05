@@ -5,7 +5,9 @@ const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
 const { decodeToken } = require("../utils/auth");
 
-exports.addUser = async function addUser(req, res, next) {
+
+//Added new user
+const addUser = async function addUser(req, res, next) {
   try {
     var form_data = {
       username: req.body.username,
@@ -28,7 +30,7 @@ exports.addUser = async function addUser(req, res, next) {
         errorsExtract.push(item.msg);
       });
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: errorsExtract,
         data: null,
@@ -38,9 +40,9 @@ exports.addUser = async function addUser(req, res, next) {
       let User = new userModel(form_data);
       let saveUser = await User.save();
       res.status(201);
-      res.json({
+      return res.json({
         success: true,
-        message: "User added successfully",
+        message: CONFIG.USER_ADD_SUCCESS,
         data: saveUser,
         accesstoken: req.accesstoken,
       });
@@ -50,7 +52,8 @@ exports.addUser = async function addUser(req, res, next) {
   }
 };
 
-exports.updateUser = async (req, res) => {
+//Update exist user
+const updateUser = async (req, res) => {
   let id = req.body.id;
   let updatedContent = req.body;
 
@@ -63,7 +66,7 @@ exports.updateUser = async (req, res) => {
       errorsExtract.push(item.msg);
     });
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: errorsExtract,
       data: null,
@@ -78,9 +81,9 @@ exports.updateUser = async (req, res) => {
       );
       if (updatedData !== undefined && updatedData !== null) {
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
-          message: "User data updated",
+          message: CONFIG.USER_UPDATE_SUCCESS,
           data: null,
           accesstoken: req.accesstoken,
         });
@@ -91,16 +94,18 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.getUser = async function getUser(req, res, next) {
+//Fetch user with id
+const getUser = async function getUser(req, res, next) {
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
       accesstoken: req.accesstoken,
     });
   }
+  console.log(res.locals.validationError)
   let id = req.params.id;
   try {
     let userData = await userModel
@@ -108,9 +113,9 @@ exports.getUser = async function getUser(req, res, next) {
       .select("name email username role_id user_status _id");
     if (userData !== undefined && userData !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
-        message: "User data",
+        message: CONFIG.USER_USER_DATA,
         data: userData,
         accesstoken: req.accesstoken,
       });
@@ -120,24 +125,25 @@ exports.getUser = async function getUser(req, res, next) {
   }
 };
 
-exports.getUsers = async function getUsers(req, res, next) {
+//Fetch all users
+const getUsers = async function getUsers(req, res, next) {
   try {
     let usersData = await userModel
       .find({})
       .select("name email username role_id user_status _id");
     if (usersData.length > 0) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
-        message: "Users data",
+        message: CONFIG.USER_USER_DATA,
         data: usersData,
         accesstoken: req.accesstoken,
       });
     } else {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
-        message: "No data present",
+        message: CONFIG.NO_DATA_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -147,15 +153,16 @@ exports.getUsers = async function getUsers(req, res, next) {
   }
 };
 
-exports.removeUser = async (req, res) => {
+// Delete user
+const removeUser = async (req, res) => {
   let id = req.body.id;
   try {
     let result = await userModel.findOneAndRemove({ _id: id });
     if (result !== undefined && result !== null) {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
-        message: "Users removed",
+        message: CONFIG.USER_REMOVE_SUCCESS,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -165,8 +172,9 @@ exports.removeUser = async (req, res) => {
   }
 };
 
-exports.uploadProfilePicture = async (req, res) => {
-  console.log("user profile");
+//Upload user profile picture
+const uploadProfilePicture = async (req, res) => {
+  // console.log("user profile");
   let userId = req.body.id;
   if (req.file && req.file.buffer) {
     try {
@@ -178,9 +186,9 @@ exports.uploadProfilePicture = async (req, res) => {
         $set: { profilePicture: file },
       });
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
-        message: "Image uploaded",
+        message: CONFIG.USER_IMAGE_UPLOADED,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -189,19 +197,21 @@ exports.uploadProfilePicture = async (req, res) => {
     }
   } else {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
-      message: "No file selected",
+      message: CONFIG.NO_FILE_SELECTED,
       data: null,
       accesstoken: req.accesstoken,
     });
   }
 };
-exports.getProfilePicture = async (req, res, next) => {
+
+//Get user profile picture 
+const getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
-    let { userId } = decodeToken(req.refreshAccessToken);
-    let user = await userModel.findOne({ _id: userId });
+    let { userId } = decodeToken(req.accesstoken);
+    let user = await userModel.findOne({ _id: userId, user_status: 1 });
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
       return res.send(user.profilePicture);
@@ -211,4 +221,14 @@ exports.getProfilePicture = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
+};
+
+module.exports = {
+  addUser,
+  updateUser,
+  getUsers,
+  getUser,
+  removeUser,
+  uploadProfilePicture,
+  getProfilePicture,
 };

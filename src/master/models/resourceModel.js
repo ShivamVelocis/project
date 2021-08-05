@@ -6,7 +6,13 @@ let resourceSchema = new mongoose.Schema(
     resource_path: String,
     resource_status: Number,
     module: { type: mongoose.Schema.Types.ObjectId, ref: "Module" },
-    methods: [{ type: mongoose.Schema.Types.ObjectId, ref: "Method" }],
+    methods: [
+      {
+        type: String,
+        enum: ["GET", "POST", "PUT", "DELETE"],
+        default: "GET",
+      },
+    ],
   },
   { timestamps: true }
 );

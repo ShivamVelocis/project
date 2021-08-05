@@ -10,11 +10,11 @@ const {
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
 //  handler for login form and redirect to users after success login
-exports.userLogin = async (req, res, next) => {
+const userLogin = async (req, res, next) => {
   let data = req.body;
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
     });
@@ -23,12 +23,13 @@ exports.userLogin = async (req, res, next) => {
     let user = await userModel
       .findOne({ email: data.email, user_status: 1 })
       .populate("role_id");
+    console.log(user);
 
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
         res.status(401);
-        res.json({
+        return res.json({
           success: false,
           message: CONFIG.LOGIN_FAIL_MESSAGE,
           data: null,
@@ -38,6 +39,7 @@ exports.userLogin = async (req, res, next) => {
         userId: user._id,
         userName: user.name.first_name,
         userRole: user.role_id.title,
+        userRoleId: user.role_id._id,
       };
       // console.log(tokenPayload)
       let token = await generateJWTToken(
@@ -51,9 +53,9 @@ exports.userLogin = async (req, res, next) => {
         { upsert: true }
       );
       if (result !== undefined && result !== null) {
-        // res.status(); res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
+        // res.status(); return res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: null,
@@ -61,7 +63,7 @@ exports.userLogin = async (req, res, next) => {
         });
       } else {
         res.status(401);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.LOGIN_SUCCESS_MESSAGE,
           data: result,
@@ -70,7 +72,7 @@ exports.userLogin = async (req, res, next) => {
       }
     } else {
       res.status(401);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.LOGIN_FAIL_MESSAGE,
         data: null,
@@ -82,19 +84,18 @@ exports.userLogin = async (req, res, next) => {
 };
 
 // email OTP and URL for user for password reset
-exports.forgetPassword = async (req, res, next) => {
+const forgetPassword = async (req, res, next) => {
   let data = req.body;
-  console.log(data);
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
     });
   }
   try {
-    let user = await userModel.findOne({ email: data.email });
+    let user = await userModel.findOne({ email: data.email, user_status: 1 });
     if (user !== null && user !== undefined) {
       let otp = Math.floor(1000 + Math.random() * 9000);
       let token = await generateJWTToken(
@@ -111,7 +112,7 @@ exports.forgetPassword = async (req, res, next) => {
         // await mailOtp(data.email, otp, token);
         await sendOtpMail(data.email, otp, token);
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.OTP_SUCCESS,
           data: null,
@@ -119,7 +120,7 @@ exports.forgetPassword = async (req, res, next) => {
       }
     } else {
       res.status(200);
-      res.json({
+      return res.json({
         success: true,
         message: CONFIG.OTP_SUCCESS,
         data: null,
@@ -132,11 +133,11 @@ exports.forgetPassword = async (req, res, next) => {
 };
 
 // reset user password after valid OTP and URL
-exports.otpVerification = async (req, res, next) => {
+const otpVerification = async (req, res, next) => {
   let token = req.params.token;
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -146,7 +147,7 @@ exports.otpVerification = async (req, res, next) => {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
@@ -154,11 +155,11 @@ exports.otpVerification = async (req, res, next) => {
     }
     let userData = await decodeToken(token);
     let data = req.body;
-    let user = await userModel.findOne({ email: userData.userEmail });
+    let user = await userModel.findOne({ email: userData.userEmail, user_status: 1 });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.FORGET_PASSWORD_LINK_EXPIRATED,
         data: null,
@@ -173,14 +174,14 @@ exports.otpVerification = async (req, res, next) => {
           { upsert: true }
         );
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.PASSWORD_SUCCESS_CHANGE,
           data: null,
         });
       } else {
         res.status(400);
-        res.json({
+        return res.json({
           success: false,
           message: CONFIG.WRONG_OTP,
           data: null,
@@ -188,7 +189,7 @@ exports.otpVerification = async (req, res, next) => {
       }
     } else {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.INVALID_EMAIL,
         data: null,
@@ -199,14 +200,13 @@ exports.otpVerification = async (req, res, next) => {
   }
 };
 
-
 //change password after user provide current and new password
-exports.changePassword = async (req, res, next) => {
+const changePassword = async (req, res, next) => {
   let userData = req.body;
   // console.log(userData)
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -223,7 +223,7 @@ exports.changePassword = async (req, res, next) => {
         { upsert: true }
       );
       res.status(200);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
@@ -231,9 +231,9 @@ exports.changePassword = async (req, res, next) => {
       });
     } else {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
-        message: "Invalid user ID",
+        message: CONFIG.INVALID_USER_ID,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -243,10 +243,10 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
-exports.changeMyPassword = async (req, res, next) => {
+const changeMyPassword = async (req, res, next) => {
   if (res.locals.validationError) {
     res.status(400);
-    res.json({
+    return res.json({
       success: false,
       message: res.locals.validationError,
       data: null,
@@ -257,7 +257,7 @@ exports.changeMyPassword = async (req, res, next) => {
     let { userId } = decodeToken(req.accesstoken);
     let userData = req.body;
 
-    let user = await userModel.findOne({ _id: userId });
+    let user = await userModel.findOne({ _id: userId, user_status: 1 });
     if (user != null && user != undefined) {
       let oldPasswordVerified = await bcrypt.compare(
         userData.currentPassword,
@@ -271,7 +271,7 @@ exports.changeMyPassword = async (req, res, next) => {
           { upsert: true }
         );
         res.status(200);
-        res.json({
+        return res.json({
           success: true,
           message: CONFIG.CHANGE_PASSWORD_SUCCESS,
           data: null,
@@ -279,7 +279,7 @@ exports.changeMyPassword = async (req, res, next) => {
         });
       }
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message: CONFIG.CHANGE_PASSWORD_ERROR,
         data: null,
@@ -289,4 +289,12 @@ exports.changeMyPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+module.exports = {
+  userLogin,
+  forgetPassword,
+  otpVerification,
+  changePassword,
+  changeMyPassword,
 };

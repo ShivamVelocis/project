@@ -1,41 +1,108 @@
 const { body, validationResult } = require("express-validator");
 const CONFIG = require("../configs/config");
+const ObjectId = require("mongoose").isValidObjectId;
 
-const addModule = () => {
+let resourceMethods = ["GET", "POST", "PUT", "DELETE"];
+
+
+// Validate request body 
+const addResource = () => {
   return [
-    body("module_name").exists().withMessage("").isString().withMessage(""),
-    body("module_status")
+    body("*.resource_name").exists().isString(),
+    body("*.resource_path").exists().isString(),
+    body("*.resource_status")
       .exists()
-      .withMessage("")
-      .isIn([1, 0, 1])
-      .withMessage("Methods should be valid http methods"),
-  ];
-};
-const updateModule = () => {
-  return [
-    body("id").exists().withMessage("id should not be empty"),
-    body("module_name").isString().withMessage(""),
-    body("module_status")
-      .isIn([1, 0, 1])
-      .withMessage("Methods should be valid http methods"),
-  ];
-};
-
-const removeModuleResource = () => {
-  return [
-    body("id").exists().withMessage("id should not be empty"),
-    body("resourceID").exists().withMessage("id should not be empty"),
-  ];
-};
-
-const addModuleResource = () => {
-  return [
-    body("moduleName")
+      .isIn([0, 1])
+      .withMessage(CONFIG.INVALID_STATUS),
+    body("*.module")
       .exists()
-      .withMessage("id should not be empty")
-      .isString()
-      .withMessage(""),
-    body("resourcesId").exists().withMessage("id should not be empty"),
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("*.methods").exists().isArray(),
+    body("*.methods.*")
+      .isIn(["GET", "POST", "PUT", "DELETE"])
+      .withMessage(CONFIG.INVALID_METHOD),
+  ];
+};
+
+
+const updateResource = () => {
+  return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("resource_name").optional().isString(),
+    body("resource_path").optional().isString(),
+    body("resource_status")
+      .optional()
+      .isIn([0, 1])
+      .withMessage(CONFIG.INVALID_STATUS),
+    body("module")
+      .optional()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("methods")
+      .optional()
+      .isArray()
+      .custom((values) => {
+        values.map((value) => {
+          if (!resourceMethods.includes(value)) {
+            throw new Error(CONFIG.INVALID_METHOD);
+          }
+        });
+      }),
+  ];
+};
+
+
+const deleteResource = () => {
+  return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+  ];
+};
+
+
+const addResourceModule = () => {
+  return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+    body("moduleID")
+      .exists()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
   ];
 };
 
@@ -49,14 +116,15 @@ const isRequestValid = (req, res, next) => {
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   if (extractedErrors) {
     res.status(400);
-    res.json({ success: false, message: extractedErrors, data: null });
+    return res.json({ success: false, message: extractedErrors, data: null });
   }
   next();
 };
 
 module.exports = {
-  addModule,
-  updateModule,
-  removeModuleResource,
-  addModuleResource,
+  addResource,
+  updateResource,
+  deleteResource,
+  addResourceModule,
+  isRequestValid,
 };

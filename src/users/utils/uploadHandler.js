@@ -25,7 +25,7 @@ let uploadProfilePicture = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
         message:
           error.message == "File too large"

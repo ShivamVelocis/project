@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-
 const controller = require("../controller/contentController");
-const {  contentValidationRules, mongoIDValidationRules, isRequestValid} = require("../middlewares/validater");
+const {addContentRules,updateContentRule,deleteContentRule,getContentRule,isRequestValid,} = require("../middlewares/validater");
 
-router.post("/", contentValidationRules(), isRequestValid, controller.addContent);
+router.post("/", addContentRules(), isRequestValid, controller.addContent);
 router.get("/", controller.getContents);
-router.put("/",mongoIDValidationRules(),contentValidationRules(), isRequestValid, controller.updateContent);
-router.delete("/", mongoIDValidationRules(),isRequestValid,controller.removeContent);
-router.get("/:id", mongoIDValidationRules(),isRequestValid,controller.getContent);
+router.put("/",updateContentRule(), isRequestValid, controller.updateContent);
+router.delete("/",deleteContentRule(),isRequestValid,controller.removeContent);
+router.get("/:id", getContentRule(),isRequestValid,controller.getContent);
 
 module.exports = router;

@@ -1,23 +1,24 @@
+const CONFIG = require("../configs/config");
 const { moduleModel } = require("../models/moduleModels");
 
-// Module controllers
+// Add new module
 const addModule = async (req, res, next) => {
   try {
     let moduleData = Array.isArray(req.body) ? req.body : [req.body];
     let result = await moduleModel.insertMany(moduleData);
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
-        message: "Adding Module failed",
+        message: CONFIG.MODULE_ADD_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(201);
-    res.json({
+    return res.json({
       success: true,
-      message: "Module added successfully",
+      message: CONFIG.MODULE_ADD_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -26,9 +27,21 @@ const addModule = async (req, res, next) => {
   }
 };
 
+// Fetch all module data
 const getModules = async (req, res, next) => {
+  let filter = {};
+  if (Object.keys(req.query).length) {
+    let module_status = req.query.module_status
+      ? (filter.module_status = req.query.module_status)
+      : null;
+    let module_name = req.query.module_name
+      ? (filter.module_name = {
+          $regex: new RegExp(req.query.module_name, "i"),
+        })
+      : null;
+  }
   try {
-    let result = await moduleModel.find().populate({
+    let result = await moduleModel.find(filter).populate({
       path: "module_resources",
       select: { module: 0, __v: 0 },
       populate: {
@@ -36,19 +49,19 @@ const getModules = async (req, res, next) => {
         select: { __v: 0 },
       },
     });
-    if (!result) {
+    if (!result || result.length <= 0) {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
-        message: "No data failed",
+        message: CONFIG.NO_RULE_FOUND,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
-      message: "All Modules",
+      message: CONFIG.MODULES_FETCH_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -57,22 +70,23 @@ const getModules = async (req, res, next) => {
   }
 };
 
+// Fectch module with module id(mongodb id)
 const getModule = async (req, res, next) => {
   try {
     let result = await moduleModel.findById(req.params.id);
     if (!result) {
       res.status(404);
-      res.json({
+      return res.json({
         success: false,
-        message: "No data dound",
+        message: CONFIG.NO_RULE_FOUND,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
-      message: "Module data",
+      message: CONFIG.MODULE_FETCH_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -81,6 +95,7 @@ const getModule = async (req, res, next) => {
   }
 };
 
+// Update module data provided id(mongodb id)
 const updateModule = async (req, res, next) => {
   try {
     let { id, ...updateData } = req.body;
@@ -91,17 +106,17 @@ const updateModule = async (req, res, next) => {
     );
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
-        message: "Module update failed",
+        message: CONFIG.MODULE_UPDATE_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
-      message: "Module updated",
+      message: CONFIG.MODULE_UPDATE_SUCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -110,23 +125,24 @@ const updateModule = async (req, res, next) => {
   }
 };
 
+// Delete module provided id
 const deleteModule = async (req, res, next) => {
   try {
     let { id } = req.body;
     let result = await moduleModel.findByIdAndRemove(id);
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
-        message: "Module deletion failed",
+        message: CONFIG.MODULE_DELETE_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
-      message: "Module deleted",
+      message: CONFIG.MODULE_DELETE_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -135,6 +151,7 @@ const deleteModule = async (req, res, next) => {
   }
 };
 
+// Map resource to module
 const mapResourceInModule = async (req, res, next) => {
   let resourceId = [];
   if (Array.isArray(req.body.resourcesId)) resourceId = req.body.resourcesId;
@@ -148,17 +165,17 @@ const mapResourceInModule = async (req, res, next) => {
     );
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
-        message: "failed",
+        message: CONFIGG.RESOURSCE_MAPPING_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
-      message: "Data mapped successfully",
+      message: CONFIG.RESOURSCE_MAPPING_SUCCESS,
       data: result,
       accesstokon: req.accesstoken,
     });
@@ -167,6 +184,7 @@ const mapResourceInModule = async (req, res, next) => {
   }
 };
 
+// Delete resource from module
 const removeResouresFromModule = async (req, res, next) => {
   try {
     let moduleID = req.body.id;
@@ -183,17 +201,17 @@ const removeResouresFromModule = async (req, res, next) => {
     );
     if (!result) {
       res.status(400);
-      res.json({
+      return res.json({
         success: false,
-        message: "failed",
+        message: CONFIG.RESOURSCE_UNLINKED_FAILED,
         data: result,
         accesstoken: req.accesstoken,
       });
     }
     res.status(200);
-    res.json({
+    return res.json({
       success: true,
-      message: "Resource removed from module",
+      message: CONFIG.RESOURSCE_UNLINKED_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
