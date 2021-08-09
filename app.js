@@ -24,7 +24,7 @@ const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
-const { isPermitted } = require("./src/ACL/middlewares/roleTest");
+// const { isPermitted } = require("./src/ACL/middlewares/roleTest");
 
 //buildin middlewares
 app.use(bodyParser.json());
