@@ -1,11 +1,28 @@
 const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
+const ContentFlowModel = require("../../Workflow/Models/approval.model");
 
 exports.addContent = async (req, res) => {
   let data = req.body;
+
   try {
     let content = new Content(data);
     await content.save();
+
+    let newObj = {};
+    newObj.contentId = content._id;
+    newObj.state = null;
+    newObj.contentStatus = null;
+    newObj.docUploadRequired = false;
+    newObj.isStartState = true;
+    newObj.isTerminateState = false;
+    newObj.isStateUpdatable = true;
+    newObj.action = "INITIATE";
+    newObj.nextState = "APPROVE";
+
+    let workflow = new ContentFlowModel(newObj);
+    await workflow.save();
+
     res.status(201);
     return res.json({
       success: true,

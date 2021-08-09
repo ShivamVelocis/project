@@ -1,0 +1,40 @@
+{
+    "states": [
+        {
+            "state": null,
+            "contentStatus": null,
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "isStateUpdatable": true,
+            "actions": [
+                {
+                    "action": "INITIATE",
+                    "nextState": "INITIATED"
+                }
+            ]
+        },
+        {
+            "state": "INITIATE",
+            "contentStatus": "INITIATE",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "isStateUpdatable": true,
+            "actions": [
+                {
+                    "action": "INITIATE",
+                    "nextState": "INITIATED"
+                }
+            ]
+        },
+        {
+            "state": "REJECTED",
+            "contentStatus": "REJECTED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "isStateUpdatable": false
+        }
+    ]
+}

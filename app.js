@@ -20,6 +20,7 @@ const moduleRouter = require("./src/master/Routes/moduleRouter");
 const resourceRouter = require("./src/master/Routes/resourceRouter");
 const roleRouter = require("./src/roleManagement/routes/roleRoute");
 const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
+const workflowRouter = require("./src/Workflow/Routers/workflow.routes");
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
@@ -36,7 +37,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(assignRole);
 
 //Authentication request
-app.use(auth().unless({path: [{ url: "/user/login", methods: ["POST"] }]}));
+app.use(auth().unless({ path: [{ url: "/user/login", methods: ["POST"] }] }));
 
 //Router
 app.use("/content", contentRoutes);
@@ -46,6 +47,7 @@ app.use("/module", moduleRouter);
 app.use("/resource", resourceRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
+app.use("/workflow", workflowRouter);
 
 //handle wild URI
 app.use((_req, _res, next) => {
