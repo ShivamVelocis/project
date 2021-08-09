@@ -21,6 +21,7 @@ const resourceRouter = require("./src/master/Routes/resourceRouter");
 const roleRouter = require("./src/roleManagement/routes/roleRoute");
 const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
 const workflowRouter = require("./src/Workflow/Routers/workflow.routes");
+const approvalRouter = require("./src/Workflow/Routers/approval.routes");
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
@@ -48,6 +49,7 @@ app.use("/resource", resourceRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
 app.use("/workflow", workflowRouter);
+app.use("/approve", approvalRouter);
 
 //handle wild URI
 app.use((_req, _res, next) => {

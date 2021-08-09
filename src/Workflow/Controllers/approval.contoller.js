@@ -1,36 +1,44 @@
-const ApprovalModel = require("../Models/approval.model");
-const workflowModel = require("../Models/workflow.model");
+const WorkflowModel = require("../Models/workflow.model");
+const ContentModel = require("../../ContentManagement/models/contentModels");
+const lodash = require("lodash");
 
-approval = async (req, res, next) => {
-  let module = req.body.module;
-  let contentId = req.body.id;
-  let userAction = req.body.action;
-  let worlflowData = await workflowModel.find({
-    "States.actions.nextState": userAction,
-    Module: module,
-  });
+approvalContent = async (req, res, next) => {
+  try {
+    let module = req.body.module;
+    let contentId = req.body.id;
+    let userAction = req.body.action;
+    let updatedata;
 
-  let newObj = {};
-  newObj.state = worlflowData.States.state;
-  newObj.contentStatus = worlflowData.States.contentStatus;
-  newObj.isStartState = worlflowData.States.isStartState;
-  newObj.isTerminateState = worlflowData.States.isTerminateState;
-  newObj.isStateUpdatable = worlflowData.States.isStateUpdatable;
-  newObj.action = userAction;
-  newObj.nextState = lodash.find(worlflowData.States.actions, function (o) {
-    return action == userAction;
-  }).nextState;
+    let contentData = await ContentModel.findOne({ _id: contentId });
 
-  console.log(newObj);
+    if (!contentData) return res.send("Invalid Content id");
 
-  let updateContentApproval = await ApprovalModel.findOneAndUpdate(
-    {
-      contentId,
-    },
-    {
-      $set: newObj,
+    let worlflowData = await WorkflowModel.findOne({
+      "States.actions.action": contentData.content_status,
+      Module: module,
+    });
+    if (!worlflowData || !worlflowData.States)
+      return res.send("Invalid Content id");
+
+    let state = worlflowData.States.map((state) => {
+      return lodash.find(state.actions, function (action) {
+        return (
+          action.action == contentData.content_status &&
+          action.nextState == userAction
+        );
+      });
+    }).filter(Boolean);
+    
+    if (!state) return res.send("Invalid step");
+
+    if (state && state.length > 0) {
+      contentData.content_status = state[0].nextState;
+      updatedata = await contentData.save();
+      return res.send(updatedata);
     }
-  );
-  res.send(updateContentApproval);
-  // let data =await
+  } catch (error) {
+    next(error);
+  }
 };
+
+module.exports = { approvalContent };
