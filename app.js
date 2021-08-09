@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(assignRole);
 
 //Authentication request
-app.use(auth().unless({path: [{ url: "/user/login", methods: ["GET"] }]}));
+app.use(auth().unless({path: [{ url: "/user/login", methods: ["POST"] }]}));
 
 //Router
 app.use("/content", contentRoutes);
