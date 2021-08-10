@@ -150,7 +150,7 @@ exports.changeMyPasswordRule = () => {
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
       .notEmpty()
       .withMessage(CONFIG.EMPTY_CURRENT_PASSWORD)
-      .custom((value) => {
+      .custom((value,{ req }) => {
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -175,7 +175,7 @@ exports.changePasswordRule = () => {
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
-      .custom((value) => {
+      .custom((value, { req }) => {
         if (value != req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -212,7 +212,7 @@ exports.otpPasswordRule = () => {
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
-      .custom((value) => {
+      .custom((value,{ req }) => {
         // console.log(value , req.body.password)
         if (value != req.body.password) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
@@ -224,11 +224,7 @@ exports.otpPasswordRule = () => {
 
 //forget password email validation in request body
 exports.forgetpasswordRule = () => {
-  return [
-    body("email")
-      .isEmail()
-      .withMessage(CONFIG.INVALID_EMAIL),
-  ];
+  return [body("email").isEmail().withMessage(CONFIG.INVALID_EMAIL)];
 };
 
 /**--------------------Auth Validator--------------------------------- */

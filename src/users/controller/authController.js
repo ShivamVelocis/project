@@ -229,13 +229,13 @@ const changePassword = async (req, res, next) => {
     if (user != null && user != undefined) {
       let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
       await userModel.findOneAndUpdate(
-        { _id: userId },
+        { _id: userData.id },
         { $set: { password: newPasswordHash } },
         { upsert: true }
       );
       res.status(200);
       return res.json({
-        success: false,
+        success: true,
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
         accesstoken: req.accesstoken,

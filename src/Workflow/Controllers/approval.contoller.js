@@ -11,32 +11,62 @@ approvalContent = async (req, res, next) => {
     //content data
     let contentData = await ContentModel.findOne({ _id: contentId });
     // console.log(contentData.content_status);
-    if (!contentData) return res.send("Invalid Content Id");
+    if (!contentData) {
+      return res.json({
+        success: false,
+        message: "Invalid Content Id",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
 
     // workflow data
     let worlflowData = await WorkflowModel.findOne({
-      "States.state": contentData.content_status,
+      "States.state": contentData.content_State,
       Module: module,
     });
 
     // console.log(worlflowData);
-    if (!worlflowData || !worlflowData.States)
-      return res.send("Invalid module/flow");
+    if (!worlflowData || !worlflowData.States) {
+      return res.json({
+        success: false,
+        message: "Invalid module/flow",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
 
     // return data workflow state
     let state = lodash.find(worlflowData.States, function (state) {
-      return state.state == contentData.content_status;
+      return state.state == contentData.content_State;
     });
 
     // console.log("State", state);
-    if (!state) return res.send("Invalid flow");
+    if (!state) {
+      return res.json({
+        success: false,
+        message: "Invalid flow",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
 
     if (state.isTerminateState) {
-      return res.send("Workflow is in terminate state");
+      return res.json({
+        success: false,
+        message: "Workflow already completed",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
 
     if (!state.isStateUpdatable) {
-      return res.send("State is not updatable");
+      return res.json({
+        success: false,
+        message: "State is not updatable",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
 
     // check user action(approved or any) and return action and role
@@ -44,17 +74,44 @@ approvalContent = async (req, res, next) => {
       return action.action == userAction;
     });
     // console.log("action", action);
-    if (!action) return res.send("Invalid action");
+    if (!action) {
+      return res.json({
+        success: false,
+        message: "Invalid action",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
 
-    // console.log(req.userRole);
+    let nextState = lodash.find(worlflowData.States, function (state) {
+      return state.state == action.action;
+    });
+
     // check is user allowed to perform action or not
     if (action.role && action.role.includes(req.userRole)) {
-      let updatedata = await ContentModel.findByIdAndUpdate(contentId, {
-        $set: { content_status: action.action },
+      let updatedata = await ContentModel.findByIdAndUpdate(
+        contentId,
+        {
+          $set: {
+            content_State: action.action,
+            content_status: nextState.contentStatus,
+          },
+        },
+        { new: true }
+      );
+      return res.json({
+        success: true,
+        message: "Step completed",
+        data: updatedata,
+        accesstoken: req.accesstoken,
       });
-      return res.send(updatedata);
     } else {
-      res.send("Not Authorized");
+      res.json({
+        success: false,
+        message: "Not Authorized",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
   } catch (error) {
     next(error);
