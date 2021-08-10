@@ -2,8 +2,9 @@ const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
 
 exports.addContent = async (req, res) => {
-  let data = req.body;
-
+  let data = {};
+  data.title = req.body.title;
+  data.description = req.body.description;
   try {
     let content = new Content(data);
     await content.save();

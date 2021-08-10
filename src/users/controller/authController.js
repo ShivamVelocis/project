@@ -23,11 +23,18 @@ const userLogin = async (req, res, next) => {
     let user = await userModel
       .findOne({ email: data.email, user_status: 1 })
       .populate("role_id");
-    // console.log(user);
 
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
+        res.status(401);
+        return res.json({
+          success: false,
+          message: CONFIG.LOGIN_FAIL_MESSAGE,
+          data: null,
+        });
+      }
+      if (!user.role) {
         res.status(401);
         return res.json({
           success: false,
@@ -155,7 +162,10 @@ const otpVerification = async (req, res, next) => {
     }
     let userData = await decodeToken(token);
     let data = req.body;
-    let user = await userModel.findOne({ email: userData.userEmail, user_status: 1 });
+    let user = await userModel.findOne({
+      email: userData.userEmail,
+      user_status: 1,
+    });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
       res.status(400);

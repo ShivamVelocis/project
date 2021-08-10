@@ -7,34 +7,41 @@ approvalContent = async (req, res, next) => {
     let module = req.body.module;
     let contentId = req.body.id;
     let userAction = req.body.action;
-    let updatedata;
 
+    //content data
     let contentData = await ContentModel.findOne({ _id: contentId });
 
-    if (!contentData) return res.send("Invalid Content id");
+    if (!contentData) return res.send("Invalid Content Id");
 
     let worlflowData = await WorkflowModel.findOne({
-      "States.actions.action": contentData.content_status,
+      "States.state": contentData.content_status,
       Module: module,
     });
+
     if (!worlflowData || !worlflowData.States)
-      return res.send("Invalid Content id");
+      return res.send("Invalid module/flow");
 
-    let state = worlflowData.States.map((state) => {
-      return lodash.find(state.actions, function (action) {
-        return (
-          action.action == contentData.content_status &&
-          action.nextState == userAction
-        );
+    let state = lodash.find(worlflowData.States, function (state) {
+      return state.state == contentData.content_status;
+    });
+
+    // console.log("State", state);
+    if (!state || !state.actions) return res.send("Invalid flow");
+
+    let action = lodash.find(state.actions, function (action) {
+      return action.action == userAction;
+    });
+    // console.log("action", action);
+    if (!action) return res.send("Invalid action");
+
+    // console.log(req.userRole);
+    if (action.role && action.role.includes(req.userRole)) {
+      let updatedata = await ContentModel.findByIdAndUpdate(contentId, {
+        $set: { content_status: action.action },
       });
-    }).filter(Boolean);
-    
-    if (!state) return res.send("Invalid step");
-
-    if (state && state.length > 0) {
-      contentData.content_status = state[0].nextState;
-      updatedata = await contentData.save();
       return res.send(updatedata);
+    } else {
+      res.send("Not Authorized");
     }
   } catch (error) {
     next(error);
