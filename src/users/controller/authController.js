@@ -23,7 +23,7 @@ const userLogin = async (req, res, next) => {
     let user = await userModel
       .findOne({ email: data.email, user_status: 1 })
       .populate("role_id");
-    console.log(user);
+    // console.log(user);
 
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);

@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-
 //Environment File handle
 dotenv.config();
 
@@ -24,7 +23,7 @@ const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
-const { isPermitted } = require("./src/ACL/middlewares/roleTest");
+const { isPermitted, auth } = require("./src/ACL/middlewares/roleTest");
 
 //buildin middlewares
 app.use(bodyParser.json());
@@ -37,7 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(assignRole);
 
 //Authentication request
-app.use(isPermitted);
+app.use(auth().unless({path: [{ url: "/user/login", methods: ["POST"] }]}));
 
 //Router
 app.use("/content", contentRoutes);
@@ -48,14 +47,12 @@ app.use("/resource", resourceRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
 
-
 //handle wild URI
 app.use((_req, _res, next) => {
   const error = new Error("URL not found");
   error.status = 404;
   next(error);
 });
-
 
 //Error handler
 app.use((error, req, res, _next) => {
@@ -69,14 +66,12 @@ app.use((error, req, res, _next) => {
   });
 });
 
-
 //Server start after mongoose connection open
 mongoose.connection.once("open", function callback() {
   app.listen(process.env.APP_PORT || 5000, () =>
     console.log(`Example app listening on port ${process.env.PORT}!`)
   );
 });
-
 
 //Error on mongoose connection
 mongoose.connection.on("error", function (err) {
