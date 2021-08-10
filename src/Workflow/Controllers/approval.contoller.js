@@ -118,4 +118,83 @@ approvalContent = async (req, res, next) => {
   }
 };
 
-module.exports = { approvalContent };
+getContentFlow = async (req, res, next) => {
+  let module = req.body.module;
+  let contentId = req.params.id;
+
+  try {
+    let contentData = await ContentModel.findOne({ _id: contentId });
+    // console.log(contentData.content_status);
+    if (!contentData) {
+      return res.json({
+        success: false,
+        message: "Invalid Content Id",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    // workflow data
+    let worlflowData = await WorkflowModel.findOne({
+      "States.state": contentData.content_State,
+      Module: module,
+    });
+
+    // console.log(worlflowData);
+    if (!worlflowData || !worlflowData.States) {
+      return res.json({
+        success: false,
+        message: "Invalid module/flow",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    // return data workflow state
+    let state = lodash.find(worlflowData.States, function (state) {
+      return state.state == contentData.content_State;
+    });
+
+    // console.log("State", state);
+    if (!state) {
+      return res.json({
+        success: false,
+        message: "Invalid flow",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    if (state.isTerminateState) {
+      return res.json({
+        success: false,
+        message: "Workflow already completed",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    if (!state.isStateUpdatable) {
+      return res.json({
+        success: false,
+        message: "State is not updatable",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    let actionAllowed = [];
+    state.actions.map((action) => {
+      actionAllowed.push({ action: action.action });
+    });
+    return res.json({
+      success: true,
+      message: "Action allowed",
+      data: actionAllowed,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { approvalContent, getContentFlow };

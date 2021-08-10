@@ -4,7 +4,7 @@ const {
   generaterefreshToken,
 } = require("../Utils/authHelper");
 
-let assignRole = async (req, res, next) => {
+let assignRole = async (req, _res, next) => {
   try {
     if (isUserTokenValid(req)) {
       let payload = decodeToken(req.headers.authorization.split(" ")[1]);
