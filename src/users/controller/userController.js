@@ -218,11 +218,12 @@ const getProfilePicture = async (req, res, next) => {
     // let userId = req.body.id;
     let { userId } = decodeToken(req.accesstoken);
     let user = await userModel.findOne({ _id: userId, user_status: 1 });
+    // console.log(decodeToken(req.accesstoken))
     if (user != null && user != undefined) {
       res.set("Content-Type", "image/jpeg");
       return res.send(user.profilePicture);
     } else {
-      return res.send(null);
+      return res.send("No profile picture found");
     }
   } catch (error) {
     return next(error);
