@@ -37,6 +37,7 @@ CONFIG.LOGIN_FAIL_MESSAGE = "Invalid Username or Password";
 
 //-----------------------Invalid fields-------------------
 CONFIG.INVALID_OTP = "OTP must be 4 digits long nuber";
+CONFIG.CHARACTER_ONLY = "Allow characters only";
 CONFIG.WRONG_OTP = "Please use valid OTP";
 CONFIG.INVALID_NAME = "Please enter valid name";
 CONFIG.INVALID_EMAIL = "Please enter valid email";
@@ -53,6 +54,7 @@ CONFIG.INVALID_MONGODB_ID = "Invalid mongodb ID";
 CONFIG.EMPTY_OTP = "OTP must not be empty";
 CONFIG.TOO_LARGE_IMAGE = "Image should be smaller than 2mb";
 CONFIG.NEW_CONFIRM_ERROR = "New password and confirm password should be same";
+CONFIG.INVALID_USER_STATUS = "Status should be 1 oer 0";
 
 //----------------------------Empty fields---------------------------
 // CONFIG.EMPTY_CONFIRM_PASSWORD = "New password should not be empty";
@@ -61,12 +63,13 @@ CONFIG.EMPTY_PASSWORD = "Password should not be empty";
 CONFIG.EMPTY_NEW_PASSWORD = "New password should not be empty";
 CONFIG.EMPTY_CURRENT_PASSWORD = "Current password should not be empty";
 CONFIG.EMPTY_CONFIRM_PASSWORD = "Confirm password should not be empty";
-
+CONFIG.EMPTY_ID = "id is required";
 //-----------------------------Regex Patterns-------------------------
 CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
 CONFIG.TITLE_PATTERN = /^[ A-Za-z0-9_.\/,\?]*$/;
 CONFIG.PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]/;
-CONFIG.EMAIL_PATTERN = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+CONFIG.EMAIL_PATTERN =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 CONFIG.NUMBERONLYREGEX = /^[ 0-9]*$/;
 CONFIG.CHARONLYREGEX = /^[ A-Za-z]*$/;
 CONFIG.ALPHANUMERICONLYREGEX = /^[ A-Za-z0-9]*$/;

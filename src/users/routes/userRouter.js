@@ -9,7 +9,7 @@ const { uploadProfilePicture } = require("../utils/uploadHandler");
 
 //User management
 router.get("/", userController.getUsers); 
-router.post("/",Validtor.addUserRules(), userController.addUser);
+router.post("/",Validtor.addUserRules(),Validtor.isRequestValid, userController.addUser);
 router.put("/",Validtor.updateUsernRules(),Validtor.isRequestValid,userController.updateUser);
 router.delete("/", Validtor.deleteUserRule(), Validtor.isRequestValid , userController.removeUser); 
 

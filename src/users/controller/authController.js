@@ -215,15 +215,7 @@ const otpVerification = async (req, res, next) => {
 const changePassword = async (req, res, next) => {
   let userData = req.body;
   // console.log(userData)
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
+  
   try {
     let user = await userModel.findOne({ _id: userData.id });
     if (user != null && user != undefined) {
@@ -255,15 +247,6 @@ const changePassword = async (req, res, next) => {
 };
 
 const changeMyPassword = async (req, res, next) => {
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
   try {
     let { userId } = decodeToken(req.accesstoken);
     let userData = req.body;
