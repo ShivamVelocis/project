@@ -32,6 +32,13 @@ exports.getContent = async (req, res) => {
         data: result,
         accesstoken: req.accesstoken,
       });
+    } else {
+      return res.json({
+        success: false,
+        message: CONFIG.NO_CONTENT_FOUND,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
   } catch (error) {
     next(error);

@@ -15,7 +15,6 @@ let WorkflowSchema = new mongoose.Schema(
           {
             _id: false,
             action: String,
-            nextState: String,
             role: [String],
           },
         ],

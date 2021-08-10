@@ -10,24 +10,36 @@ approvalContent = async (req, res, next) => {
 
     //content data
     let contentData = await ContentModel.findOne({ _id: contentId });
-
+    // console.log(contentData.content_status);
     if (!contentData) return res.send("Invalid Content Id");
 
+    // workflow data
     let worlflowData = await WorkflowModel.findOne({
       "States.state": contentData.content_status,
       Module: module,
     });
 
+    // console.log(worlflowData);
     if (!worlflowData || !worlflowData.States)
       return res.send("Invalid module/flow");
 
+    // return data workflow state
     let state = lodash.find(worlflowData.States, function (state) {
       return state.state == contentData.content_status;
     });
 
     // console.log("State", state);
-    if (!state || !state.actions) return res.send("Invalid flow");
+    if (!state) return res.send("Invalid flow");
 
+    if (state.isTerminateState) {
+      return res.send("Workflow is in terminate state");
+    }
+
+    if (!state.isStateUpdatable) {
+      return res.send("State is not updatable");
+    }
+
+    // check user action(approved or any) and return action and role
     let action = lodash.find(state.actions, function (action) {
       return action.action == userAction;
     });
@@ -35,6 +47,7 @@ approvalContent = async (req, res, next) => {
     if (!action) return res.send("Invalid action");
 
     // console.log(req.userRole);
+    // check is user allowed to perform action or not
     if (action.role && action.role.includes(req.userRole)) {
       let updatedata = await ContentModel.findByIdAndUpdate(contentId, {
         $set: { content_status: action.action },

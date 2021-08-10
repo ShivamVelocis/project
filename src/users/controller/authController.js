@@ -34,11 +34,12 @@ const userLogin = async (req, res, next) => {
           data: null,
         });
       }
-      if (!user.role) {
+      if (!user.role_id) {
+        // console.log()
         res.status(401);
         return res.json({
           success: false,
-          message: CONFIG.LOGIN_FAIL_MESSAGE,
+          message: "Invalid role id",
           data: null,
         });
       }

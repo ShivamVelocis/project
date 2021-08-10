@@ -43,7 +43,7 @@ CONFIG.INVALID_EMAIL = "Please enter valid email";
 CONFIG.INVALID_ROLE = "Please enter valid role";
 CONFIG.INVALID_STATUS = "Please enter valid status";
 CONFIG.INSERT_USER_NAME = "Please enter valid username";
-CONFIG.INVALID_PASSWORD = "Please enter valid password";
+CONFIG.INVALID_PASSWORD = "Incorrect current password";
 CONFIG.INVALID_MONGO_ID = "Please enter valid Mongodb ID";
 CONFIG.INVALID_USER_NAME = "Please enter valid username";
 CONFIG.INVALID_NEW_PASSWORD = "Please enter valid new password";
@@ -55,10 +55,12 @@ CONFIG.TOO_LARGE_IMAGE = "Image should be smaller than 2mb";
 CONFIG.NEW_CONFIRM_ERROR = "New password and confirm password should be same";
 
 //----------------------------Empty fields---------------------------
-CONFIG.EMPTY_CONFIRM_PASSWORD = "New password should not be empty";
+// CONFIG.EMPTY_CONFIRM_PASSWORD = "New password should not be empty";
 CONFIG.EMPTY_USER_NAME = "Username should not be empty";
 CONFIG.EMPTY_PASSWORD = "Password should not be empty";
 CONFIG.EMPTY_NEW_PASSWORD = "New password should not be empty";
+CONFIG.EMPTY_CURRENT_PASSWORD = "Current password should not be empty";
+CONFIG.EMPTY_CONFIRM_PASSWORD = "Confirm password should not be empty";
 
 //-----------------------------Regex Patterns-------------------------
 CONFIG.TEXTAREA_PATTERN = /^[ A-Za-z0-9_.\/'"@\$#\*\-!,<>&;]*$/;
