@@ -5,7 +5,6 @@ const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
 const { decodeToken } = require("../utils/auth");
 
-
 //Added new user
 const addUser = async function addUser(req, res, next) {
   try {
@@ -105,7 +104,7 @@ const getUser = async function getUser(req, res, next) {
       accesstoken: req.accesstoken,
     });
   }
-  console.log(res.locals.validationError)
+  console.log(res.locals.validationError);
   let id = req.params.id;
   try {
     let userData = await userModel
@@ -117,6 +116,13 @@ const getUser = async function getUser(req, res, next) {
         success: true,
         message: CONFIG.USER_USER_DATA,
         data: userData,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: CONFIG.NO_DATA_FOUND,
+        data: null,
         accesstoken: req.accesstoken,
       });
     }
@@ -206,7 +212,7 @@ const uploadProfilePicture = async (req, res) => {
   }
 };
 
-//Get user profile picture 
+//Get user profile picture
 const getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
