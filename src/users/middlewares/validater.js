@@ -8,6 +8,7 @@ exports.addUserRules = () => {
     body("email")
       .exists()
       .withMessage(CONFIG.INVALID_EMAIL)
+      .bail()
       .isEmail()
       .withMessage(CONFIG.INVALID_EMAIL),
 
@@ -20,6 +21,7 @@ exports.addUserRules = () => {
     body("role_id")
       .exists()
       .withMessage(CONFIG.INVALID_ROLE)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
@@ -30,8 +32,10 @@ exports.addUserRules = () => {
     body("username")
       .exists()
       .withMessage(CONFIG.EMPTY_USER_NAME)
+      .bail()
       .matches(CONFIG.CHARONLYREGEX)
       .withMessage(CONFIG.CHARACTER_ONLY)
+      .bail()
       .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_USER_NAME);
@@ -42,12 +46,14 @@ exports.addUserRules = () => {
     body("user_status")
       .exists()
       .withMessage(CONFIG.INVALID_STATUS)
+      .bail()
       .isIn([0, 1])
       .withMessage(CONFIG.INVALID_USER_STATUS),
 
     check("first_name")
       .notEmpty()
       .withMessage("The first name is require")
+      .bail()
       .matches(CONFIG.CHARONLYREGEX)
       .withMessage(CONFIG.CHARACTER_ONLY),
   ];
@@ -59,6 +65,7 @@ exports.updateUsernRules = () => {
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
@@ -94,6 +101,7 @@ exports.getUserRule = () => {
     param("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGO_ID);
@@ -108,6 +116,7 @@ exports.deleteUserRule = () => {
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGO_ID);
@@ -122,6 +131,7 @@ exports.getUserProfileRule = () => {
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGO_ID);
@@ -137,8 +147,10 @@ exports.changeMyPasswordRule = () => {
     body("currentPassword")
       .exists()
       .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_CURRENT_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -147,8 +159,10 @@ exports.changeMyPasswordRule = () => {
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -157,8 +171,10 @@ exports.changeMyPasswordRule = () => {
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_CURRENT_PASSWORD)
+      .bail()
       .custom((value, { req }) => {
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
@@ -196,8 +212,10 @@ exports.changePasswordRule = () => {
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .custom((value, { req }) => {
         if (value != req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
@@ -212,6 +230,7 @@ exports.otpPasswordRule = () => {
     body("otp")
       .exists()
       .withMessage(CONFIG.EMPTY_OTP)
+      .bail()
       .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_OTP);
@@ -225,8 +244,10 @@ exports.otpPasswordRule = () => {
     body("password")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -235,8 +256,10 @@ exports.otpPasswordRule = () => {
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .custom((value, { req }) => {
         // console.log(value , req.body.password)
         if (value != req.body.password) {

@@ -27,11 +27,17 @@ const addContentRules = () => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_DESCRIPTION);
         }
-        if (value && value.match(CONFIG.TEXTAREA_PATTERN == null)) {
+        if (value.match(CONFIG.TEXTAREA_PATTERN == null)) {
           throw new Error(CONFIG.INVALID_DESCRIPTION);
         }
         return true;
       }),
+    body("content_status")
+      .exists()
+      .withMessage(CONFIG.EMPTY_STATUS)
+      .bail()
+      .isIn([0, 1])
+      .withMessage(CONFIG.INVALID_STATUS),
   ];
 };
 

@@ -22,13 +22,13 @@ CONFIG.ADD_CONTENT_FAILED = "Error while adding content";
 //-----------------Invalid fields--------------------------------
 CONFIG.INVALID_TITLE = "Please enter alphanumeric title only";
 CONFIG.INVALID_DESCRIPTION = "Please enter alphanumeric description only";
-CONFIG.INVALID_STATUS = "Please select  content status";
+CONFIG.INVALID_STATUS = "Please enter valid  content status";
 CONFIG.INVALID_MONGO_ID = "Please enter valid  MongoDB ID";
 
 //---------------------Empty fields---------------------------------
 CONFIG.EMPTY_TITLE = "Title should not be empty";
 CONFIG.EMPTY_DESCRIPTION = "Description should not be empty";
-CONFIG.EMPTY_STATUS = "Please select  content status";
+CONFIG.EMPTY_STATUS = "Please enter  content status";
 
 
 //---------------------Regex Pattern--------------------------------
