@@ -113,6 +113,14 @@ exports.updateContent = async (req, res) => {
         data: result,
         accesstoken: req.accesstoken,
       });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: CONFIG.NO_CONTENT_FOUND,
+        data: [],
+        accesstoken: req.accesstoken,
+      });
     }
   } catch (error) {
     next(error);

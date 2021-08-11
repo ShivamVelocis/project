@@ -12,13 +12,6 @@ const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 //  handler for login form and redirect to users after success login
 const userLogin = async (req, res, next) => {
   let data = req.body;
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-    });
-  }
   try {
     let user = await userModel
       .findOne({ email: data.email, user_status: 1 })
@@ -93,14 +86,6 @@ const userLogin = async (req, res, next) => {
 // email OTP and URL for user for password reset
 const forgetPassword = async (req, res, next) => {
   let data = req.body;
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-    });
-  }
   try {
     let user = await userModel.findOne({ email: data.email, user_status: 1 });
     if (user !== null && user !== undefined) {
@@ -142,14 +127,6 @@ const forgetPassword = async (req, res, next) => {
 // reset user password after valid OTP and URL
 const otpVerification = async (req, res, next) => {
   let token = req.params.token;
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-    });
-  }
   try {
     let isUrlTokenVal = await validateToken(token);
     if (!isUrlTokenVal) {
@@ -213,8 +190,7 @@ const otpVerification = async (req, res, next) => {
 //change password after user provide current and new password
 const changePassword = async (req, res, next) => {
   let userData = req.body;
-  // console.log(userData)
-  
+ 
   try {
     let user = await userModel.findOne({ _id: userData.id });
     if (user != null && user != undefined) {

@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const sharp = require("sharp");
-const { validationResult } = require("express-validator");
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
 const { decodeToken } = require("../utils/auth");
@@ -20,32 +19,15 @@ const addUser = async function addUser(req, res, next) {
       user_status: req.body.user_status,
     };
 
-    //Validation
-    let errorsExtract = [];
-    let validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty()) {
-      let errors = Object.values(validationErrors.mapped());
-      errors.forEach((item) => {
-        errorsExtract.push(item.msg);
-      });
-      res.status(400);
-      return res.json({
-        success: false,
-        message: errorsExtract,
-        data: null,
-        accesstoken: req.accesstoken,
-      });
-    } else {
-      let User = new userModel(form_data);
-      let saveUser = await User.save();
-      res.status(201);
-      return res.json({
-        success: true,
-        message: CONFIG.USER_ADD_SUCCESS,
-        data: saveUser,
-        accesstoken: req.accesstoken,
-      });
-    }
+    let User = new userModel(form_data);
+    let saveUser = await User.save();
+    res.status(201);
+    return res.json({
+      success: true,
+      message: CONFIG.USER_ADD_SUCCESS,
+      data: saveUser,
+      accesstoken: req.accesstoken,
+    });
   } catch (error) {
     next(error);
   }
@@ -86,16 +68,6 @@ const updateUser = async (req, res) => {
 
 //Fetch user with id
 const getUser = async function getUser(req, res, next) {
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
-  console.log(res.locals.validationError);
   let id = req.params.id;
   try {
     let userData = await userModel
@@ -160,7 +132,7 @@ const removeUser = async (req, res) => {
       return res.json({
         success: true,
         message: CONFIG.USER_REMOVE_SUCCESS,
-        data: null,
+        data: result,
         accesstoken: req.accesstoken,
       });
     } else {
