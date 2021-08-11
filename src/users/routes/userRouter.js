@@ -29,7 +29,7 @@ router.post('/change-my-password/',Validtor.changeMyPasswordRule(),Validtor.isRe
 
 
 //Profile Picture
-router.get('/profile/',Validtor.getUserProfileRule(),Validtor.isRequestValid,userController.getProfilePicture)
+router.get('/profile/',userController.getProfilePicture)
 router.post('/profile/',uploadProfilePicture,userController.uploadProfilePicture)
 
 
