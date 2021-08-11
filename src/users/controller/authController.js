@@ -57,7 +57,7 @@ const userLogin = async (req, res, next) => {
       let result = await userModel.findOneAndUpdate(
         { email: data.email },
         { $set: { token: token } },
-        { upsert: true }
+        { new: true }
       );
       if (result !== undefined && result !== null) {
         // res.status(); return res.json(responseHandler(true,CONFIG.LOGIN_SUCCESS_MESSAGE,null,token))
@@ -113,7 +113,7 @@ const forgetPassword = async (req, res, next) => {
       let result = await userModel.findOneAndUpdate(
         { email: data.email },
         { $set: { otp: otp, otpToken: token } },
-        { upsert: true }
+        { new: true }
       );
       if (result !== undefined && result !== null) {
         // await mailOtp(data.email, otp, token);
@@ -181,7 +181,7 @@ const otpVerification = async (req, res, next) => {
         await userModel.findOneAndUpdate(
           { email: userData.userEmail },
           { $set: { otp: null, password: passwordHash, otpToken: null } },
-          { upsert: true }
+          { new: true }
         );
         res.status(200);
         return res.json({
@@ -222,7 +222,7 @@ const changePassword = async (req, res, next) => {
       await userModel.findOneAndUpdate(
         { _id: userData.id },
         { $set: { password: newPasswordHash } },
-        { upsert: true }
+        { new: true }
       );
       res.status(200);
       return res.json({
@@ -261,7 +261,7 @@ const changeMyPassword = async (req, res, next) => {
         await userModel.findOneAndUpdate(
           { _id: userId },
           { $set: { password: newPasswordHash } },
-          { upsert: true }
+          { new: true }
         );
         res.status(200);
         return res.json({

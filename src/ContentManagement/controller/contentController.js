@@ -103,7 +103,7 @@ exports.updateContent = async (req, res) => {
     let result = await Content.findOneAndUpdate(
       { _id: id },
       { $set: updatedContent },
-      { new: true, upsert: true }
+      { new: true }
     );
     if (result !== undefined && result !== null) {
       res.status(200);

@@ -56,40 +56,31 @@ const updateUser = async (req, res) => {
   let id = req.body.id;
   let updatedContent = req.body;
 
-  //Validation
-  let errorsExtract = [];
-  let validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    let errors = Object.values(validationErrors.mapped());
-    errors.forEach((item) => {
-      errorsExtract.push(item.msg);
-    });
-    res.status(400);
-    return res.json({
-      success: false,
-      message: errorsExtract,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  } else {
-    try {
-      let updatedData = await userModel.findOneAndUpdate(
-        { _id: id },
-        { $set: updatedContent },
-        { upsert: true }
-      );
-      if (updatedData !== undefined && updatedData !== null) {
-        res.status(200);
-        return res.json({
-          success: true,
-          message: CONFIG.USER_UPDATE_SUCCESS,
-          data: null,
-          accesstoken: req.accesstoken,
-        });
-      }
-    } catch (error) {
-      next(error);
+  try {
+    let updatedData = await userModel.findOneAndUpdate(
+      { _id: id },
+      { $set: updatedContent },
+      { new: true }
+    );
+    if (updatedData !== undefined && updatedData !== null) {
+      res.status(200);
+      return res.json({
+        success: true,
+        message: CONFIG.USER_UPDATE_SUCCESS,
+        data: updatedData,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: CONFIG.NO_DATA_FOUND,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -169,6 +160,14 @@ const removeUser = async (req, res) => {
       return res.json({
         success: true,
         message: CONFIG.USER_REMOVE_SUCCESS,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: CONFIG.NO_DATA_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
