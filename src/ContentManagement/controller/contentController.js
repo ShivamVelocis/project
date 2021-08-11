@@ -103,7 +103,7 @@ exports.updateContent = async (req, res) => {
     let result = await Content.findOneAndUpdate(
       { _id: id },
       { $set: updatedContent },
-      { new: true, upsert: true }
+      { new: true }
     );
     if (result !== undefined && result !== null) {
       res.status(200);
@@ -111,6 +111,14 @@ exports.updateContent = async (req, res) => {
         success: true,
         message: CONFIG.UPDATE_CONTENT_SUCCESS,
         data: result,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: CONFIG.NO_CONTENT_FOUND,
+        data: [],
         accesstoken: req.accesstoken,
       });
     }

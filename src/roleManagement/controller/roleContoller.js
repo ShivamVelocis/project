@@ -122,7 +122,7 @@ exports.updateRole = async (req, res) => {
     let result = await Role.findOneAndUpdate(
       { _id: id },
       { $set: updatedRole },
-      { new: true, upsert: true }
+      { new: true}
     );
 	return res.json({
 		       success:"Success",

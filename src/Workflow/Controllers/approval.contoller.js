@@ -2,6 +2,7 @@ const WorkflowModel = require("../Models/workflow.model");
 const ContentModel = require("../../ContentManagement/models/contentModels");
 const lodash = require("lodash");
 
+//Approve/Reject content
 approvalContent = async (req, res, next) => {
   try {
     let module = req.body.module;
@@ -118,6 +119,7 @@ approvalContent = async (req, res, next) => {
   }
 };
 
+// Get options for next step of content flow
 getContentFlow = async (req, res, next) => {
   let module = req.body.module;
   let contentId = req.params.id;
@@ -126,12 +128,7 @@ getContentFlow = async (req, res, next) => {
     let contentData = await ContentModel.findOne({ _id: contentId });
     // console.log(contentData.content_status);
     if (!contentData) {
-      return res.json({
-        success: false,
-        message: "Invalid Content Id",
-        data: null,
-        accesstoken: req.accesstoken,
-      });
+      throw new Error("Invalid Content Id");
     }
 
     // workflow data
@@ -142,45 +139,25 @@ getContentFlow = async (req, res, next) => {
 
     // console.log(worlflowData);
     if (!worlflowData || !worlflowData.States) {
-      return res.json({
-        success: false,
-        message: "Invalid module/flow",
-        data: null,
-        accesstoken: req.accesstoken,
-      });
+      throw new Error("Invalid module/flow");
     }
 
-    // return data workflow state
+    // return content workflow state
     let state = lodash.find(worlflowData.States, function (state) {
       return state.state == contentData.content_State;
     });
 
     // console.log("State", state);
     if (!state) {
-      return res.json({
-        success: false,
-        message: "Invalid flow",
-        data: null,
-        accesstoken: req.accesstoken,
-      });
+      throw new Error("Invalid flow");
     }
 
     if (state.isTerminateState) {
-      return res.json({
-        success: false,
-        message: "Workflow already completed",
-        data: null,
-        accesstoken: req.accesstoken,
-      });
+      throw new Error("Workflow already completed");
     }
 
     if (!state.isStateUpdatable) {
-      return res.json({
-        success: false,
-        message: "State is not updatable",
-        data: null,
-        accesstoken: req.accesstoken,
-      });
+      throw new Error("State is not updatable");
     }
 
     let actionAllowed = [];
@@ -197,4 +174,5 @@ getContentFlow = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = { approvalContent, getContentFlow };
