@@ -95,7 +95,7 @@ approvalContent = async (req, res, next) => {
         {
           $set: {
             content_State: action.action,
-            content_status: nextState.contentStatus,
+            content_status: nextState.status,
           },
         },
         { new: true }

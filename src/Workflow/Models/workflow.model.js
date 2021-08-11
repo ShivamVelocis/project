@@ -7,7 +7,7 @@ let WorkflowSchema = new mongoose.Schema(
       {
         _id: false,
         state: String,
-        contentStatus: String,
+        status: String,
         isStartState: Boolean,
         isTerminateState: Boolean,
         isStateUpdatable: Boolean,
