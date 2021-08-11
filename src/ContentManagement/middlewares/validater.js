@@ -19,31 +19,26 @@ const addContentRules = () => {
         }
         return true;
       }),
+      
     body("description")
       .exists()
       .withMessage(CONFIG.EMPTY_DESCRIPTION)
       .bail()
       .custom((value, { req }) => {
-        // console.log("des", value);
         if (value == "") {
           throw new Error(CONFIG.EMPTY_DESCRIPTION);
         }
-        if (value && value.match(CONFIG.TEXTAREA_PATTERN == null)) {
-          // console.log(value);
+        if (value.match(CONFIG.TEXTAREA_PATTERN == null)) {
           throw new Error(CONFIG.INVALID_DESCRIPTION);
         }
         return true;
       }),
-    body("content_status")
-      .exists()
-      .withMessage(CONFIG.EMPTY_STATUS)
-      .bail()
-      .custom((value, { req }) => {
-        if (value && (value == 1 || value == 2)) {
-          return true;
-        }
-        throw new Error(CONFIG.INVALID_STATUS);
-      }),
+    // body("content_status")
+    //   .exists()
+    //   .withMessage(CONFIG.EMPTY_STATUS)
+    //   .bail()
+    //   .isIn([0, 1])
+    //   .withMessage(CONFIG.INVALID_STATUS),
   ];
 };
 
@@ -74,12 +69,8 @@ const updateContentRule = () => {
       }),
     body("content_status")
       .optional()
-      .custom((value) => {
-        if (value && (value == 1 || value == 2)) {
-          return true;
-        }
-        throw new Error(CONFIG.INVALID_STATUS);
-      }),
+      .isIn([0, 1, 2, 3, 4])
+      .withMessage(CONFIG.INVALID_STATUS),
     body("id").custom((value) => {
       if (!ObjectId(value)) {
         throw new Error(CONFIG.INVALID_MONGO_ID);

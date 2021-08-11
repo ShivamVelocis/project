@@ -2,7 +2,9 @@ const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
 
 exports.addContent = async (req, res) => {
-  let data = req.body;
+  let data = {};
+  data.title = req.body.title;
+  data.description = req.body.description;
   try {
     let content = new Content(data);
     await content.save();
@@ -28,6 +30,13 @@ exports.getContent = async (req, res) => {
         success: true,
         message: "Content",
         data: result,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: CONFIG.NO_CONTENT_FOUND,
+        data: null,
         accesstoken: req.accesstoken,
       });
     }

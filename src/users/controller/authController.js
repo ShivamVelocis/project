@@ -23,11 +23,19 @@ const userLogin = async (req, res, next) => {
     let user = await userModel
       .findOne({ email: data.email, user_status: 1 })
       .populate("role_id");
-    // console.log(user);
 
     if (user !== null && user !== undefined) {
       let passwordVerified = await bcrypt.compare(data.password, user.password);
       if (!passwordVerified) {
+        res.status(401);
+        return res.json({
+          success: false,
+          message: CONFIG.LOGIN_FAIL_MESSAGE,
+          data: null,
+        });
+      }
+      if (!user.role_id) {
+        // console.log()
         res.status(401);
         return res.json({
           success: false,
@@ -155,7 +163,10 @@ const otpVerification = async (req, res, next) => {
     }
     let userData = await decodeToken(token);
     let data = req.body;
-    let user = await userModel.findOne({ email: userData.userEmail, user_status: 1 });
+    let user = await userModel.findOne({
+      email: userData.userEmail,
+      user_status: 1,
+    });
     let crossVerifyTOken = await validateToken(user.otpToken);
     if (!crossVerifyTOken) {
       res.status(400);
@@ -204,27 +215,19 @@ const otpVerification = async (req, res, next) => {
 const changePassword = async (req, res, next) => {
   let userData = req.body;
   // console.log(userData)
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
+  
   try {
     let user = await userModel.findOne({ _id: userData.id });
     if (user != null && user != undefined) {
       let newPasswordHash = await bcrypt.hashSync(userData.newPassword, 10);
       await userModel.findOneAndUpdate(
-        { _id: userId },
+        { _id: userData.id },
         { $set: { password: newPasswordHash } },
         { upsert: true }
       );
       res.status(200);
       return res.json({
-        success: false,
+        success: true,
         message: CONFIG.CHANGE_PASSWORD_SUCCESS,
         data: null,
         accesstoken: req.accesstoken,
@@ -244,15 +247,6 @@ const changePassword = async (req, res, next) => {
 };
 
 const changeMyPassword = async (req, res, next) => {
-  if (res.locals.validationError) {
-    res.status(400);
-    return res.json({
-      success: false,
-      message: res.locals.validationError,
-      data: null,
-      accesstoken: req.accesstoken,
-    });
-  }
   try {
     let { userId } = decodeToken(req.accesstoken);
     let userData = req.body;
