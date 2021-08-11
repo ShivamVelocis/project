@@ -19,6 +19,7 @@ const addContentRules = () => {
         }
         return true;
       }),
+      
     body("description")
       .exists()
       .withMessage(CONFIG.EMPTY_DESCRIPTION)
@@ -32,12 +33,12 @@ const addContentRules = () => {
         }
         return true;
       }),
-    body("content_status")
-      .exists()
-      .withMessage(CONFIG.EMPTY_STATUS)
-      .bail()
-      .isIn([0, 1])
-      .withMessage(CONFIG.INVALID_STATUS),
+    // body("content_status")
+    //   .exists()
+    //   .withMessage(CONFIG.EMPTY_STATUS)
+    //   .bail()
+    //   .isIn([0, 1])
+    //   .withMessage(CONFIG.INVALID_STATUS),
   ];
 };
 
