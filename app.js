@@ -60,7 +60,7 @@ app.use((_req, _res, next) => {
 
 //Error handler
 app.use((error, req, res, _next) => {
-  console.log("Final error handle Middleware--->", error);
+  console.log("> Final error handle Middleware--->", error);
   res.status(error.status || 500);
   return res.json({
     message: error.message ? error.message : error,
@@ -79,6 +79,6 @@ mongoose.connection.once("open", function callback() {
 
 //Error on mongoose connection
 mongoose.connection.on("error", function (err) {
-  console.log("Could not connect to mongo server!");
+  console.log("> Could not connect to mongo server!");
   return console.error(err.message);
 });

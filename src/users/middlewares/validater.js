@@ -301,11 +301,9 @@ exports.isRequestValid = (req, res, next) => {
   const extractedErrors = [];
   // console.log(errors);
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-
   if (extractedErrors) {
     res.status(400);
     return res.json({ success: false, message: extractedErrors, data: null });
   }
-
   next();
 };

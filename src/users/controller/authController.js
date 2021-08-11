@@ -35,7 +35,6 @@ const userLogin = async (req, res, next) => {
         });
       }
       if (!user.role_id) {
-        // console.log()
         res.status(401);
         return res.json({
           success: false,
