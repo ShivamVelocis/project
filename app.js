@@ -20,6 +20,8 @@ const moduleRouter = require("./src/master/Routes/moduleRouter");
 const resourceRouter = require("./src/master/Routes/resourceRouter");
 const roleRouter = require("./src/roleManagement/routes/roleRoute");
 const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
+const workflowRouter = require("./src/Workflow/Routers/workflow.routes");
+const approvalRouter = require("./src/Workflow/Routers/approval.routes");
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
@@ -36,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(assignRole);
 
 //Authentication request
-app.use(auth().unless({path: [{ url: "/user/login", methods: ["POST"] }]}));
+app.use(auth().unless({ path: [{ url: "/user/login", methods: ["POST"] }] }));
 
 //Router
 app.use("/content", contentRoutes);
@@ -46,6 +48,8 @@ app.use("/module", moduleRouter);
 app.use("/resource", resourceRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
+app.use("/workflow", workflowRouter);
+app.use("/approve", approvalRouter);
 
 //handle wild URI
 app.use((_req, _res, next) => {
@@ -69,7 +73,7 @@ app.use((error, req, res, _next) => {
 //Server start after mongoose connection open
 mongoose.connection.once("open", function callback() {
   app.listen(process.env.APP_PORT || 5000, () =>
-    console.log(`Example app listening on port ${process.env.PORT}!`)
+    console.log(`> API listening on port ${process.env.APP_PORT}!`)
   );
 });
 
