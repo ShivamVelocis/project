@@ -36,9 +36,6 @@ exports.addUserRules = () => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_USER_NAME);
         }
-        if (value.match(CONFIG.TITLE_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_USER_NAME);
-        }
         return true;
       }),
 
@@ -59,7 +56,6 @@ exports.addUserRules = () => {
 // updating user request body validater
 exports.updateUsernRules = () => {
   return [
-
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
@@ -95,7 +91,6 @@ exports.updateUsernRules = () => {
 
 exports.getUserRule = () => {
   return [
-
     param("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
@@ -110,7 +105,6 @@ exports.getUserRule = () => {
 
 exports.deleteUserRule = () => {
   return [
-
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
@@ -125,7 +119,6 @@ exports.deleteUserRule = () => {
 
 exports.getUserProfileRule = () => {
   return [
-
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
@@ -141,7 +134,6 @@ exports.getUserProfileRule = () => {
 //change my password request body validator
 exports.changeMyPasswordRule = () => {
   return [
-
     body("currentPassword")
       .exists()
       .withMessage(CONFIG.INVALID_PASSWORD)
@@ -181,6 +173,7 @@ exports.changePasswordRule = () => {
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGO_ID);
@@ -191,8 +184,10 @@ exports.changePasswordRule = () => {
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -214,7 +209,6 @@ exports.changePasswordRule = () => {
 //change password request body validator with otp
 exports.otpPasswordRule = () => {
   return [
-
     body("otp")
       .exists()
       .withMessage(CONFIG.EMPTY_OTP)
@@ -265,8 +259,8 @@ exports.validateUserLogin = () => {
     check("password")
       .isLength({ min: 5 })
       .withMessage("The password must be 5+ chars long and contain a number"),
-    
-      check("email")
+
+    check("email")
       .normalizeEmail()
       .isEmail()
       .withMessage("The valid email require"),
@@ -284,11 +278,11 @@ exports.isRequestValid = (req, res, next) => {
   const extractedErrors = [];
   // console.log(errors);
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-  
+
   if (extractedErrors) {
     res.status(400);
     return res.json({ success: false, message: extractedErrors, data: null });
   }
-  
+
   next();
 };

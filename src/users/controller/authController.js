@@ -39,7 +39,7 @@ const userLogin = async (req, res, next) => {
         res.status(401);
         return res.json({
           success: false,
-          message: "Invalid role id",
+          message: CONFIG.LOGIN_FAIL_MESSAGE,
           data: null,
         });
       }
