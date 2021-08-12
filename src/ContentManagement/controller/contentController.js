@@ -1,7 +1,7 @@
 const Content = require("../models/contentModels.js");
 const CONFIG = require("../configs/config");
 
-exports.addContent = async (req, res) => {
+exports.addContent = async (req, res, next) => {
   let data = {};
   data.title = req.body.title;
   data.description = req.body.description;
@@ -20,7 +20,7 @@ exports.addContent = async (req, res) => {
   }
 };
 
-exports.getContent = async (req, res) => {
+exports.getContent = async (req, res, next) => {
   let id = req.params.id;
   try {
     let result = await Content.findById(id);
@@ -45,7 +45,7 @@ exports.getContent = async (req, res) => {
   }
 };
 
-exports.getContents = async (req, res) => {
+exports.getContents = async (req, res, next) => {
   try {
     let contents = await Content.find({});
     if (contents.length > 0) {
@@ -70,7 +70,7 @@ exports.getContents = async (req, res) => {
   }
 };
 
-exports.removeContent = async (req, res) => {
+exports.removeContent = async (req, res, next) => {
   let id = req.body.id;
   try {
     let result = await Content.findOneAndRemove({ _id: id });
@@ -96,9 +96,13 @@ exports.removeContent = async (req, res) => {
   }
 };
 
-exports.updateContent = async (req, res) => {
+exports.updateContent = async (req, res, next) => {
   let id = req.body.id;
-  let updatedContent = req.body;
+  let updatedContent = {
+    title: req.body.title,
+    description: req.body.description,
+    content_status: 0,
+  };
   try {
     let result = await Content.findOneAndUpdate(
       { _id: id },
@@ -110,6 +114,66 @@ exports.updateContent = async (req, res) => {
       return res.json({
         success: true,
         message: CONFIG.UPDATE_CONTENT_SUCCESS,
+        data: result,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: CONFIG.NO_CONTENT_FOUND,
+        data: [],
+        accesstoken: req.accesstoken,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateContentStatus = async (req, res, next) => {
+  let id = req.params.id;
+  try {
+    let result = await Content.findOneAndUpdate(
+      { _id: id },
+      { $set: { content_status: req.body.status } },
+      { new: true }
+    );
+    if (result !== undefined && result !== null) {
+      res.status(200);
+      return res.json({
+        success: true,
+        message: "Content status updated successfully",
+        data: result,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: CONFIG.NO_CONTENT_FOUND,
+        data: [],
+        accesstoken: req.accesstoken,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.contentPublish = async (req, res, next) => {
+  let id = req.params.id;
+  try {
+    let result = await Content.findOneAndUpdate(
+      { _id: id },
+      { $set: { content_status: 1 } },
+      { new: true }
+    );
+    if (result !== undefined && result !== null) {
+      res.status(200);
+      return res.json({
+        success: true,
+        message: "Content status published successfully",
         data: result,
         accesstoken: req.accesstoken,
       });

@@ -1,45 +1,39 @@
 const WorkflowModel = require("../Models/workflow.model");
-const ContentModel = require("../../ContentManagement/models/contentModels");
+const ApprovalModel = require("../Models/approval.model");
 const lodash = require("lodash");
 
-//Approve/Reject content
-approvalContent = async (req, res, next) => {
+let getApprovalData = async (req, res, next) => {
   try {
-    let module = req.body.module;
-    let contentId = req.body.id;
-    let userAction = req.body.action;
-
-    //content data
-    let contentData = await ContentModel.findOne({ _id: contentId });
+    console.log(req.params.id);
+    let approvalData = await ApprovalModel.findById(req.params.id);
     // console.log(contentData.content_status);
-    if (!contentData) {
+    if (!approvalData) {
       return res.json({
         success: false,
-        message: "Invalid Content Id",
+        message: "No Record(s) Found",
         data: null,
         accesstoken: req.accesstoken,
       });
     }
 
-    // workflow data
-    let worlflowData = await WorkflowModel.findOne({
-      "States.state": contentData.content_State,
-      Module: module,
+    console.log(approvalData);
+
+    let workFlowData = await WorkflowModel.findOne({
+      module: approvalData.module,
     });
 
-    // console.log(worlflowData);
-    if (!worlflowData || !worlflowData.States) {
+    if (!workFlowData) {
       return res.json({
         success: false,
-        message: "Invalid module/flow",
+        message: "No Workflow Found",
         data: null,
         accesstoken: req.accesstoken,
       });
     }
 
     // return data workflow state
-    let state = lodash.find(worlflowData.States, function (state) {
-      return state.state == contentData.content_State;
+    let state = lodash.find(workFlowData.states, function (state) {
+      return state.wfLevel == approvalData.level;
     });
 
     // console.log("State", state);
@@ -52,7 +46,60 @@ approvalContent = async (req, res, next) => {
       });
     }
 
-    if (state.isTerminateState) {
+    return res.json({
+      success: true,
+      message: "Allowed Action",
+      data: state.wfNextActions,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+let approval = async (req, res, next) => {
+  try {
+    // console.log(req.body);
+    let approvalData = await ApprovalModel.findOne({ id: req.body.id });
+    // console.log(approvalData);
+    if (!approvalData) {
+      return res.json({
+        success: false,
+        message: "No Record(s) Found",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    let workFlowData = await WorkflowModel.findOne({
+      module: approvalData.module,
+    });
+
+    if (!workFlowData) {
+      return res.json({
+        success: false,
+        message: "No Workflow Found",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+    // console.log(workFlowData);
+    // return data workflow state
+    let state = lodash.find(workFlowData.states, function (state) {
+      // console.log(state);
+      return state.wfLevel == approvalData.level;
+    });
+
+    if (!state) {
+      return res.json({
+        success: false,
+        message: "Invalid flow",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    if (state.wfLevelName == "REJECTED" || state.wfLevelName == "APPROVED") {
       return res.json({
         success: false,
         message: "Workflow already completed",
@@ -61,21 +108,17 @@ approvalContent = async (req, res, next) => {
       });
     }
 
-    if (!state.isStateUpdatable) {
+    if (state.wfRole != req.userRole) {
       return res.json({
         success: false,
-        message: "State is not updatable",
+        message: "Your are not allowed to perform this action",
         data: null,
         accesstoken: req.accesstoken,
       });
     }
-
-    // check user action(approved or any) and return action and role
-    let action = lodash.find(state.actions, function (action) {
-      return action.action == userAction;
-    });
-    // console.log("action", action);
-    if (!action) {
+    // lodash.find(state.wfNextActions, [nextAction, req.body.action])
+    // console.log("State",  lodash.find(state.wfNextActions, ["nextAction", req.body.action]));
+    if (!lodash.find(state.wfNextActions, ["nextAction", req.body.action])) {
       return res.json({
         success: false,
         message: "Invalid action",
@@ -84,90 +127,40 @@ approvalContent = async (req, res, next) => {
       });
     }
 
-    let nextState = lodash.find(worlflowData.States, function (state) {
-      return state.state == action.action;
-    });
-
-    // check is user allowed to perform action or not
-    if (action.role && action.role.includes(req.userRole)) {
-      let updatedata = await ContentModel.findByIdAndUpdate(
-        contentId,
-        {
-          $set: {
-            content_State: action.action,
-            content_status: nextState.contentStatus,
-          },
-        },
-        { new: true }
-      );
+    if (req.body.action == "REJECTED" && !req.body.comment) {
       return res.json({
-        success: true,
-        message: "Step completed",
-        data: updatedata,
-        accesstoken: req.accesstoken,
-      });
-    } else {
-      res.json({
         success: false,
-        message: "Not Authorized",
+        message: "In case of Rejected please provide comment also",
         data: null,
         accesstoken: req.accesstoken,
       });
     }
-  } catch (error) {
-    next(error);
-  }
-};
 
-// Get options for next step of content flow
-getContentFlow = async (req, res, next) => {
-  let module = req.body.module;
-  let contentId = req.params.id;
+    let updatedData = await ApprovalModel.findOneAndUpdate(
+      { id: req.body.id },
+      {
+        $set: {
+          level: req.body.action,
+          comment: req.body.comment || null,
+          updatedBy: req.user,
+        },
+      },
+      { new: true }
+    );
 
-  try {
-    let contentData = await ContentModel.findOne({ _id: contentId });
-    // console.log(contentData.content_status);
-    if (!contentData) {
-      throw new Error("Invalid Content Id");
+    if (!updatedData) {
+      return res.json({
+        success: false,
+        message: "Approval Failed",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
 
-    // workflow data
-    let worlflowData = await WorkflowModel.findOne({
-      "States.state": contentData.content_State,
-      Module: module,
-    });
-
-    // console.log(worlflowData);
-    if (!worlflowData || !worlflowData.States) {
-      throw new Error("Invalid module/flow");
-    }
-
-    // return content workflow state
-    let state = lodash.find(worlflowData.States, function (state) {
-      return state.state == contentData.content_State;
-    });
-
-    // console.log("State", state);
-    if (!state) {
-      throw new Error("Invalid flow");
-    }
-
-    if (state.isTerminateState) {
-      throw new Error("Workflow already completed");
-    }
-
-    if (!state.isStateUpdatable) {
-      throw new Error("State is not updatable");
-    }
-
-    let actionAllowed = [];
-    state.actions.map((action) => {
-      actionAllowed.push({ action: action.action });
-    });
     return res.json({
       success: true,
-      message: "Action allowed",
-      data: actionAllowed,
+      message: "Successfully Completed",
+      data: updatedData,
       accesstoken: req.accesstoken,
     });
   } catch (error) {
@@ -175,4 +168,55 @@ getContentFlow = async (req, res, next) => {
   }
 };
 
-module.exports = { approvalContent, getContentFlow };
+let getWfStatu = async (req, res, next) => {
+  try {
+    let approvalData = await ApprovalModel.findById(req.params.id);
+
+    if (!approvalData) {
+      return res.json({
+        success: false,
+        message: "No Record(s) Found",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+    return res.json({
+      success: true,
+      message: "Status",
+      data: { status: approvalData.level, comment: approvalData.comment },
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+let addToapproval = async (req, res, next) => {
+  try {
+    let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
+    if (isDuplicate) {
+      return res.json({
+        status: false,
+        message: "Request already added to workflow",
+        data: newRequest,
+        accesstoken: req.accesstoken,
+      });
+    }
+    let newRequest = new ApprovalModel({
+      level: req.body.level,
+      updatedBy: req.user,
+      id: req.body.id,
+      module: req.body.module,
+    });
+    let savedRequest = newRequest.save();
+    return res.json({
+      status: true,
+      message: "Requested added to workflow",
+      data: newRequest,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { getApprovalData, approval, getWfStatu, addToapproval };
