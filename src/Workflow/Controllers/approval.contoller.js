@@ -1,16 +1,16 @@
 const WorkflowModel = require("../Models/workflow.model");
 const ApprovalModel = require("../Models/approval.model");
 const lodash = require("lodash");
+const { CONFIG } = require("../Configs/config");
 
 let getApprovalData = async (req, res, next) => {
   try {
-    console.log(req.params.id);
     let approvalData = await ApprovalModel.findById(req.params.id);
     // console.log(contentData.content_status);
     if (!approvalData) {
       return res.json({
         success: false,
-        message: "No Record(s) Found",
+        message: CONFIG.NO_RECORD_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -25,7 +25,7 @@ let getApprovalData = async (req, res, next) => {
     if (!workFlowData) {
       return res.json({
         success: false,
-        message: "No Workflow Found",
+        message: CONFIG.NO_WORKFLOW_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -40,7 +40,7 @@ let getApprovalData = async (req, res, next) => {
     if (!state) {
       return res.json({
         success: false,
-        message: "Invalid flow",
+        message: CONFIG.INVALID_FLOW,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -48,7 +48,7 @@ let getApprovalData = async (req, res, next) => {
 
     return res.json({
       success: true,
-      message: "Allowed Action",
+      message: CONFIG.ACTIONS_ALLOWED,
       data: state.wfNextActions,
       accesstoken: req.accesstoken,
     });
@@ -65,7 +65,7 @@ let approval = async (req, res, next) => {
     if (!approvalData) {
       return res.json({
         success: false,
-        message: "No Record(s) Found",
+        message: CONFIG.NO_RECORD_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -78,7 +78,7 @@ let approval = async (req, res, next) => {
     if (!workFlowData) {
       return res.json({
         success: false,
-        message: "No Workflow Found",
+        message: CONFIG.NO_WORKFLOW_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -93,7 +93,7 @@ let approval = async (req, res, next) => {
     if (!state) {
       return res.json({
         success: false,
-        message: "Invalid flow",
+        message: CONFIG.INVALID_FLOW,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -102,7 +102,7 @@ let approval = async (req, res, next) => {
     if (state.wfLevelName == "REJECTED" || state.wfLevelName == "APPROVED") {
       return res.json({
         success: false,
-        message: "Workflow already completed",
+        message: CONFIG.WORKFLOW_COMPLETED,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -111,7 +111,7 @@ let approval = async (req, res, next) => {
     if (state.wfRole != req.userRole) {
       return res.json({
         success: false,
-        message: "Your are not allowed to perform this action",
+        message: CONFIG.NOT_AUTHORIZED,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -121,7 +121,7 @@ let approval = async (req, res, next) => {
     if (!lodash.find(state.wfNextActions, ["nextAction", req.body.action])) {
       return res.json({
         success: false,
-        message: "Invalid action",
+        message: CONFIG.INVALID_ACTION,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -130,7 +130,7 @@ let approval = async (req, res, next) => {
     if (req.body.action == "REJECTED" && !req.body.comment) {
       return res.json({
         success: false,
-        message: "In case of Rejected please provide comment also",
+        message: CONFIG.NO_COMMENT,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -151,7 +151,7 @@ let approval = async (req, res, next) => {
     if (!updatedData) {
       return res.json({
         success: false,
-        message: "Approval Failed",
+        message: CONFIG.APPROVAL_FAILED,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -159,7 +159,7 @@ let approval = async (req, res, next) => {
 
     return res.json({
       success: true,
-      message: "Successfully Completed",
+      message: CONFIG.APPROVAL_SUCCESS,
       data: updatedData,
       accesstoken: req.accesstoken,
     });
@@ -175,7 +175,7 @@ let getWfStatu = async (req, res, next) => {
     if (!approvalData) {
       return res.json({
         success: false,
-        message: "No Record(s) Found",
+        message: CONFIG.NO_RECORD_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -197,7 +197,7 @@ let addToapproval = async (req, res, next) => {
     if (isDuplicate) {
       return res.json({
         status: false,
-        message: "Request already added to workflow",
+        message: CONFIG.ALREADY_ADDED_TO_APPROVAL,
         data: newRequest,
         accesstoken: req.accesstoken,
       });
@@ -211,7 +211,7 @@ let addToapproval = async (req, res, next) => {
     let savedRequest = newRequest.save();
     return res.json({
       status: true,
-      message: "Requested added to workflow",
+      message: CONFIG.ADDED_FOR_APPROVAL_SUCCESS,
       data: newRequest,
       accesstoken: req.accesstoken,
     });
