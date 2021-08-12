@@ -75,27 +75,27 @@ deleteWorkflow = async (req, res, next) => {
   }
 };
 
-editWorkflow = async (req, res, next) => {
-  try {
-    let filter = {};
-    let result = await WorkflowModel.findByIdAndDelete(req.body.id);
-    if (!result) {
-      return res.json({
-        success: false,
-        message: "Workflow Updation failed",
-        data: null,
-        accesstoken: req.accesstoken,
-      });
-    }
-    return res.json({
-      success: true,
-      message: "Workflow Updated successfully",
-      data: result,
-      accesstoken: req.accesstoken,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// editWorkflow = async (req, res, next) => {
+//   try {
+//     let filter = {};
+//     let result = await WorkflowModel.findByIdAndDelete(req.body.id);
+//     if (!result) {
+//       return res.json({
+//         success: false,
+//         message: "Workflow Updation failed",
+//         data: null,
+//         accesstoken: req.accesstoken,
+//       });
+//     }
+//     return res.json({
+//       success: true,
+//       message: "Workflow Updated successfully",
+//       data: result,
+//       accesstoken: req.accesstoken,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 module.exports = { getWorkflows, addWorkflow, deleteWorkflow };

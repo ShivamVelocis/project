@@ -16,6 +16,7 @@ let assignRole = async (req, _res, next) => {
         req.headers.authorization.split(" ")[1]
       );
       req.userRole = payload.userRole;
+      req.user = payload.userName;
       return next();
     } else {
       console.log("Anonymous user");

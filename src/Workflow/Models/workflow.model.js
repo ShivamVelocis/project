@@ -2,21 +2,15 @@ const mongoose = require("mongoose");
 
 let WorkflowSchema = new mongoose.Schema(
   {
-    Module: String,
-    States: [
+    module: { type: String, required: true, lowercase: true },
+    states: [
       {
         _id: false,
-        state: String,
-        status: String,
-        isStartState: Boolean,
-        isTerminateState: Boolean,
-        isStateUpdatable: Boolean,
-        actions: [
-          {
-            _id: false,
-            action: String,
-            role: [String],
-          },
+        wfLevel: { type: Number, required: true },
+        wfLevelName: { type: String, required: true },
+        wfRole: [{ type: String, required: true }],
+        wfNextActions: [
+          { _id: false, nextAction: { type: Number, required: true } },
         ],
       },
     ],
@@ -24,4 +18,11 @@ let WorkflowSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Workflow", WorkflowSchema);
+module.exports = mongoose.model("WorkflowV3", WorkflowSchema);
+
+// 0-drafted
+// 1-initiated
+// 2-approval approved
+// 3-publisher approved
+// 4-Approved
+// 5-rejected
