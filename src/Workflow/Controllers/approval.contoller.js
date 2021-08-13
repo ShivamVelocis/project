@@ -219,4 +219,42 @@ let addToapproval = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getApprovalData, approval, getWfStatu, addToapproval };
+
+let getApprovalsData = async (req, res, next) => {
+  try {
+    let filter = {};
+    if (Object.keys(req.query).length) {
+      let module = req.query.module
+        ? (filter.module = {
+            $regex: new RegExp(req.query.module, "i"),
+          })
+        : null;
+      let level = req.query.level ? (filter.level = req.query.level) : null;
+    }
+    let result = await ApprovalModel.find(filter);
+
+    if (!result || !result.length) {
+      return res.json({
+        success: false,
+        message: CONFIG.NO_RECORD_FOUND,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+    return res.json({
+      success: true,
+      message: "Apprvoals data",
+      data: result,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = {
+  getApprovalData,
+  approval,
+  getWfStatu,
+  addToapproval,
+  getApprovalsData,
+};
