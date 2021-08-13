@@ -1,0 +1,21 @@
+exports.CONFIG = {
+  ADDED_SUCCESS: "Workflow added successfully",
+  DELETE_SUCCESS: "Workflow deleted successfully",
+  WORKFLOW_DATA: "Workflow data",
+  NO_RECORD_FOUND: "No record(s) found",
+  WORKFLOW_SAVED_FAILED: "Workflow not saved",
+  WORKFLOW_DELETION_FAILED: "Workflow deletion failed",
+
+  ADDED_FOR_APPROVAL_SUCCESS: "Added to approval process successfully",
+  INVALID_ACTION: "Invalid action",
+  NOT_AUTHORIZED: "Your not authorized to perform this action",
+  WORKFLOW_COMPLETED: "Workflow already completed for this task",
+  NO_WORKFLOW_FOUND: "No Workflow Found for this module",
+  ACTIONS_ALLOWED: "Allowed Action",
+  INVALID_FLOW: "Invalid worflow",
+  NO_COMMENT: "In case of Rejected please provide comment also",
+  APPROVAL_FAILED: "Approval Failed",
+  APPROVAL_SUCCESS: "Successfully Completed",
+  APPROVAL_STATUS: "Approval current status",
+  ALREADY_ADDED_TO_APPROVAL: "Request already added to workflow",
+};

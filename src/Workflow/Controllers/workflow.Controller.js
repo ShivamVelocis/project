@@ -1,6 +1,7 @@
 const WorkflowModel = require("../Models/workflow.model");
+const { CONFIG } = require("../Configs/config");
 
-getWorkflows = async (req, res, next) => {
+let getWorkflows = async (req, res, next) => {
   try {
     let filter = {};
     if (Object.keys(req.query).length) {
@@ -11,17 +12,18 @@ getWorkflows = async (req, res, next) => {
         : null;
     }
     let result = await WorkflowModel.find(filter);
-    if (!result) {
+
+    if (!result && result.length <= 0) {
       return res.json({
         success: false,
-        message: "No Record found",
+        message: CONFIG.NO_RECORD_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
     }
     return res.json({
       success: true,
-      message: "Workflow Data",
+      message: CONFIG.WORKFLOW_DATA,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -30,21 +32,21 @@ getWorkflows = async (req, res, next) => {
   }
 };
 
-addWorkflow = async (req, res, next) => {
+let addWorkflow = async (req, res, next) => {
   try {
     let newWorkflow = new WorkflowModel(req.body);
     let result = await newWorkflow.save();
     if (!result) {
       return res.json({
         success: false,
-        message: "Workflow not saved",
+        message: CONFIG.WORKFLOW_SAVED_FAILED,
         data: null,
         accesstoken: req.accesstoken,
       });
     }
     return res.json({
       success: true,
-      message: "Workflow added successfully",
+      message: CONFIG.ADDED_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -53,20 +55,20 @@ addWorkflow = async (req, res, next) => {
   }
 };
 
-deleteWorkflow = async (req, res, next) => {
+let deleteWorkflow = async (req, res, next) => {
   try {
     let result = await WorkflowModel.findByIdAndDelete(req.body.id);
     if (!result) {
       return res.json({
         success: false,
-        message: "Workflow deletion failed",
+        message: CONFIG.WORKFLOW_DELETION_FAILED,
         data: null,
         accesstoken: req.accesstoken,
       });
     }
     return res.json({
       success: true,
-      message: "Workflow deleted successfully",
+      message: CONFIG.DELETE_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -74,28 +76,5 @@ deleteWorkflow = async (req, res, next) => {
     next(error);
   }
 };
-
-// editWorkflow = async (req, res, next) => {
-//   try {
-//     let filter = {};
-//     let result = await WorkflowModel.findByIdAndDelete(req.body.id);
-//     if (!result) {
-//       return res.json({
-//         success: false,
-//         message: "Workflow Updation failed",
-//         data: null,
-//         accesstoken: req.accesstoken,
-//       });
-//     }
-//     return res.json({
-//       success: true,
-//       message: "Workflow Updated successfully",
-//       data: result,
-//       accesstoken: req.accesstoken,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 module.exports = { getWorkflows, addWorkflow, deleteWorkflow };
