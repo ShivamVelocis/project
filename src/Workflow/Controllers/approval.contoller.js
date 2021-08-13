@@ -4,7 +4,7 @@ const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
 
 // return action available for approver
-let getApprovalData = async (req, res, next) => {
+const getApprovalData = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
     //
@@ -57,7 +57,7 @@ let getApprovalData = async (req, res, next) => {
 };
 
 // approver action
-let approval = async (req, res, next) => {
+const approval = async (req, res, next) => {
   try {
     //
     let approvalData = await ApprovalModel.findOne({ id: req.body.id });
@@ -169,7 +169,7 @@ let approval = async (req, res, next) => {
 };
 
 // get status
-let getWfStatu = async (req, res, next) => {
+const getWfStatu = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
 
@@ -193,7 +193,7 @@ let getWfStatu = async (req, res, next) => {
 };
 
 // to item to aprroval table/collection for wrokflow
-let addToapproval = async (req, res, next) => {
+const addToapproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
     if (isDuplicate) {
@@ -214,7 +214,7 @@ let addToapproval = async (req, res, next) => {
     return res.json({
       status: true,
       message: CONFIG.ADDED_FOR_APPROVAL_SUCCESS,
-      data: newRequest,
+      data: savedRequest,
       accesstoken: req.accesstoken,
     });
   } catch (error) {
@@ -223,7 +223,7 @@ let addToapproval = async (req, res, next) => {
 };
 
 // get all approvals data or query by module/level
-let getApprovalsData = async (req, res, next) => {
+const getApprovalsData = async (req, res, next) => {
   try {
     let filter = {};
     if (Object.keys(req.query).length) {

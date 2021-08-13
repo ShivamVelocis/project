@@ -61,9 +61,24 @@ const generaterefreshToken = async (token) => {
   return refreshtoken;
 };
 
+const extractToken = (req) => {
+  try {
+    if (!req.headers.authorization) {
+      return false;
+    }
+    const accesstoken = req.headers.authorization.split(" ")[1];
+    if (accesstoken === null) {
+      return false;
+    }
+    return accesstoken;
+  } catch (err) {
+    return false;
+  }
+};
 module.exports = {
   validateToken,
   decodeToken,
   generaterefreshToken,
   generateJWTToken,
+  extractToken,
 };

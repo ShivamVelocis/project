@@ -21,6 +21,7 @@ exports.addUserRules = () => {
     body("role_id")
       .exists()
       .withMessage(CONFIG.INVALID_ROLE)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
@@ -61,7 +62,6 @@ exports.addUserRules = () => {
 // updating user request body validater
 exports.updateUsernRules = () => {
   return [
-
     body("id")
       .exists()
       .withMessage(CONFIG.EMPTY_ID)
@@ -144,7 +144,6 @@ exports.getUserProfileRule = () => {
 //change my password request body validator
 exports.changeMyPasswordRule = () => {
   return [
-
     body("currentPassword")
       .exists()
       .withMessage(CONFIG.INVALID_PASSWORD)
@@ -160,8 +159,10 @@ exports.changeMyPasswordRule = () => {
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -170,6 +171,7 @@ exports.changeMyPasswordRule = () => {
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_CURRENT_PASSWORD)
       .bail()
@@ -198,8 +200,10 @@ exports.changePasswordRule = () => {
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -208,6 +212,7 @@ exports.changePasswordRule = () => {
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()
@@ -222,10 +227,10 @@ exports.changePasswordRule = () => {
 //change password request body validator with otp
 exports.otpPasswordRule = () => {
   return [
-
     body("otp")
       .exists()
       .withMessage(CONFIG.EMPTY_OTP)
+      .bail()
       .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_OTP);
@@ -239,8 +244,10 @@ exports.otpPasswordRule = () => {
     body("password")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
@@ -249,6 +256,7 @@ exports.otpPasswordRule = () => {
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
       .bail()

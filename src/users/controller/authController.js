@@ -1,11 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const CONFIG = require("./../configs/config");
-const {
-  generateJWTToken,
-  validateToken,
-  decodeToken,
-} = require("../utils/auth");
+const authHelper = require("../utils/auth");
 // const { responseHandler } = require("../utils/responseHandler");
 const { sendOtpMail } = require(`../utils/${process.env.EMAIL_SERVICE}`);
 
@@ -42,7 +38,7 @@ const userLogin = async (req, res, next) => {
         userRoleId: user.role_id._id,
       };
       // console.log(tokenPayload)
-      let token = await generateJWTToken(
+      let token = await authHelper.generateJWTToken(
         tokenPayload,
         process.env.ACCESS_TOKEN_SECRET,
         process.env.ACCESS_TOKEN_LIFE
@@ -90,7 +86,7 @@ const forgetPassword = async (req, res, next) => {
     let user = await userModel.findOne({ email: data.email, user_status: 1 });
     if (user !== null && user !== undefined) {
       let otp = Math.floor(1000 + Math.random() * 9000);
-      let token = await generateJWTToken(
+      let token = await authHelper.generateJWTToken(
         { userEmail: user.email },
         process.env.ACCESS_TOKEN_SECRET,
         process.env.OTP_LIFE
@@ -128,7 +124,7 @@ const forgetPassword = async (req, res, next) => {
 const otpVerification = async (req, res, next) => {
   let token = req.params.token;
   try {
-    let isUrlTokenVal = await validateToken(token);
+    let isUrlTokenVal = await authHelper.validateToken(token);
     if (!isUrlTokenVal) {
       res.status(400);
       return res.json({
@@ -137,13 +133,13 @@ const otpVerification = async (req, res, next) => {
         data: null,
       });
     }
-    let userData = await decodeToken(token);
+    let userData = await authHelper.decodeToken(token);
     let data = req.body;
     let user = await userModel.findOne({
       email: userData.userEmail,
       user_status: 1,
     });
-    let crossVerifyTOken = await validateToken(user.otpToken);
+    let crossVerifyTOken = await authHelper.validateToken(user.otpToken);
     if (!crossVerifyTOken) {
       res.status(400);
       return res.json({
@@ -190,7 +186,7 @@ const otpVerification = async (req, res, next) => {
 //change password after user provide current and new password
 const changePassword = async (req, res, next) => {
   let userData = req.body;
- 
+
   try {
     let user = await userModel.findOne({ _id: userData.id });
     if (user != null && user != undefined) {
@@ -223,7 +219,7 @@ const changePassword = async (req, res, next) => {
 
 const changeMyPassword = async (req, res, next) => {
   try {
-    let { userId } = decodeToken(req.accesstoken);
+    let { userId } = authHelper.decodeToken(req.accesstoken);
     let userData = req.body;
 
     let user = await userModel.findOne({ _id: userId, user_status: 1 });
@@ -260,10 +256,30 @@ const changeMyPassword = async (req, res, next) => {
   }
 };
 
+const userValidation = async (req, res, next) => {
+  let accesstoken = authHelper.extractToken(req);
+  if (!accesstoken) {
+    res.status(401);
+    return res.json({ success: false, message: "Not authorized", data: null });
+  }
+  let isTokenValid = authHelper.validateToken(accesstoken);
+  if (!isTokenValid) {
+    res.status(401);
+    return res.json({ success: false, message: "Not authorized", data: null });
+  }
+  res.status(200);
+  return res.json({
+    success: true,
+    message: "Valid user",
+    data: authHelper.decodeToken(accesstoken),
+  });
+};
+
 module.exports = {
   userLogin,
   forgetPassword,
   otpVerification,
   changePassword,
   changeMyPassword,
+  userValidation,
 };
