@@ -4,10 +4,10 @@ const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
 
 // return action available for approver
-let getApprovalData = async (req, res, next) => {
+const getApprovalData = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
-    // console.log(contentData.content_status);
+
     if (!approvalData) {
       return res.json({
         success: false,
@@ -16,8 +16,6 @@ let getApprovalData = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-
-    console.log(approvalData);
 
     let workFlowData = await WorkflowModel.findOne({
       module: approvalData.module,
@@ -37,7 +35,6 @@ let getApprovalData = async (req, res, next) => {
       return state.wfLevel == approvalData.level;
     });
 
-    // console.log("State", state);
     if (!state) {
       return res.json({
         success: false,
@@ -59,11 +56,9 @@ let getApprovalData = async (req, res, next) => {
 };
 
 // approver action
-let approval = async (req, res, next) => {
+const approval = async (req, res, next) => {
   try {
-    // console.log(req.body);
     let approvalData = await ApprovalModel.findOne({ id: req.body.id });
-    // console.log(approvalData);
     if (!approvalData) {
       return res.json({
         success: false,
@@ -85,10 +80,8 @@ let approval = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    // console.log(workFlowData);
-    // return data workflow state
+
     let state = lodash.find(workFlowData.states, function (state) {
-      // console.log(state);
       return state.wfLevel == approvalData.level;
     });
 
@@ -118,8 +111,7 @@ let approval = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    // lodash.find(state.wfNextActions, [nextAction, req.body.action])
-    // console.log("State",  lodash.find(state.wfNextActions, ["nextAction", req.body.action]));
+  
     if (!lodash.find(state.wfNextActions, ["nextAction", req.body.action])) {
       return res.json({
         success: false,
@@ -171,7 +163,7 @@ let approval = async (req, res, next) => {
 };
 
 // get status
-let getWfStatu = async (req, res, next) => {
+const getWfStatu = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
 
@@ -195,7 +187,7 @@ let getWfStatu = async (req, res, next) => {
 };
 
 // to item to aprroval table/collection for wrokflow
-let addToapproval = async (req, res, next) => {
+const addToapproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
     if (isDuplicate) {
@@ -216,7 +208,7 @@ let addToapproval = async (req, res, next) => {
     return res.json({
       status: true,
       message: CONFIG.ADDED_FOR_APPROVAL_SUCCESS,
-      data: newRequest,
+      data: savedRequest,
       accesstoken: req.accesstoken,
     });
   } catch (error) {
@@ -225,7 +217,7 @@ let addToapproval = async (req, res, next) => {
 };
 
 // get all approvals data or query by module/level
-let getApprovalsData = async (req, res, next) => {
+const getApprovalsData = async (req, res, next) => {
   try {
     let filter = {};
     if (Object.keys(req.query).length) {
