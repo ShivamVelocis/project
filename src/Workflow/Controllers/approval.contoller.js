@@ -3,6 +3,7 @@ const ApprovalModel = require("../Models/approval.model");
 const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
 
+// return action available for approver
 let getApprovalData = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
@@ -57,6 +58,7 @@ let getApprovalData = async (req, res, next) => {
   }
 };
 
+// approver action
 let approval = async (req, res, next) => {
   try {
     // console.log(req.body);
@@ -168,6 +170,7 @@ let approval = async (req, res, next) => {
   }
 };
 
+// get status
 let getWfStatu = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
@@ -191,6 +194,7 @@ let getWfStatu = async (req, res, next) => {
   }
 };
 
+// to item to aprroval table/collection for wrokflow
 let addToapproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
@@ -220,6 +224,7 @@ let addToapproval = async (req, res, next) => {
   }
 };
 
+// get all approvals data or query by module/level
 let getApprovalsData = async (req, res, next) => {
   try {
     let filter = {};
@@ -251,6 +256,7 @@ let getApprovalsData = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   getApprovalData,
   approval,
