@@ -5,15 +5,15 @@ let getWorkflows = async (req, res, next) => {
   try {
     let filter = {};
     if (Object.keys(req.query).length) {
-      let Module = req.query.Module
-        ? (filter.Module = {
-            $regex: new RegExp(req.query.Module, "i"),
+      let module = req.query.module
+        ? (filter.module = {
+            $regex: new RegExp(req.query.module, "i"),
           })
         : null;
     }
     let result = await WorkflowModel.find(filter);
 
-    if (!result && result.length <= 0) {
+    if (!result || !result.length) {
       return res.json({
         success: false,
         message: CONFIG.NO_RECORD_FOUND,

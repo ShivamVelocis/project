@@ -3,6 +3,7 @@ const ApprovalModel = require("../Models/approval.model");
 const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
 
+// return action available for approver
 let getApprovalData = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
@@ -57,6 +58,7 @@ let getApprovalData = async (req, res, next) => {
   }
 };
 
+// approver action
 let approval = async (req, res, next) => {
   try {
     // console.log(req.body);
@@ -168,6 +170,7 @@ let approval = async (req, res, next) => {
   }
 };
 
+// get status
 let getWfStatu = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
@@ -191,6 +194,7 @@ let getWfStatu = async (req, res, next) => {
   }
 };
 
+// to item to aprroval table/collection for wrokflow
 let addToapproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
@@ -219,4 +223,44 @@ let addToapproval = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getApprovalData, approval, getWfStatu, addToapproval };
+
+// get all approvals data or query by module/level
+let getApprovalsData = async (req, res, next) => {
+  try {
+    let filter = {};
+    if (Object.keys(req.query).length) {
+      let module = req.query.module
+        ? (filter.module = {
+            $regex: new RegExp(req.query.module, "i"),
+          })
+        : null;
+      let level = req.query.level ? (filter.level = req.query.level) : null;
+    }
+    let result = await ApprovalModel.find(filter);
+
+    if (!result || !result.length) {
+      return res.json({
+        success: false,
+        message: CONFIG.NO_RECORD_FOUND,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+    return res.json({
+      success: true,
+      message: "Apprvoals data",
+      data: result,
+      accesstoken: req.accesstoken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getApprovalData,
+  approval,
+  getWfStatu,
+  addToapproval,
+  getApprovalsData,
+};

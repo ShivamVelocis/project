@@ -6,6 +6,7 @@ const approvalControllers = require("../Controllers/approval.contoller");
 router.post("/create", approvalControllers.addToapproval);
 router.post("/", approvalControllers.approval);
 router.post("/:id", approvalControllers.getApprovalData);
+router.get("/", approvalControllers.getApprovalsData);
 router.get("/:id", approvalControllers.getWfStatu);
 // router.delete("/", workflowControllers.deleteWorkflow);
 

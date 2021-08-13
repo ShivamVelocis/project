@@ -8,10 +8,8 @@ let WorkflowSchema = new mongoose.Schema(
         _id: false,
         wfLevel: { type: Number, required: true },
         wfLevelName: { type: String, required: true },
-        wfRole: [{ type: String, required: true }],
-        wfNextActions: [
-          { _id: false, nextAction: { type: Number, required: true } },
-        ],
+        wfRole: [{ type: String }],
+        wfNextActions: [{ _id: false, nextAction: { type: Number } }],
       },
     ],
   },
