@@ -7,7 +7,7 @@ const { CONFIG } = require("../Configs/config");
 let getApprovalData = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
-    // console.log(contentData.content_status);
+    //
     if (!approvalData) {
       return res.json({
         success: false,
@@ -16,8 +16,6 @@ let getApprovalData = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-
-    console.log(approvalData);
 
     let workFlowData = await WorkflowModel.findOne({
       module: approvalData.module,
@@ -37,7 +35,7 @@ let getApprovalData = async (req, res, next) => {
       return state.wfLevel == approvalData.level;
     });
 
-    // console.log("State", state);
+    //
     if (!state) {
       return res.json({
         success: false,
@@ -61,9 +59,9 @@ let getApprovalData = async (req, res, next) => {
 // approver action
 let approval = async (req, res, next) => {
   try {
-    // console.log(req.body);
+    //
     let approvalData = await ApprovalModel.findOne({ id: req.body.id });
-    // console.log(approvalData);
+    //
     if (!approvalData) {
       return res.json({
         success: false,
@@ -85,10 +83,10 @@ let approval = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    // console.log(workFlowData);
+    //
     // return data workflow state
     let state = lodash.find(workFlowData.states, function (state) {
-      // console.log(state);
+      //
       return state.wfLevel == approvalData.level;
     });
 
@@ -119,7 +117,7 @@ let approval = async (req, res, next) => {
       });
     }
     // lodash.find(state.wfNextActions, [nextAction, req.body.action])
-    // console.log("State",  lodash.find(state.wfNextActions, ["nextAction", req.body.action]));
+    //
     if (!lodash.find(state.wfNextActions, ["nextAction", req.body.action])) {
       return res.json({
         success: false,
