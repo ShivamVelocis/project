@@ -1,5 +1,5 @@
 const aclModel = require("../models/aclModel");
-const aclHelper = require("../utils/aclHelper");
+const aclHelper = require("../Utils/aclHelper");
 
 // Middleware
 const isPermitted = async (req, res, next) => {
