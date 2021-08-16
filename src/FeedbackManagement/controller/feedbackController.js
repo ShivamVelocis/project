@@ -57,6 +57,11 @@ exports.getFeedback = async (req, res) => {
         message: "Feedback data",
         data: result,
       });
+  }else{
+	  return res.json({
+        success: "Success",
+        message: "feedback id does not exist in database",
+      });
   }
   }catch (error) {
     console.log(error);
