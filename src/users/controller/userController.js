@@ -36,8 +36,15 @@ const addUser = async function addUser(req, res, next) {
     }
 
     if (uniqError.length) {
-      throw uniqError;
+      res.status(422);
+      return res.json({
+        success: false,
+        message: uniqError,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
     }
+
     let User = new userModel(form_data);
     let saveUser = await User.save();
     res.status(201);
@@ -48,7 +55,7 @@ const addUser = async function addUser(req, res, next) {
       accesstoken: req.accesstoken,
     });
   } catch (error) {
-    console.log({ error });
+    // console.log({ error });
     next(error);
   }
 };
