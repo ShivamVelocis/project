@@ -1,6 +1,6 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
-// const { appendACL } = require("../Utils/helper");
+const aclHelper = require("../middlewares/roleTest");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -78,7 +78,6 @@ const addAcl = async (req, res, next) => {
     let denyResources = req.body.denyResources || [];
     let dbData = await aclModel.findOne({ role: req.body.role });
     if (dbData) {
-      // let result = appendACL(dbData, req.body);
       responseData = await aclModel.findOneAndUpdate(
         { role: req.body.role },
         {
@@ -163,10 +162,63 @@ const deletAcl = async (req, res, next) => {
   }
 };
 
+const aclCheck = async (req, res) => {
+  try {
+    let resourceToBeAccess = req.body.resourceToBeAccess;
+    let resourceMethod = req.body.resourceMethod;
+    let userRole = req.body.userRole;
+    let allowedResources;
+    let denyResources;
+    let isAllowed = false;
+    
+    // acldata from db
+    let dbRoleData = await aclModel
+      .findOne({ role: userRole })
+      .populate({
+        path: "allowedResources",
+        select: { module: 0, __v: 0 },
+      })
+      .populate({
+        path: "denyResources",
+        select: { module: 0, __v: 0 },
+      });
+  
+    if (userRole && dbRoleData) {
+       allowedResources = dbRoleData.allowedResources.map((resource) => {
+        return { path: resource.resource_path, methods: resource.methods };
+      });
+       denyResources = dbRoleData.denyResources.map((resource) => {
+        return { path: resource.resource_path, methods: resource.methods };
+      });
+
+    // ACL check
+    isAllowed =
+      aclHelper.allowedResource(allowedResources, resourceToBeAccess, resourceMethod) &&
+      aclHelper.denyResource(denyResources, resourceToBeAccess, resourceMethod);
+      
+    if (isAllowed) {
+      res.send(200);
+      return res.json({
+        status: true,
+        message: "Access allowed",
+      });
+    } else {
+      res.send(401);
+      return res.json({
+        status: false,
+        message: "Access denied",
+      });
+    }
+  }
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   addAcl,
   editAcl,
   deletAcl,
   getAcls,
   getAcl,
+  aclCheck,
 };
