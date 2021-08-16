@@ -20,6 +20,7 @@ const moduleRouter = require("./src/master/Routes/moduleRouter");
 const resourceRouter = require("./src/master/Routes/resourceRouter");
 const roleRouter = require("./src/roleManagement/routes/roleRoute");
 const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
+const feedbackRouter = require("./src/FeedbackManagement/routes/feedbackRoute");
 const workflowRouter = require("./src/Workflow/Routers/workflow.routes");
 const approvalRouter = require("./src/Workflow/Routers/approval.routes");
 
@@ -48,6 +49,7 @@ app.use("/module", moduleRouter);
 app.use("/resource", resourceRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
+app.use("/feedback", feedbackRouter);
 app.use("/workflow", workflowRouter);
 app.use("/approve", approvalRouter);
 
