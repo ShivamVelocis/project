@@ -47,9 +47,24 @@ exports.getContactus = async (req, res) => {
         message: "Contactus data",
         data: result,
       });
-    }
+    }else{
+		 res.status(404);
+      return res.json({
+        success: false,
+        message: "role id not exist in database",
+        data: [],
+        accesstoken: req.accesstoken,
+      });
+	}
   } catch (error) {
-    console.log(error);
+	   res.status(404);
+      return res.json({
+        success: false,
+        message: "role id does not exist in database",
+        data: [],
+        accesstoken: req.accesstoken,
+      });
+    //console.log(error);
   }
 };
 
@@ -97,63 +112,69 @@ exports.removeContactus = async (req, res) => {
       });
     } else {
       let result = await Contactus.findOneAndRemove({ _id: id });
+	   if (result !== undefined && result !== null) {
       return res.json({
         success: "Success",
         message: "Contactus deleted successfully",
       });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-exports.contactusToUpdate = async (req, res) => {
-  let id = req.params.id;
-  try {
-    let result = await Contactus.findById(id);
-    if (result !== undefined && result !== null) {
-      return res.render("ContactUs/views/updateContactus", {
-        oldCont: result,
+	   }else{
+		    res.status(404);
+            return res.json({
+             success: false,
+            message: "contact us id does not exist in database",
+            data: [],
+           accesstoken: req.accesstoken,
       });
+	   }
     }
   } catch (error) {
-    res.render("ContactUs/views/ErrorPage", {
-      error: Configs.FETCH_CONTENT_ERROR,
-    });
+	  res.status(404);
+            return res.json({
+             success: false,
+            message: "contact us id not exist in database",
+            data: [],
+           accesstoken: req.accesstoken,
+      });
+    console.log(error);
   }
 };
 
 exports.updateContactus = async (req, res) => {
-  let id = req.params.id;
-  let updatedContactus = {
-    title: req.body.title,
-    description: req.body.description,
-  };
+
+ let id = req.body.id;
+  let updatedContactus = req.body;
   try {
-    let errorsExtract = [];
-    let validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty()) {
-      let errors = Object.values(validationErrors.mapped());
-      errors.forEach((item) => {
-        errorsExtract.push(item.msg);
-      });
+    let result = await Contactus.findOneAndUpdate(
+      { _id: id },
+      { $set: updatedContactus },
+      { new: true }
+    );
+    if (result !== undefined && result !== null) {
+      res.status(200);
       return res.json({
-        success: false,
-        message: errorsExtract,
-        data: null,
+        success: true,
+        message: "contact us updtaed successfully",
+        data: result,
+        accesstoken: req.accesstoken,
       });
     } else {
-      let result = await Contactus.findOneAndUpdate(
-        { _id: id },
-        { $set: updatedContactus },
-        { new: true }
-      );
+      res.status(404);
       return res.json({
-        success: "Success",
-        message: "Contactus updated successfully",
+        success: false,
+        message: "contact us id does not exist in database",
+        data: [],
+        accesstoken: req.accesstoken,
       });
     }
   } catch (error) {
-    console.log(error);
-  }
+	  res.status(404);
+      return res.json({
+        success: false,
+        message: "duplicate title in database",
+        data: [],
+        accesstoken: req.accesstoken,
+      });
+   //next(error);
+  } 
+   
 };

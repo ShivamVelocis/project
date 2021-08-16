@@ -23,7 +23,7 @@ CONFIG.LOGIN_SUCCESS_MESSAGE = "Logged in success";
 //--------------------Error messages--------------------
 CONFIG.NO_RECORDS = "No Record(s) Found";
 CONFIG.NO_DATA_FOUND = "No data found";
-CONFIG.CHANGE_PASSWORD_ERROR = "Enter current valid password";
+CONFIG.CHANGE_PASSWORD_ERROR = "Incorrect current password";
 CONFIG.NO_FILE_SELECTED = "No file selected";
 CONFIG.NOT_REGISTER_USER = "Not a registered user";
 CONFIG.FORGET_PASSWORD_LINK_EXPIRATED = "Link expired";
@@ -44,7 +44,7 @@ CONFIG.INVALID_EMAIL = "Please enter valid email";
 CONFIG.INVALID_ROLE = "Please enter valid role";
 CONFIG.INVALID_STATUS = "Please enter valid status";
 CONFIG.INSERT_USER_NAME = "Please enter valid username";
-CONFIG.INVALID_PASSWORD = "Incorrect current password";
+CONFIG.INVALID_PASSWORD = "Current password required";
 CONFIG.INVALID_MONGO_ID = "Please enter valid Mongodb ID";
 CONFIG.INVALID_USER_NAME = "Please enter valid username";
 CONFIG.INVALID_NEW_PASSWORD = "Please enter valid new password";

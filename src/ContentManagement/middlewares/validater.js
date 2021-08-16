@@ -19,7 +19,7 @@ const addContentRules = () => {
         }
         return true;
       }),
-      
+
     body("description")
       .exists()
       .withMessage(CONFIG.EMPTY_DESCRIPTION)
@@ -28,7 +28,7 @@ const addContentRules = () => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_DESCRIPTION);
         }
-        if (value.match(CONFIG.TEXTAREA_PATTERN == null)) {
+        if (value.match(CONFIG.TEXTAREA_PATTERN) == null) {
           throw new Error(CONFIG.INVALID_DESCRIPTION);
         }
         return true;
