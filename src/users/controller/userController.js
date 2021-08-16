@@ -19,6 +19,25 @@ const addUser = async function addUser(req, res, next) {
       user_status: req.body.user_status,
     };
 
+    let isUserNameUnique = await userModel.findOne({
+      username: req.body.username,
+    });
+    let isEmailUnique = await userModel.findOne({ email: req.body.email });
+
+    let uniqError = [];
+
+    if (isUserNameUnique) {
+      uniqError.push({ username: "username already in use" });
+      // throw new Error("username already in use")
+    }
+
+    if (isEmailUnique) {
+      uniqError.push({ email: "email already in use" });
+    }
+
+    if (uniqError.length) {
+      throw uniqError;
+    }
     let User = new userModel(form_data);
     let saveUser = await User.save();
     res.status(201);
@@ -29,6 +48,7 @@ const addUser = async function addUser(req, res, next) {
       accesstoken: req.accesstoken,
     });
   } catch (error) {
+    console.log({ error });
     next(error);
   }
 };
