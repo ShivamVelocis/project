@@ -1,6 +1,6 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
-const aclHelper = require("../middlewares/roleTest");
+const aclHelper = require("../middlewares/aclHelper");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
