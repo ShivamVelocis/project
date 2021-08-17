@@ -1,10 +1,6 @@
 const Role = require("../models/rolemodel.js");
 const Configs = require("../configs/config");
 const { check, validationResult } = require('express-validator');
-exports.roleForm = (req, res) => {
-  res.render("roleManagement/views/addRole", { error: null });
-};
-
 exports.addRole = async (req, res) => {
   try {
 	 var form_data = {
@@ -29,7 +25,7 @@ exports.addRole = async (req, res) => {
       let role = new Role(form_data);
       let saveRole = await role.save();
       return res.json({
-		       success:"Success",
+		       success:true,
                message: "Role added successfully",
               data: saveRole,
 			  
@@ -37,7 +33,13 @@ exports.addRole = async (req, res) => {
     }
 
   } catch (error) {
-     console.log(error);
+	  //console.log(error);
+	  return res.json({
+		       success:false,
+               message: "title already exist in database",
+			  
+      });
+     
   }
 };
 
@@ -58,7 +60,7 @@ exports.getAllRole = async (req, res) => {
     }else{
     let resultdata = await Role.find({});
 	return res.json({
-        success: "success",
+        success: true,
         message: "All Role fetch successfully",
         data: resultdata,
       });
@@ -90,7 +92,7 @@ exports.removeRole = async (req, res) => {
 		 let result = await Role.findOneAndRemove({ _id: id });
 		  if (result !== undefined && result !== null) {
 		 return res.json({
-		       success:"Success",
+		       success:true,
                message: "Role deleted successfully", 
       });
 		  }else{
@@ -112,6 +114,19 @@ exports.updateRole = async (req, res,next) => {
   let id = req.body.id;
   let updatedRole = req.body;
   try {
+	  let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
+      });
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
+      }); 
+    }else{
     let result = await Role.findOneAndUpdate(
       { _id: id },
       { $set: updatedRole },
@@ -134,11 +149,12 @@ exports.updateRole = async (req, res,next) => {
         accesstoken: req.accesstoken,
       });
     }
+	}
   } catch (error) {
 	  res.status(404);
       return res.json({
         success: false,
-        message: "duplicate title in database",
+        message: " title already exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
@@ -152,7 +168,7 @@ exports.getRole = async (req, res) => {
     //console.log(result);
 	if (result !== undefined && result !== null) {
       return res.json({
-        success: "Success",
+        success: true,
         message: "Role data",
         data: result,
       });

@@ -9,8 +9,8 @@ const contentValidationRules = () => {
       .withMessage(CONFIG.EMPTY_TITLE)
       .bail()
       .custom((value, { req }) => {
-        // console.log("tile", value);
         if (value == "") {
+			console.log(CONFIG.EMPTY_TITLE);
           throw new Error(CONFIG.EMPTY_TITLE);
         }
         if (value.match(CONFIG.TITLE_PATTERN) == null) {
