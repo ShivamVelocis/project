@@ -7,7 +7,7 @@ const { decodeToken } = require("../utils/auth");
 //Added new user
 const addUser = async function addUser(req, res, next) {
   try {
-    var form_data = {
+    let form_data = {
       username: req.body.username,
       role_id: req.body.role_id,
       email: req.body.email,
@@ -18,7 +18,7 @@ const addUser = async function addUser(req, res, next) {
       },
       user_status: req.body.user_status,
     };
-
+    // throw exception if uername or email is not unique
     let isUserNameUnique = await userModel.findOne({
       username: req.body.username,
     });
@@ -28,7 +28,6 @@ const addUser = async function addUser(req, res, next) {
 
     if (isUserNameUnique) {
       uniqError.push({ username: "username already in use" });
-      // throw new Error("username already in use")
     }
 
     if (isEmailUnique) {
