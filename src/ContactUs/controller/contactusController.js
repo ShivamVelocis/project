@@ -51,7 +51,7 @@ exports.getContactus = async (req, res) => {
 		 res.status(404);
       return res.json({
         success: false,
-        message: "role id not exist in database",
+        message: "contact us id not exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
@@ -60,7 +60,7 @@ exports.getContactus = async (req, res) => {
 	   res.status(404);
       return res.json({
         success: false,
-        message: "role id does not exist in database",
+        message: "contact us id does not exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
