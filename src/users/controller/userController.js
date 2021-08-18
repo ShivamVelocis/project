@@ -102,11 +102,9 @@ const updateUser = async (req, res, next) => {
       });
     }
 
-    let updatedData = await userModel.findOneAndUpdate(
-      { _id: id },
-      { $set: updatedContent },
-      { new: true }
-    );
+    let updatedData = await userModel
+      .findOneAndUpdate({ _id: id }, { $set: updatedContent }, { new: true })
+      .select("name email username role_id user_status _id");
     if (updatedData !== undefined && updatedData !== null) {
       res.status(200);
       return res.json({
@@ -189,7 +187,9 @@ const getUsers = async function getUsers(req, res, next) {
 const removeUser = async (req, res, next) => {
   let id = req.body.id;
   try {
-    let result = await userModel.findOneAndRemove({ _id: id });
+    let result = await userModel
+      .findOneAndRemove({ _id: id })
+      .select("name email username role_id user_status _id");
     if (result !== undefined && result !== null) {
       res.status(200);
       return res.json({
@@ -222,9 +222,11 @@ const uploadProfilePicture = async (req, res, next) => {
         .resize(200, 200)
         .png({ quality: 100 })
         .toBuffer();
-      await userModel.findByIdAndUpdate(userId, {
-        $set: { profilePicture: file },
-      });
+      await userModel
+        .findByIdAndUpdate(userId, {
+          $set: { profilePicture: file },
+        })
+        .select("name email username role_id user_status _id");
       res.status(200);
       return res.json({
         success: true,
@@ -251,7 +253,9 @@ const getProfilePicture = async (req, res, next) => {
   try {
     // let userId = req.body.id;
     let { userId } = decodeToken(req.accesstoken);
-    let user = await userModel.findOne({ _id: userId, user_status: 1 });
+    let user = await userModel
+      .findOne({ _id: userId, user_status: 1 })
+      .select("name email username role_id user_status _id profilePicture");
     console.log(user);
     if (user != null && user != undefined && user.profilePicture) {
       res.set("Content-Type", "image/jpeg");
