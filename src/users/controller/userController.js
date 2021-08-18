@@ -61,11 +61,47 @@ const addUser = async function addUser(req, res, next) {
 };
 
 //Update exist user
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   let id = req.body.id;
   let updatedContent = req.body;
 
   try {
+    let isUserNameUnique;
+    let isEmailUnique;
+
+    if (req.body.username) {
+      isUserNameUnique = await userModel.findOne({
+        $and: [{ username: req.body.username }, { _id: { $ne: id } }],
+      });
+    }
+    if (req.body.email) {
+      isEmailUnique = await userModel.findOne({
+        $and: [{ email: req.body.email }, { _id: { $ne: id } }],
+      });
+    }
+    // unique email
+
+    let uniqError = [];
+
+    if (isUserNameUnique) {
+      uniqError.push({ username: "username already in use" });
+      // throw new Error("username already in use")
+    }
+
+    if (isEmailUnique) {
+      uniqError.push({ email: "email already in use" });
+    }
+
+    if (uniqError.length) {
+      res.status(422);
+      return res.json({
+        success: false,
+        message: uniqError,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
     let updatedData = await userModel.findOneAndUpdate(
       { _id: id },
       { $set: updatedContent },
@@ -150,7 +186,7 @@ const getUsers = async function getUsers(req, res, next) {
 };
 
 // Delete user
-const removeUser = async (req, res) => {
+const removeUser = async (req, res, next) => {
   let id = req.body.id;
   try {
     let result = await userModel.findOneAndRemove({ _id: id });
@@ -177,7 +213,7 @@ const removeUser = async (req, res) => {
 };
 
 //Upload user profile picture
-const uploadProfilePicture = async (req, res) => {
+const uploadProfilePicture = async (req, res, next) => {
   // console.log("user profile");
   let userId = req.body.id;
   if (req.file && req.file.buffer) {
