@@ -214,7 +214,6 @@ const removeUser = async (req, res, next) => {
 
 //Upload user profile picture
 const uploadProfilePicture = async (req, res, next) => {
-  // console.log("user profile");
   let userId = req.body.id;
   if (req.file && req.file.buffer) {
     try {
@@ -222,11 +221,10 @@ const uploadProfilePicture = async (req, res, next) => {
         .resize(200, 200)
         .png({ quality: 100 })
         .toBuffer();
-      await userModel
-        .findByIdAndUpdate(userId, {
-          $set: { profilePicture: file },
-        })
-        .select("name email username role_id user_status _id");
+      await userModel.findByIdAndUpdate(userId, {
+        $set: { profilePicture: file },
+      });
+
       res.status(200);
       return res.json({
         success: true,
