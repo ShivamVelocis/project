@@ -4,10 +4,10 @@ const aclHelper = require("../utils/aclHelper");
 // Middleware
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
-  console.log(req.originalUrl);
+  // console.log(req.originalUrl);
   let userRole = req.userRole;
   let dbRoleData = await aclModel
-    .findOne({ role: userRole })
+    .findOne({ role : userRole })
     .populate({
       path: "allowedResources",
       select: { module: 0, __v: 0 },
