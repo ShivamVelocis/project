@@ -6,7 +6,7 @@ let feedbackSchema = new mongoose.Schema({
     type: String,
     lowercase: true, trim: true,
     index: true,
-    unique: true,
+	unique: true,
     required: [true, 'feedback required'],
   },
   description: {

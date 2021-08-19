@@ -166,7 +166,7 @@ exports.contentPublish = async (req, res, next) => {
   try {
     let result = await Content.findOneAndUpdate(
       { _id: id },
-      { $set: { content_status: 1 } },
+      { $set: { content_status: 5 } },
       { new: true }
     );
     if (result !== undefined && result !== null) {

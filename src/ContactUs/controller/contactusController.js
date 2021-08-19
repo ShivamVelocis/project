@@ -26,7 +26,7 @@ exports.addContactus = async (req, res) => {
       let contactus = new Contactus(form_data);
       let saveContent = await contactus.save();
       return res.json({
-        success: "Success",
+        success: true,
         message: "Contactus added successfully",
         data: saveContent,
       });
@@ -43,7 +43,7 @@ exports.getContactus = async (req, res) => {
     //console.log(result);
     if (result !== undefined && result !== null) {
       return res.json({
-        success: "Success",
+        success: true,
         message: "Contactus data",
         data: result,
       });
@@ -51,7 +51,7 @@ exports.getContactus = async (req, res) => {
 		 res.status(404);
       return res.json({
         success: false,
-        message: "role id not exist in database",
+        message: "contact us id not exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
@@ -60,7 +60,7 @@ exports.getContactus = async (req, res) => {
 	   res.status(404);
       return res.json({
         success: false,
-        message: "role id does not exist in database",
+        message: "contact us id does not exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
@@ -85,7 +85,7 @@ exports.getAllcontactus = async (req, res) => {
     } else {
       let resultdata = await Contactus.find({});
       return res.json({
-        success: "success",
+        success: true,
         message: "All Contactus fetch successfully",
         data: resultdata,
       });
@@ -114,7 +114,7 @@ exports.removeContactus = async (req, res) => {
       let result = await Contactus.findOneAndRemove({ _id: id });
 	   if (result !== undefined && result !== null) {
       return res.json({
-        success: "Success",
+        success: true,
         message: "Contactus deleted successfully",
       });
 	   }else{
@@ -144,6 +144,19 @@ exports.updateContactus = async (req, res) => {
  let id = req.body.id;
   let updatedContactus = req.body;
   try {
+	   let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
+      });
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
+      });
+    }else{
     let result = await Contactus.findOneAndUpdate(
       { _id: id },
       { $set: updatedContactus },
@@ -166,11 +179,12 @@ exports.updateContactus = async (req, res) => {
         accesstoken: req.accesstoken,
       });
     }
+	}
   } catch (error) {
 	  res.status(404);
       return res.json({
         success: false,
-        message: "duplicate title in database",
+        message: "title already exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
