@@ -34,7 +34,7 @@ const userLogin = async (req, res, next) => {
       let tokenPayload = {
         userId: user._id,
         userName: user.name.first_name,
-        userRole: user.role_id.role_name,
+        userRole: user.role_id.title,
         userRoleId: user.role_id._id,
       };
       // console.log(tokenPayload)
