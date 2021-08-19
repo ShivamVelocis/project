@@ -3,9 +3,11 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
 
+app.use(cors({ origin: "*" }));
 //Environment File handle
 dotenv.config();
 
