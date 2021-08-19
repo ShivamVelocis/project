@@ -7,7 +7,7 @@ const isPermitted = async (req, res, next) => {
   console.log(req.originalUrl);
   let userRole = req.userRole;
   let dbRoleData = await aclModel
-    .findOne({ role: userRole })
+    .findOne({ role_name: userRole })
     .populate({
       path: "allowedResources",
       select: { module: 0, __v: 0 },
