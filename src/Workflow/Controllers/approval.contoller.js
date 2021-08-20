@@ -2,6 +2,7 @@ const WorkflowModel = require("../Models/workflow.model");
 const ApprovalModel = require("../Models/approval.model");
 const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
+
 // 0->Draft
 // 1->Published/inititiated
 // 2->Unpublished
@@ -11,6 +12,8 @@ const { CONFIG } = require("../Configs/config");
 // 6-> level 2
 // 7-> level 3
 // 8-> level 4
+
+
 // return action available for approver
 const getApprovalData = async (req, res, next) => {
   try {
@@ -176,7 +179,7 @@ const approval = async (req, res, next) => {
   }
 };
 
-// get status
+// fetch status
 const getWfStatu = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findById(req.params.id);
@@ -230,7 +233,7 @@ const addToapproval = async (req, res, next) => {
   }
 };
 
-// get all approvals data or query by module/level
+// fetch all approvals data or query by module/level
 const getApprovalsData = async (req, res, next) => {
   try {
     let filter = {};
