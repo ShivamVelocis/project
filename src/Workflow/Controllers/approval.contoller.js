@@ -2,7 +2,15 @@ const WorkflowModel = require("../Models/workflow.model");
 const ApprovalModel = require("../Models/approval.model");
 const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
-
+// 0->Draft
+// 1->Published/inititiated
+// 2->Unpublished
+// 3->Approved
+// 4->Recjected
+// 5-> level 1
+// 6-> level 2
+// 7-> level 3
+// 8-> level 4
 // return action available for approver
 const getApprovalData = async (req, res, next) => {
   try {
@@ -85,10 +93,10 @@ const approval = async (req, res, next) => {
     }
     //
     // return data workflow state
-    let state = lodash.find(workFlowData.states, function (state) {
-      //
-      return state.wfLevel == approvalData.level;
-    });
+    let state = lodash.find(
+      workFlowData.states,
+      (state) => state.wfLevel == approvalData.level
+    );
 
     if (!state) {
       return res.json({
@@ -99,7 +107,7 @@ const approval = async (req, res, next) => {
       });
     }
 
-    if (state.wfLevelName == "REJECTED" || state.wfLevelName == "APPROVED") {
+    if (state.wfLevel == 3 || state.wfLevel == 4) {
       return res.json({
         success: false,
         message: CONFIG.WORKFLOW_COMPLETED,
@@ -127,7 +135,7 @@ const approval = async (req, res, next) => {
       });
     }
 
-    if (req.body.action == "REJECTED" && !req.body.comment) {
+    if (req.body.action == 4 && !req.body.comment) {
       return res.json({
         success: false,
         message: CONFIG.NO_COMMENT,
