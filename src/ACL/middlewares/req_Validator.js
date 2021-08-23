@@ -19,6 +19,7 @@ const addACLRuleValidation = () => {
     body("denyResources")
       .optional()
       .isArray()
+      .optional()
       .withMessage(CONFIG.INVALID_RESOURCE),
     body("denyResources")
       .optional()

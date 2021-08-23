@@ -4,10 +4,10 @@ const aclHelper = require("../utils/aclHelper");
 // Middleware
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
-  console.log(req.originalUrl);
+  // console.log(req.originalUrl);
   let userRole = req.userRole;
   let dbRoleData = await aclModel
-    .findOne({ role: userRole })
+    .findOne({ role : userRole })
     .populate({
       path: "allowedResources",
       select: { module: 0, __v: 0 },
@@ -18,6 +18,7 @@ const isPermitted = async (req, res, next) => {
     });
 
   let isAllowed = false;
+  // console.log(dbRoleData)
   if (userRole && dbRoleData) {
     let allowedResources = dbRoleData.allowedResources.map((resource) => {
       return { path: resource.resource_path, methods: resource.methods };
@@ -25,7 +26,7 @@ const isPermitted = async (req, res, next) => {
     let denyResources = dbRoleData.denyResources.map((resource) => {
       return { path: resource.resource_path, methods: resource.methods };
     });
-    // console.log(dbRoleData);
+    // console.log(allowedResources);
     isAllowed =
     aclHelper.allowedResource(allowedResources, req.originalUrl, req.method) &&
     aclHelper.denyResource(denyResources, req.originalUrl, req.method);

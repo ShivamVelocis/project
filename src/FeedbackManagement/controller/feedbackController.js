@@ -28,8 +28,9 @@ exports.addFeedback = async (req, res) => {
     } else {
       let feedback = new Feedback(form_data);
       let saveFeedback = await feedback.save();
+	  console.log(saveFeedback);
       return res.json({
-		       success:"Success",
+		       success:true,
                message: "Feedback added successfully",
               data: saveFeedback,
 			  
@@ -37,12 +38,13 @@ exports.addFeedback = async (req, res) => {
     }
 
   } catch (error) {
+	   console.log(error);
 	  return res.json({
-		       success:"Success",
+		       success:false,
                message: "title and user name already exist in database",
 			  
       });
-     console.log(error);
+    
   }
 	
 };
@@ -53,13 +55,13 @@ exports.getFeedback = async (req, res) => {
     let result = await Feedback.findById(id);
 	if (result !== undefined && result !== null) {
       return res.json({
-        success: "Success",
+        success: true,
         message: "Feedback data",
         data: result,
       });
   }else{
 	  return res.json({
-        success: "Success",
+        success: false,
         message: "feedback id does not exist in database",
       });
   }
@@ -86,7 +88,7 @@ exports.getAllFeedback = async (req, res) => {
     }else{
     let resultdata = await Feedback.find({});
 	return res.json({
-        success: "success",
+        success: true,
         message: "All Feedback fetch successfully",
         data: resultdata,
       });
@@ -118,12 +120,12 @@ exports.removeFeedback = async (req, res) => {
 		 console.log(result);
 		 	if (result !== undefined && result !== null) {
 		 return res.json({
-		       success:"Success",
+		       success:true,
                message: "Feedback deleted successfully", 
                   });
 			}else{
 				return res.json({
-		       success:"Success",
+		       success:false,
                message: "Feedback id does not exist in database", 
                   });
 			}
@@ -139,11 +141,25 @@ exports.updateFeedback = async (req, res,next) => {
    let id = req.body.id;
   let updatedFeedback = req.body;
   try {
+	  let errorsExtract = [];
+    let validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      let errors = Object.values(validationErrors.mapped());
+      errors.forEach((item) => {
+        errorsExtract.push(item.msg);
+      });
+      return res.json({
+        success: false,
+        message: errorsExtract,
+        data: null,
+      }); 
+    }else{
     let result = await Feedback.findOneAndUpdate(
       { _id: id },
       { $set: updatedFeedback },
       { new: true }
     );
+	console.log(result);
     if (result !== undefined && result !== null) {
       res.status(200);
       return res.json({
@@ -161,6 +177,7 @@ exports.updateFeedback = async (req, res,next) => {
         accesstoken: req.accesstoken,
       });
     }
+	}
   } catch (error) {
 	  res.status(404);
       return res.json({
