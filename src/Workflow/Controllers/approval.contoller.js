@@ -13,12 +13,11 @@ const { CONFIG } = require("../Configs/config");
 // 7-> level 3
 // 8-> level 4
 
-
 // return action available for approver
 const getApprovalData = async (req, res, next) => {
   try {
-    let approvalData = await ApprovalModel.findById(req.params.id);
-    //
+    let approvalData = await ApprovalModel.findOne({ id: req.params.id });
+
     if (!approvalData) {
       return res.json({
         success: false,
@@ -181,9 +180,10 @@ const approval = async (req, res, next) => {
 
 // fetch status
 const getWfStatu = async (req, res, next) => {
+  console.log(req.params.id);
   try {
-    let approvalData = await ApprovalModel.findById(req.params.id);
-
+    let approvalData = await ApprovalModel.findOne({ id: req.params.id });
+    // console.log(approvalData);
     if (!approvalData) {
       return res.json({
         success: false,
@@ -207,16 +207,17 @@ const getWfStatu = async (req, res, next) => {
 const addToapproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
+    // console.log(isDuplicate);
     if (isDuplicate) {
       return res.json({
         status: false,
         message: CONFIG.ALREADY_ADDED_TO_APPROVAL,
-        data: newRequest,
+        data: null,
         accesstoken: req.accesstoken,
       });
     }
     let newRequest = new ApprovalModel({
-      level: req.body.level,
+      level: 5,
       updatedBy: req.user,
       id: req.body.id,
       module: req.body.module,
