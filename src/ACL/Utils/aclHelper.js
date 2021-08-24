@@ -1,5 +1,6 @@
 const lodash = require("lodash");
-
+const log = console.log;
+// const { all } = require("../Routes/aclRoutes");
 
 // -----------------------------------check allowed resources start--------------
 /**
@@ -121,4 +122,73 @@ const denyResource = (resource, resourceToBeAccess, method) => {
 
 // -----------------------------------check deny resources end-------------------
 
-module.exports = { allowedResource, denyResource };
+const extractAclSubRolesData = (role, data) => {
+  let childRoles = [];
+  let allowedResources = [];
+  let denyResources = [];
+
+  let parentAclData = lodash.find(data, ["role", role]);
+
+  childRoles.push(...parentAclData.childRoles);
+  allowedResources.push(...parentAclData.allowedResources);
+  denyResources.push(...parentAclData.denyResources);
+
+  data = lodash.pull(data, parentAclData);
+
+  let childResourcesData = childResources(data, childRoles);
+  let parentResourcesData = resourceThroughParent(data, role);
+
+  // concat resources from return data of above two function
+  childResourcesData.allowedResources.push(
+    ...parentResourcesData.allowedResources
+  );
+  childResourcesData.denyResources.push(
+    ...parentResourcesData.denyResources
+    );
+// concat role resources 
+  childResourcesData.allowedResources.push(...allowedResources);
+  childResourcesData.denyResources.push(...denyResources);
+
+  // log(childResourcesData);
+  return { ...childResourcesData };
+};
+
+let childResources = (aclData, firstChildData) => {
+  let childRoles = [];
+  let allowedResources = [];
+  let denyResources = [];
+
+  childRoles.push(...firstChildData);
+
+  aclData.map((acl) => {
+    if (childRoles.includes(acl.role)) {
+      childRoles.push(...acl.childRoles);
+      allowedResources.push(...acl.allowedResources);
+      denyResources.push(...acl.denyResources);
+    }
+    lodash.uniq(childRoles);
+    return;
+  });
+
+  lodash.uniq(allowedResources);
+  lodash.uniq(denyResources);
+  return { allowedResources, denyResources };
+};
+
+const resourceThroughParent = (aclData, role) => {
+  let parentRoles = role;
+  let allowedResources = [];
+  let denyResources = [];
+  let data = aclData;
+
+  while (lodash.find(data, ["parentRole", parentRoles])) {
+    let acl = lodash.find(data, ["parentRole", parentRoles]);
+    allowedResources.push(...acl.allowedResources);
+    denyResources.push(...acl.denyResources);
+    parentRoles = acl.role;
+    data = lodash.pull(data, acl);
+  }
+  log(allowedResources, denyResources);
+  return { allowedResources, denyResources };
+};
+module.exports = { allowedResource, denyResource, extractAclSubRolesData };

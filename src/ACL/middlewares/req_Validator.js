@@ -8,28 +8,37 @@ const addACLRuleValidation = () => {
       .optional()
       .isArray()
       .withMessage(CONFIG.INVALID_RESOURCE),
+
     body("allowedResources.*")
       .optional()
       .custom((value) => {
-        if (!ObjectId(value)) {
+        if (value && !ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
+
     body("denyResources")
       .optional()
       .isArray()
-      .optional()
       .withMessage(CONFIG.INVALID_RESOURCE),
-    body("denyResources")
+
+    body("denyResources.*")
       .optional()
       .custom((value) => {
-        if (!ObjectId(value)) {
+        if (value && !ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
     body("role").isString().withMessage(CONFIG.INVALID_ROLE),
+
+    body("childRole").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
+    body("childRole.*").isString().withMessage(CONFIG.INVALID_ROLE),
+
+
+    body("parentRole").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
+    body("parentRole.*").isString().withMessage(CONFIG.INVALID_ROLE),
   ];
 };
 const updateACLRuleValidation = () => {

@@ -5,9 +5,9 @@ const aclHelper = require("../utils/aclHelper");
 const isPermitted = async (req, res, next) => {
   // fetching data from db of particuler role
   // console.log(req.originalUrl);
-  let userRole = req.userRole;
-  let dbRoleData = await aclModel
-    .findOne({ role : userRole })
+  let dbRoleData;
+  let aclData = await aclModel
+    .find()
     .populate({
       path: "allowedResources",
       select: { module: 0, __v: 0 },
@@ -16,10 +16,24 @@ const isPermitted = async (req, res, next) => {
       path: "denyResources",
       select: { module: 0, __v: 0 },
     });
+  if (aclData && aclData.length) {
+    dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
+  }
+  // let userRole = req.userRole;
+  // let dbRoleData = await aclModel
+  //   .findOne({ role: userRole })
+  //   .populate({
+  //     path: "allowedResources",
+  //     select: { module: 0, __v: 0 },
+  //   })
+  //   .populate({
+  //     path: "denyResources",
+  //     select: { module: 0, __v: 0 },
+  //   });
 
   let isAllowed = false;
   // console.log(dbRoleData)
-  if (userRole && dbRoleData) {
+  if (req.userRole && dbRoleData) {
     let allowedResources = dbRoleData.allowedResources.map((resource) => {
       return { path: resource.resource_path, methods: resource.methods };
     });
@@ -28,8 +42,11 @@ const isPermitted = async (req, res, next) => {
     });
     // console.log(allowedResources);
     isAllowed =
-    aclHelper.allowedResource(allowedResources, req.originalUrl, req.method) &&
-    aclHelper.denyResource(denyResources, req.originalUrl, req.method);
+      aclHelper.allowedResource(
+        allowedResources,
+        req.originalUrl,
+        req.method
+      ) && aclHelper.denyResource(denyResources, req.originalUrl, req.method);
     // console.log(allowedResources, req.originalUrl, req.method);
   }
 
