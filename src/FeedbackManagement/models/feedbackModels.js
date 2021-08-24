@@ -2,18 +2,18 @@
 let mongoose = require("mongoose");
 
 let feedbackSchema = new mongoose.Schema({
-  title: {
+  feedback_title: {
     type: String,
     lowercase: true, trim: true,
     index: true,
 	unique: true,
     required: [true, 'feedback required'],
   },
-  description: {
+  feedback_description: {
     type: String,
   },
-  password: String,
-  email: {
+  feedback_password: String,
+  feedback_email: {
     type: String,
   },
 },
