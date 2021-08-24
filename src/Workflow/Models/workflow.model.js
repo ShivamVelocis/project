@@ -16,7 +16,7 @@ let WorkflowSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("WorkflowV3", WorkflowSchema);
+module.exports = mongoose.model("Workflow", WorkflowSchema);
 
 // 0-drafted
 // 1-initiated

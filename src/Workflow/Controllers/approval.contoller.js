@@ -4,11 +4,11 @@ const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
 
 // 0->Draft
-// 1->Published/inititiated
+// 1->Published
 // 2->Unpublished
 // 3->Approved
 // 4->Recjected
-// 5-> level 1
+// 5-> level 1/intialize
 // 6-> level 2
 // 7-> level 3
 // 8-> level 4
@@ -17,7 +17,8 @@ const { CONFIG } = require("../Configs/config");
 const getApprovalData = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findOne({ id: req.params.id });
-
+    // console.log(req.params.id)
+    // console.log(approvalData)
     if (!approvalData) {
       return res.json({
         success: false,
@@ -30,6 +31,7 @@ const getApprovalData = async (req, res, next) => {
     let workFlowData = await WorkflowModel.findOne({
       module: approvalData.module,
     });
+    // console.log(workFlowData);
 
     if (!workFlowData) {
       return res.json({
@@ -45,7 +47,6 @@ const getApprovalData = async (req, res, next) => {
       return state.wfLevel == approvalData.level;
     });
 
-    //
     if (!state) {
       return res.json({
         success: false,
@@ -54,7 +55,15 @@ const getApprovalData = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-
+    
+    if (!state.wfNextActions.length) {
+      return res.json({
+        success: false,
+        message: "Workflow already completed",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
     return res.json({
       success: true,
       message: CONFIG.ACTIONS_ALLOWED,
