@@ -1,4 +1,4 @@
-const statusModel = require("../models/statusModel");
+const { statusModel } = require("../models/statusModel");
 
 const addStatus = (req, res, next) => {
   try {
