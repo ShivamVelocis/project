@@ -1,6 +1,6 @@
 const aclController = require("../contollers/aclController");
 const express = require("express");
-const validation = require("../middlewares/req_Validator");
+const validation = require("../middlewares/validator");
 const router = express.Router();
 
 router.get("/", aclController.getAcls);
