@@ -181,6 +181,7 @@ const resourceThroughParent = (aclData, role) => {
 
   while (lodash.find(data, ["parentRole", parentRoles])) {
     let acl = lodash.find(data, ["parentRole", parentRoles]);
+    if (!acl.aclStatus) break;
     allowedResources.push(...acl.allowedResources);
     denyResources.push(...acl.denyResources);
     parentRoles = acl.role;
