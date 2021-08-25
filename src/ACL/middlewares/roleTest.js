@@ -1,3 +1,4 @@
+const lodash = require("lodash");
 const aclModel = require("../models/aclModel");
 const aclHelper = require("../utils/aclHelper");
 
@@ -7,7 +8,7 @@ const isPermitted = async (req, res, next) => {
   // console.log(req.originalUrl);
   let dbRoleData;
   let aclData = await aclModel
-    .find()
+    .find({ aclStatus: 1 })
     .populate({
       path: "allowedResources",
       select: { module: 0, __v: 0 },
@@ -16,8 +17,10 @@ const isPermitted = async (req, res, next) => {
       path: "denyResources",
       select: { module: 0, __v: 0 },
     });
-  if (aclData && aclData.length) {
+
+  if (aclData && aclData.length && lodash.find(aclData, ["role", req.userRole])) {
     dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
+    // console.log(dbRoleData);
   }
 
   let isAllowed = false;

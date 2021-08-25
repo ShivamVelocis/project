@@ -142,10 +142,8 @@ const extractAclSubRolesData = (role, data) => {
   childResourcesData.allowedResources.push(
     ...parentResourcesData.allowedResources
   );
-  childResourcesData.denyResources.push(
-    ...parentResourcesData.denyResources
-    );
-// concat role resources 
+  childResourcesData.denyResources.push(...parentResourcesData.denyResources);
+  // concat role resources
   childResourcesData.allowedResources.push(...allowedResources);
   childResourcesData.denyResources.push(...denyResources);
 
@@ -161,7 +159,7 @@ let childResources = (aclData, firstChildData) => {
   childRoles.push(...firstChildData);
 
   aclData.map((acl) => {
-    if (childRoles.includes(acl.role)) {
+    if (childRoles.includes(acl.role) && acl.aclStatus) {
       childRoles.push(...acl.childRoles);
       allowedResources.push(...acl.allowedResources);
       denyResources.push(...acl.denyResources);
