@@ -36,37 +36,141 @@ const getAcl = async (req, res, next) => {
   }
 };
 
-const getAcls = async (req, res, next) => {
-  let filter = {};
-  if (Object.keys(req.query).length) {
-    let role = req.query.role ? (filter.role = req.query.role) : null;
-    let module_name = req.query.module_name
-      ? (filter.module_name = {
-          $regex: new RegExp(req.query.module_name, "i"),
-        })
-      : null;
-  }
-  try {
-    let result = await aclModel
-      .find(filter)
-      .populate({
-        path: "allowedResources",
-        select: { module: 0, __v: 0 },
-      })
-      .populate({
-        path: "denyResources",
-        select: { module: 0, __v: 0 },
-      });
+// const getAcls = async (req, res, next) => {
+//   let filter = {};
+//   if (Object.keys(req.query).length) {
+//     let role = req.query.role ? (filter.role = req.query.role) : null;
+//     let module_name = req.query.module_name
+//       ? (filter.module_name = {
+//           $regex: new RegExp(req.query.module_name, "i"),
+//         })
+//       : null;
+//   }
+//   try {
+//     let result = await aclModel
+//       .find(filter)
+//       .populate({
+//         path: "allowedResources",
+//         select: { module: 0, __v: 0 },
+//       })
+//       .populate({
+//         path: "denyResources",
+//         select: { module: 0, __v: 0 },
+//       });
 
-    res.status(200);
-    return res.json({
-      success: true,
-      message: "All ACL Rules",
-      data: result,
-      accesstoken: req.accesstoken,
-    });
+//     res.status(200);
+//     return res.json({
+//       success: true,
+//       message: "All ACL Rules",
+//       data: result,
+//       accesstoken: req.accesstoken,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     next(error);
+//   }
+// };
+
+const getAcls = async (req, res, next) => {
+  try {
+    let pipeline = [
+      {
+        $lookup: {
+          from: "roles",
+          localField: "role",
+          foreignField: "role_name",
+          as: "string",
+        },
+      },
+      {
+        $unwind: {
+          path: "$allowedResources",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$denyResources",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$string",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "resources",
+          localField: "allowedResources",
+          foreignField: "_id",
+          as: "allowedResources",
+        },
+      },
+      {
+        $lookup: {
+          from: "resources",
+          localField: "denyResources",
+          foreignField: "_id",
+          as: "denyResources",
+        },
+      },
+      {
+        $unwind: {
+          path: "$allowedResources",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$denyResources",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            role: "$role",
+            role_title: "$string",
+          },
+          allowedResources: {
+            $push: "$allowedResources",
+          },
+          denyResources: {
+            $push: "$denyResources",
+          },
+        },
+      },
+      {
+        $addFields: {
+          role: "$_id.role",
+          role_name: "$_id.role_title.role_name",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+    ];
+    let result = await aclModel.aggregate(pipeline);
+    if (!result && !result.length) {
+      return res.json({
+        success: false,
+        message: "No record(s) found",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      return res.json({
+        success: true,
+        message: "ACL rule",
+        data: result,
+        accesstoken: req.accesstoken,
+      });
+    }
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -170,7 +274,7 @@ const aclCheck = async (req, res) => {
     let allowedResources;
     let denyResources;
     let isAllowed = false;
-    
+
     // acldata from db
     let dbRoleData = await aclModel
       .findOne({ role: userRole })
@@ -182,34 +286,42 @@ const aclCheck = async (req, res) => {
         path: "denyResources",
         select: { module: 0, __v: 0 },
       });
-  
+
     if (userRole && dbRoleData) {
-       allowedResources = dbRoleData.allowedResources.map((resource) => {
+      allowedResources = dbRoleData.allowedResources.map((resource) => {
         return { path: resource.resource_path, methods: resource.methods };
       });
-       denyResources = dbRoleData.denyResources.map((resource) => {
+      denyResources = dbRoleData.denyResources.map((resource) => {
         return { path: resource.resource_path, methods: resource.methods };
       });
 
-    // ACL check
-    isAllowed =
-      aclHelper.allowedResource(allowedResources, resourceToBeAccess, resourceMethod) &&
-      aclHelper.denyResource(denyResources, resourceToBeAccess, resourceMethod);
-      
-    if (isAllowed) {
-      res.send(200);
-      return res.json({
-        status: true,
-        message: "Access allowed",
-      });
-    } else {
-      res.send(401);
-      return res.json({
-        status: false,
-        message: "Access denied",
-      });
+      // ACL check
+      isAllowed =
+        aclHelper.allowedResource(
+          allowedResources,
+          resourceToBeAccess,
+          resourceMethod
+        ) &&
+        aclHelper.denyResource(
+          denyResources,
+          resourceToBeAccess,
+          resourceMethod
+        );
+
+      if (isAllowed) {
+        res.send(200);
+        return res.json({
+          status: true,
+          message: "Access allowed",
+        });
+      } else {
+        res.send(401);
+        return res.json({
+          status: false,
+          message: "Access denied",
+        });
+      }
     }
-  }
   } catch (error) {
     next(error);
   }
