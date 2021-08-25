@@ -9,11 +9,21 @@ const getAcl = async (req, res, next) => {
       .findById(aclId)
       .populate({
         path: "allowedResources",
-        select: { module: 0, __v: 0 },
+        select: {
+          methods: 1,
+          resource_name: 1,
+          resource_path: 1,
+          resource_status: 1,
+        },
       })
       .populate({
         path: "denyResources",
-        select: { module: 0, __v: 0 },
+        select: {
+          methods: 1,
+          resource_name: 1,
+          resource_path: 1,
+          resource_status: 1,
+        },
       });
     if (!result) {
       res.status(404);
@@ -132,7 +142,7 @@ const getAcls = async (req, res, next) => {
         $group: {
           _id: {
             role: "$role",
-            role_title: "$roledata",
+            roleData: "$roledata",
           },
           allowedResources: {
             $push: "$allowedResources",
@@ -145,12 +155,20 @@ const getAcls = async (req, res, next) => {
       {
         $addFields: {
           role: "$_id.role",
-          role_name: "$_id.role_title.role_name",
+          role_title: "$_id.roleData.role_title",
         },
       },
       {
         $project: {
           _id: 0,
+          "allowedResources.__v": 0,
+          "allowedResources.createdAt": 0,
+          "allowedResources.updatedAt": 0,
+          "allowedResources.module": 0,
+          "denyResources.__v": 0,
+          "denyResources.createdAt": 0,
+          "denyResources.updatedAt": 0,
+          "denyResources.module": 0,
         },
       },
     ];
@@ -326,6 +344,7 @@ const aclCheck = async (req, res) => {
     next(error);
   }
 };
+
 module.exports = {
   addAcl,
   editAcl,

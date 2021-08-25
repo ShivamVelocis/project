@@ -19,17 +19,6 @@ const isPermitted = async (req, res, next) => {
   if (aclData && aclData.length) {
     dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
   }
-  // let userRole = req.userRole;
-  // let dbRoleData = await aclModel
-  //   .findOne({ role: userRole })
-  //   .populate({
-  //     path: "allowedResources",
-  //     select: { module: 0, __v: 0 },
-  //   })
-  //   .populate({
-  //     path: "denyResources",
-  //     select: { module: 0, __v: 0 },
-  //   });
 
   let isAllowed = false;
   // console.log(dbRoleData)

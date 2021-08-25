@@ -1,5 +1,5 @@
 const lodash = require("lodash");
-const log = console.log;
+// const log = console.log;
 // const { all } = require("../Routes/aclRoutes");
 
 // -----------------------------------check allowed resources start--------------
@@ -188,7 +188,7 @@ const resourceThroughParent = (aclData, role) => {
     parentRoles = acl.role;
     data = lodash.pull(data, acl);
   }
-  log(allowedResources, denyResources);
+  // log(allowedResources, denyResources);
   return { allowedResources, denyResources };
 };
 module.exports = { allowedResource, denyResource, extractAclSubRolesData };
