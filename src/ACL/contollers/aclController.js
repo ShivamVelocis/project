@@ -9,6 +9,7 @@ const getAcl = async (req, res, next) => {
       .findById(aclId)
       .populate({
         path: "allowedResources",
+        match: { resource_status: 1 },
         select: {
           methods: 1,
           resource_name: 1,
@@ -18,6 +19,7 @@ const getAcl = async (req, res, next) => {
       })
       .populate({
         path: "denyResources",
+        match: { resource_status: 1 },
         select: {
           methods: 1,
           resource_name: 1,

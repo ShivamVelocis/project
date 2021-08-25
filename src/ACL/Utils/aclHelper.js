@@ -122,6 +122,12 @@ const denyResource = (resource, resourceToBeAccess, method) => {
 
 // -----------------------------------check deny resources end-------------------
 
+/**
+ * Return acl data of child acls.
+ * @param {String} role User role.
+ * @param {Array} data All acl rules data.
+ * @return {Object} Returns allowedResources and deniedResources.
+ */
 const extractAclSubRolesData = (role, data) => {
   let childRoles = [];
   let allowedResources = [];
@@ -149,7 +155,7 @@ const extractAclSubRolesData = (role, data) => {
     ...parentResourcesData.allowedResources
   );
   childResourcesData.denyResources.push(...parentResourcesData.denyResources);
-  
+
   // concat role resources
   childResourcesData.allowedResources.push(...allowedResources);
   childResourcesData.denyResources.push(...denyResources);

@@ -11,14 +11,20 @@ const isPermitted = async (req, res, next) => {
     .find({ aclStatus: 1 })
     .populate({
       path: "allowedResources",
+      match: { resource_status: 1 },
       select: { module: 0, __v: 0 },
     })
     .populate({
       path: "denyResources",
+      match: { resource_status: 1 },
       select: { module: 0, __v: 0 },
     });
 
-  if (aclData && aclData.length && lodash.find(aclData, ["role", req.userRole])) {
+  if (
+    aclData &&
+    aclData.length &&
+    lodash.find(aclData, ["role", req.userRole])
+  ) {
     dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
     // console.log(dbRoleData);
   }
