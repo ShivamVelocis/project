@@ -5,8 +5,7 @@
     "main": "app.js",
     "scripts": {
         "start": "node ./app.js",
-        "dev": "nodemon  --ext js,ejs --delay 1 ./app.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "dev": "nodemon  --ext js,ejs --delay 1 ./app.js"
     },
     "author": "Shivam Chaudhry",
     "license": "ISC",
