@@ -127,15 +127,21 @@ const extractAclSubRolesData = (role, data) => {
   let allowedResources = [];
   let denyResources = [];
 
-  let parentAclData = lodash.find(data, ["role", role]);
+  // extract data of current role
+  let currentRoleAclData = lodash.find(data, ["role", role]);
 
-  childRoles.push(...parentAclData.childRoles);
-  allowedResources.push(...parentAclData.allowedResources);
-  denyResources.push(...parentAclData.denyResources);
+  // push current acl role data into arrays
+  childRoles.push(...currentRoleAclData.childRoles);
+  allowedResources.push(...currentRoleAclData.allowedResources);
+  denyResources.push(...currentRoleAclData.denyResources);
 
-  data = lodash.pull(data, parentAclData);
+  // remove current acl data from list
+  data = lodash.pull(data, currentRoleAclData);
 
+  // return acl data of child and child of child
   let childResourcesData = childResources(data, childRoles);
+
+  // return acl data of of child which contain current user role in parentRole array
   let parentResourcesData = resourceThroughParent(data, role);
 
   // concat resources from return data of above two function
@@ -143,6 +149,7 @@ const extractAclSubRolesData = (role, data) => {
     ...parentResourcesData.allowedResources
   );
   childResourcesData.denyResources.push(...parentResourcesData.denyResources);
+  
   // concat role resources
   childResourcesData.allowedResources.push(...allowedResources);
   childResourcesData.denyResources.push(...denyResources);
