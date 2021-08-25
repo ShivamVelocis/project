@@ -79,7 +79,7 @@ const getAcls = async (req, res, next) => {
           from: "roles",
           localField: "role",
           foreignField: "role_name",
-          as: "string",
+          as: "roledata",
         },
       },
       {
@@ -96,7 +96,7 @@ const getAcls = async (req, res, next) => {
       },
       {
         $unwind: {
-          path: "$string",
+          path: "$roledata",
           preserveNullAndEmptyArrays: true,
         },
       },
@@ -132,7 +132,7 @@ const getAcls = async (req, res, next) => {
         $group: {
           _id: {
             role: "$role",
-            role_title: "$string",
+            role_title: "$roledata",
           },
           allowedResources: {
             $push: "$allowedResources",
