@@ -4,8 +4,6 @@ const aclHelper = require("../utils/aclHelper");
 
 // Middleware
 const isPermitted = async (req, res, next) => {
-  // fetching data from db of particuler role
-  // console.log(req.originalUrl);
   let dbRoleData;
   let aclData = await aclModel
     .find({ aclStatus: 1 })
@@ -19,7 +17,6 @@ const isPermitted = async (req, res, next) => {
       match: { resource_status: 1 },
       select: { module: 0, __v: 0 },
     });
-  // console.log(aclData);
 
   if (
     aclData &&
@@ -27,11 +24,9 @@ const isPermitted = async (req, res, next) => {
     lodash.find(aclData, ["role", req.userRole])
   ) {
     dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
-    // console.log(dbRoleData);
   }
 
   let isAllowed = false;
-  // console.log(dbRoleData)
   if (req.userRole && dbRoleData) {
     let allowedResources = dbRoleData.allowedResources.map((resource) => {
       return { path: resource.resource_path, methods: resource.methods };
@@ -39,14 +34,12 @@ const isPermitted = async (req, res, next) => {
     let denyResources = dbRoleData.denyResources.map((resource) => {
       return { path: resource.resource_path, methods: resource.methods };
     });
-    // console.log(allowedResources);
     isAllowed =
       aclHelper.allowedResource(
         allowedResources,
         req.originalUrl,
         req.method
       ) && aclHelper.denyResource(denyResources, req.originalUrl, req.method);
-    // console.log(allowedResources, req.originalUrl, req.method);
   }
 
   if (isAllowed) return next();
