@@ -129,23 +129,25 @@ const denyResource = (resource, resourceToBeAccess, method) => {
  * @return {Object} Returns allowedResources and deniedResources.
  */
 const extractAclSubRolesData = (role, data) => {
-  let childRoles = [];
+  let children = [];
   let allowedResources = [];
   let denyResources = [];
 
   // extract data of current role
   let currentRoleAclData = lodash.find(data, ["role", role]);
+  // console.log('currentRoleAclData: ', currentRoleAclData);
 
   // push current acl role data into arrays
-  childRoles.push(...currentRoleAclData.childRoles);
+  children.push(...currentRoleAclData.children);
+  // console.log('children: ', children);
   allowedResources.push(...currentRoleAclData.allowedResources);
   denyResources.push(...currentRoleAclData.denyResources);
 
   // remove current acl data from list
-  data = lodash.pull(data, currentRoleAclData);
+  // data = lodash.pull(data, currentRoleAclData);
 
   // return acl data of child and child of child
-  let childResourcesData = childResources(data, childRoles);
+  let childResourcesData = childResources(data, children);
 
   // return acl data of of child which contain current user role in parentRole array
   let parentResourcesData = resourceThroughParent(data, role);
@@ -165,19 +167,20 @@ const extractAclSubRolesData = (role, data) => {
 };
 
 let childResources = (aclData, firstChildData) => {
-  let childRoles = [];
+  // console.log('firstChildData: ', firstChildData);
+  let children = [];
   let allowedResources = [];
   let denyResources = [];
 
-  childRoles.push(...firstChildData);
+  children.push(...firstChildData);
 
   aclData.map((acl) => {
-    if (childRoles.includes(acl.role) && acl.aclStatus) {
-      childRoles.push(...acl.childRoles);
+    if (children.includes(acl.role) && acl.aclStatus) {
+      children.push(...acl.children);
       allowedResources.push(...acl.allowedResources);
       denyResources.push(...acl.denyResources);
     }
-    lodash.uniq(childRoles);
+    lodash.uniq(children);
     return;
   });
 
@@ -187,17 +190,24 @@ let childResources = (aclData, firstChildData) => {
 };
 
 const resourceThroughParent = (aclData, role) => {
-  let parentRoles = role;
+  // console.log("role: ", role);
+  // console.log("aclData: ", aclData);
+  let parents = role;
+  // console.log('parents: ', parents);
   let allowedResources = [];
   let denyResources = [];
   let data = aclData;
-
-  while (lodash.find(data, ["parentRole", parentRoles])) {
-    let acl = lodash.find(data, ["parentRole", parentRoles]);
+  let iterator = (acl) => {
+    if (acl.parents.includes(parents)) {
+      return true;
+    }
+  };
+  while (lodash.find(data, iterator)) {
+    let acl = lodash.find(data, iterator);
     if (!acl.aclStatus) break;
     allowedResources.push(...acl.allowedResources);
     denyResources.push(...acl.denyResources);
-    parentRoles = acl.role;
+    parents = acl.role;
     data = lodash.pull(data, acl);
   }
   // log(allowedResources, denyResources);

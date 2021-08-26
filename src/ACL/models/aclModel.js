@@ -7,8 +7,8 @@ let aclSchema = new mongoose.Schema(
       { type: mongoose.Schema.Types.ObjectId, ref: "Resource" },
     ],
     denyResources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
-    childRoles: [String],
-    parentRoles: [String],
+    children: [String],
+    parents: [String],
     aclStatus: { type: Number, default: 1 },
   },
   { timestamps: true }

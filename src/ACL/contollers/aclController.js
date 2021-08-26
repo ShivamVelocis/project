@@ -145,6 +145,7 @@ const getAcls = async (req, res, next) => {
           _id: {
             role: "$role",
             roleData: "$roledata",
+            _id: "$_id",
           },
           allowedResources: {
             $push: "$allowedResources",
@@ -158,11 +159,11 @@ const getAcls = async (req, res, next) => {
         $addFields: {
           role: "$_id.role",
           role_title: "$_id.roleData.role_title",
+          _id: "$_id._id",
         },
       },
       {
         $project: {
-          _id: 0,
           "allowedResources.__v": 0,
           "allowedResources.createdAt": 0,
           "allowedResources.updatedAt": 0,
@@ -175,7 +176,8 @@ const getAcls = async (req, res, next) => {
       },
     ];
     let result = await aclModel.aggregate(pipeline);
-    if (!result && !result.length) {
+    console.log(result);
+    if (!result || !result.length) {
       return res.json({
         success: false,
         message: "No record(s) found",
@@ -200,6 +202,8 @@ const addAcl = async (req, res, next) => {
     let responseData;
     let allowedResources = req.body.allowedResources || [];
     let denyResources = req.body.denyResources || [];
+    let children = req.body.children || [];
+    let parents = req.body.parents || [];
     let dbData = await aclModel.findOne({ role: req.body.role });
     if (dbData) {
       responseData = await aclModel.findOneAndUpdate(
@@ -208,6 +212,8 @@ const addAcl = async (req, res, next) => {
           $addToSet: {
             allowedResources: { $each: allowedResources },
             denyResources: { $each: denyResources },
+            children: { $each: children },
+            parents: { $each: parents },
           },
         },
         { new: true }
@@ -217,6 +223,8 @@ const addAcl = async (req, res, next) => {
         role: req.body.role,
         allowedResources,
         denyResources,
+        parents: parents,
+        children: children,
       };
       let acl = new aclModel(newAcl);
       responseData = await acl.save();
@@ -237,6 +245,11 @@ const editAcl = async (req, res, next) => {
   aclId = req.body.id;
   let allowedResources = req.body.allowedResources || [];
   let denyResources = req.body.denyResources || [];
+  let children = req.body.children || [];
+  let parents = req.body.parents || [];
+  let updateAcl = {};
+  if (req.body.aclStatus == 0 || req.body.aclStatus)
+    updateAcl.aclStatus = req.body.aclStatus;
   try {
     let updateACLRule = await aclModel.findByIdAndUpdate(
       aclId,
@@ -244,7 +257,10 @@ const editAcl = async (req, res, next) => {
         $pull: {
           allowedResources: { $in: allowedResources },
           denyResources: { $in: denyResources },
+          children: { $in: children },
+          parents: { $in: parents },
         },
+        $set: updateAcl,
       },
       { new: true }
     );
@@ -278,7 +294,7 @@ const deletAcl = async (req, res, next) => {
     return res.json({
       success: true,
       message: CONFIG.ACL_DELETE_SUCCESS,
-      data: null,
+      data: result,
       accesstoken: req.accesstoken,
     });
   } catch (error) {

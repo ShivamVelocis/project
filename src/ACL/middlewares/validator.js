@@ -33,12 +33,12 @@ const addACLRuleValidation = () => {
       }),
     body("role").isString().withMessage(CONFIG.INVALID_ROLE),
 
-    body("childRole").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
-    body("childRole.*").isString().withMessage(CONFIG.INVALID_ROLE),
+    body("children").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
+    body("children.*").isString().withMessage(CONFIG.INVALID_ROLE),
 
 
-    body("parentRole").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
-    body("parentRole.*").isString().withMessage(CONFIG.INVALID_ROLE),
+    body("parents").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
+    body("parents.*").isString().withMessage(CONFIG.INVALID_ROLE),
   ];
 };
 const updateACLRuleValidation = () => {

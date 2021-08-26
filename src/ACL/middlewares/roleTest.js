@@ -19,6 +19,7 @@ const isPermitted = async (req, res, next) => {
       match: { resource_status: 1 },
       select: { module: 0, __v: 0 },
     });
+  // console.log(aclData);
 
   if (
     aclData &&
