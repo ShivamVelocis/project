@@ -14,7 +14,7 @@ const { CONFIG } = require("../Configs/config");
 // 8-> level 4
 
 // return action available for approver
-const getApprovalData = async (req, res, next) => {
+const nextActionAllowed = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findOne({ id: req.params.id });
     // console.log(req.params.id)
@@ -76,7 +76,7 @@ const getApprovalData = async (req, res, next) => {
 };
 
 // approver action
-const approval = async (req, res, next) => {
+const approvalAction = async (req, res, next) => {
   try {
     //
     let approvalData = await ApprovalModel.findOne({ id: req.body.id });
@@ -213,7 +213,7 @@ const getWfStatu = async (req, res, next) => {
 };
 
 // to item to aprroval table/collection for wrokflow
-const addToapproval = async (req, res, next) => {
+const addForApproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
     // console.log(isDuplicate);
@@ -277,9 +277,9 @@ const getApprovalsData = async (req, res, next) => {
 };
 
 module.exports = {
-  getApprovalData,
-  approval,
+  nextActionAllowed,
+  approvalAction,
   getWfStatu,
-  addToapproval,
+  addForApproval,
   getApprovalsData,
 };
