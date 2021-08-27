@@ -148,7 +148,7 @@ const denyResource = (resource, resourceToBeAccess, method) => {
 // -----------------------------------check deny resources end-------------------
 
 /**
- * Return acl data of child acls.
+ * Return acl data of all children acls.
  * @param {String} role User role.
  * @param {Array} data All acl rules data.
  * @return {Object} Returns allowedResources and deniedResources.
@@ -168,14 +168,11 @@ const extractAclSubRolesData = (role, data) => {
   allowedResources.push(...currentRoleAclData.allowedResources);
   denyResources.push(...currentRoleAclData.denyResources);
 
-  // remove current acl data from list
-  // data = lodash.pull(data, currentRoleAclData);
-
   // return acl data of child and child of child
   let childResourcesData = childrenResources(data, children);
 
   // return acl data of of child which contain current user role in parentRole array
-  let parentResourcesData = resourceThroughParent(data, role);
+  let parentResourcesData = childrenResourcesAsParent(data, role);
 
   // concat resources from return data of above two function
   childResourcesData.allowedResources.push(
@@ -192,8 +189,13 @@ const extractAclSubRolesData = (role, data) => {
   return { ...childResourcesData };
 };
 
+/**
+ * Return acl data of child acls.
+ * @param {Array} aclData Acl rule data.
+ * @param {Array} firstChildData Children of user role acl
+ * @return {Object} Returns allowedResources and deniedResources.
+ */
 let childrenResources = (aclData, firstChildData) => {
-  // console.log('firstChildData: ', firstChildData);
   let children = [];
   let allowedResources = [];
   let denyResources = [];
@@ -216,9 +218,13 @@ let childrenResources = (aclData, firstChildData) => {
   return { allowedResources, denyResources };
 };
 
-const resourceThroughParent = (aclData, role) => {
-  // console.log("resourceThroughParent: ", role);
-
+/**
+ * Return acl data of child acls where role is in parent of other acls.
+ * @param {Array} aclData Acl rule data.
+ * @param {String} role Children of user role acl
+ * @return {Object} Returns allowedResources and deniedResources.
+ */
+const childrenResourcesAsParent = (aclData, role) => {
   let parents = [role];
   let allowedResources = [];
   let denyResources = [];
@@ -239,16 +245,25 @@ const resourceThroughParent = (aclData, role) => {
       }
     });
   }
-  // console.log("asd", allowedResources, denyResources);
-  // console.log(parents);
-
   return { allowedResources, denyResources };
 };
 
+/**
+ * Check if there is common elements between two array.
+ * @param {Array} arr1 First array.
+ * @param {Array} arr2 Second array
+ * @return {Boolean} True if there is a least one element is coomon.
+ */
 const arrayMatch = (arr1, arr2) => {
   return arr1.some((data) => arr2.includes(data));
 };
 
+/**
+ * Check if there is child in acl data.
+ * @param {Array} data Array of acl rules.
+ * @param {Array} roleInParent Role name in parent of acl rule
+ * @return {Boolean} True if there is a role
+ */
 const whileLoopCheck = (data, roleInParent) => {
   return data.some((data) => {
     return arrayMatch(data.parents, roleInParent);
