@@ -31,7 +31,7 @@ const getAcl = async (req, res, next) => {
       res.status(404);
       return res.json({
         success: false,
-        message: "ACL Rule not available",
+        message: CONFIG.NO_RULE_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
@@ -39,7 +39,7 @@ const getAcl = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: "ACL Rule",
+      message: CONFIG.ADD_ACL,
       data: result,
       accesstoken: req.accesstoken,
     });
@@ -176,18 +176,17 @@ const getAcls = async (req, res, next) => {
       },
     ];
     let result = await aclModel.aggregate(pipeline);
-    console.log(result);
     if (!result || !result.length) {
       return res.json({
         success: false,
-        message: "No record(s) found",
+        message: CONFIG.NO_RULE_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
     } else {
       return res.json({
         success: true,
-        message: "ACL rule",
+        message: CONFIG.ADD_ACL,
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -284,7 +283,7 @@ const deletAcl = async (req, res, next) => {
       res.status(200);
       return res.json({
         success: false,
-        message: "Invalid Acl ID",
+        message: CONFIG.NO_RULE_FOUND,
         data: null,
         accesstoken: req.accesstoken,
       });
