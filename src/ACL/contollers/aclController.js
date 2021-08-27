@@ -278,7 +278,6 @@ const editAcl = async (req, res, next) => {
 
 const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
-  // console.log(aclId)
   try {
     let result = await aclModel.findByIdAndRemove(aclId);
     if (!result) {
@@ -312,16 +311,23 @@ const aclCheck = async (req, res) => {
     let isAllowed = false;
 
     // acldata from db
-    let dbRoleData = await aclModel
-      .findOne({ role: userRole })
+    let aclData = await aclModel
+      .find({ aclStatus: 1 })
       .populate({
         path: "allowedResources",
+        match: { resource_status: 1 },
         select: { module: 0, __v: 0 },
       })
       .populate({
         path: "denyResources",
+        match: { resource_status: 1 },
         select: { module: 0, __v: 0 },
       });
+    // console.log('aclData: ', aclData);
+
+    if (aclData && aclData.length && lodash.find(aclData, ["role", userRole])) {
+      dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
+    }
 
     if (userRole && dbRoleData) {
       allowedResources = dbRoleData.allowedResources.map((resource) => {
@@ -330,33 +336,31 @@ const aclCheck = async (req, res) => {
       denyResources = dbRoleData.denyResources.map((resource) => {
         return { path: resource.resource_path, methods: resource.methods };
       });
+      console.log(
+        aclHelper.allowedResource(allowedResources, req.originalUrl, req.method)
+      );
+    }
+    // ACL check
+    isAllowed =
+      aclHelper.allowedResource(
+        allowedResources,
+        resourceToBeAccess,
+        resourceMethod
+      ) &&
+      aclHelper.denyResource(denyResources, resourceToBeAccess, resourceMethod);
 
-      // ACL check
-      isAllowed =
-        aclHelper.allowedResource(
-          allowedResources,
-          resourceToBeAccess,
-          resourceMethod
-        ) &&
-        aclHelper.denyResource(
-          denyResources,
-          resourceToBeAccess,
-          resourceMethod
-        );
-
-      if (isAllowed) {
-        res.send(200);
-        return res.json({
-          status: true,
-          message: "Access allowed",
-        });
-      } else {
-        res.send(401);
-        return res.json({
-          status: false,
-          message: "Access denied",
-        });
-      }
+    if (isAllowed) {
+      res.send(200);
+      return res.json({
+        status: true,
+        message: "Access allowed",
+      });
+    } else {
+      res.send(401);
+      return res.json({
+        status: false,
+        message: "Access denied",
+      });
     }
   } catch (error) {
     next(error);
