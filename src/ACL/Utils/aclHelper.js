@@ -2,6 +2,18 @@ const lodash = require("lodash");
 // const log = console.log;
 // const { all } = require("../Routes/aclRoutes");
 
+const filterCallback = (key, value) => {
+  return function (data) {
+    return data[key] == value;
+  };
+};
+
+const isMethodAllowed = (data, method) => {
+  return data.some((item) => {
+    return item.methods.includes(method);
+  });
+};
+
 // -----------------------------------check allowed resources start--------------
 /**
 /**
@@ -13,21 +25,25 @@ const lodash = require("lodash");
  */
 const allowedResource = (resource, resourceToBeAccess, method) => {
   // console.log(resource, resourceToBeAccess,method)
-  let resourcePathIndex = null;
   if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    resourcePathIndex = lodash.findIndex(resource, [
-      "path",
-      resourceToBeAccess,
-    ]);
-    allowedMethods = resource[resourcePathIndex].methods;
-    isMethodsAllowed = allowedMethods.includes(method);
-    return isMethodsAllowed;
+    console.log("resourceToBeAccess: ", resourceToBeAccess);
+    let isAllowed = isMethodAllowed(
+      resource.filter(filterCallback("path", resourceToBeAccess)),
+      method
+    );
+    if (isAllowed) {
+      return true;
+    }
   }
-  if (lodash.find(resource, ["path", "/*"])) {
-    resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
-    allowedMethods = resource[resourcePathIndex].methods;
-    isMethodsAllowed = allowedMethods.includes(method);
-    return isMethodsAllowed;
+  // if (lodash.find(resource, ["path", "/*"])) {
+  if (lodash.find(resource, filterCallback("path", "/*"))) {
+    let isAllowed = isMethodAllowed(
+      resource.filter(filterCallback("path", "/*")),
+      method
+    );
+    if (isAllowed) {
+      return true;
+    }
   }
   let path =
     resourceToBeAccess.substring(resourceToBeAccess.length - 1) == "/"
@@ -39,9 +55,13 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
   while (pathArray.length > i) {
     astrikPath = subPath + "/*";
     if (lodash.find(resource, ["path", astrikPath])) {
-      resourcePathIndex = lodash.findIndex(resource, ["path", astrikPath]);
-      allowedMethods = resource[resourcePathIndex].methods;
-      return allowedMethods.includes(method);
+      let isAllowed = isMethodAllowed(
+        resource.filter(filterCallback("path", astrikPath)),
+        method
+      );
+      if (isAllowed) {
+        return true;
+      }
     }
     i++;
     subPath = subPath + "/" + pathArray[i];
@@ -50,10 +70,15 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
   subPath = pathArray[0];
   while (pathArray.length > i) {
     subPath = subPath + "/";
+    // console.log('subPath: ', subPath);
     if (lodash.find(resource, ["path", subPath])) {
-      resourcePathIndex = lodash.findIndex(resource, ["path", subPath]);
-      allowedMethods = resource[resourcePathIndex].methods;
-      return allowedMethods.includes(method);
+      let isAllowed = isMethodAllowed(
+        resource.filter(filterCallback("path", subPath)),
+        method
+      );
+      if (isAllowed) {
+        return true;
+      }
     }
     i++;
     subPath = subPath + pathArray[i];
@@ -147,7 +172,7 @@ const extractAclSubRolesData = (role, data) => {
   // data = lodash.pull(data, currentRoleAclData);
 
   // return acl data of child and child of child
-  let childResourcesData = childResources(data, children);
+  let childResourcesData = childrenResources(data, children);
 
   // return acl data of of child which contain current user role in parentRole array
   let parentResourcesData = resourceThroughParent(data, role);
@@ -163,10 +188,11 @@ const extractAclSubRolesData = (role, data) => {
   childResourcesData.denyResources.push(...denyResources);
 
   // log(childResourcesData);
+  // console.log(childResourcesData);
   return { ...childResourcesData };
 };
 
-let childResources = (aclData, firstChildData) => {
+let childrenResources = (aclData, firstChildData) => {
   // console.log('firstChildData: ', firstChildData);
   let children = [];
   let allowedResources = [];
@@ -186,31 +212,47 @@ let childResources = (aclData, firstChildData) => {
 
   lodash.uniq(allowedResources);
   lodash.uniq(denyResources);
+  // console.log(allowedResources)
   return { allowedResources, denyResources };
 };
 
 const resourceThroughParent = (aclData, role) => {
-  // console.log("role: ", role);
-  // console.log("aclData: ", aclData);
-  let parents = role;
-  // console.log('parents: ', parents);
+  // console.log("resourceThroughParent: ", role);
+
+  let parents = [role];
   let allowedResources = [];
   let denyResources = [];
   let data = aclData;
-  let iterator = (acl) => {
-    if (acl.parents.includes(parents)) {
-      return true;
-    }
-  };
-  while (lodash.find(data, iterator)) {
-    let acl = lodash.find(data, iterator);
-    if (!acl.aclStatus) break;
-    allowedResources.push(...acl.allowedResources);
-    denyResources.push(...acl.denyResources);
-    parents = acl.role;
-    data = lodash.pull(data, acl);
+
+  while (whileLoopCheck(data, parents)) {
+    data.filter((item) => {
+      if (arrayMatch(item.parents, parents)) {
+        allowedResources.push(...item.allowedResources);
+        denyResources.push(...item.denyResources);
+        let childrenResourcesData = childrenResources(data, item.children);
+        // console.log('childrenResourcesData: ', childrenResourcesData);
+        allowedResources.push(...childrenResourcesData.allowedResources);
+        denyResources.push(...childrenResourcesData.denyResources);
+        lodash.pull(data, item);
+        parents.push(...item.parents);
+        lodash.uniq(parents);
+      }
+    });
   }
-  // log(allowedResources, denyResources);
+  // console.log("asd", allowedResources, denyResources);
+  // console.log(parents);
+
   return { allowedResources, denyResources };
 };
+
+const arrayMatch = (arr1, arr2) => {
+  return arr1.some((data) => arr2.includes(data));
+};
+
+const whileLoopCheck = (data, roleInParent) => {
+  return data.some((data) => {
+    return arrayMatch(data.parents, roleInParent);
+  });
+};
+
 module.exports = { allowedResource, denyResource, extractAclSubRolesData };
