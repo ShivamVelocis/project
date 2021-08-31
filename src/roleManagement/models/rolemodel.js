@@ -2,14 +2,20 @@
 let mongoose = require("mongoose");
 
 let roleSchema = new mongoose.Schema({
-  title: {
+	role_name: {
     type: String,
     lowercase: true, trim: true,
     index: true,
     unique: true,
+  },
+  role_title: {
+    type: String,
+     trim: true,
+    index: true,
+    unique: true,
     required: [true, 'Role required'],
   },
-  status: {
+  role_status: {
     type: Number,
     max: [2, 'Must be either 0, 1 or 2: got {VALUE}'],
   }
