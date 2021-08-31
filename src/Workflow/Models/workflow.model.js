@@ -16,6 +16,15 @@ let WorkflowSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+WorkflowSchema.pre("save", async function (next) {
+  let data = await this.constructor.findOne({ module: this.module });
+  if (data) {
+    next(new Error("Worfkflow already available for this Module"));
+  } else {
+    next();
+  }
+});
+
 module.exports = mongoose.model("Workflow", WorkflowSchema);
 
 // 0-drafted
