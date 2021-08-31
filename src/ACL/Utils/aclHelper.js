@@ -230,23 +230,48 @@ const childrenResourcesAsParent = (aclData, role) => {
   let denyResources = [];
   let data = aclData;
 
-  while (whileLoopCheck(data, parents)) {
-    data.filter((item) => {
-      if (arrayMatch(item.parents, parents)) {
-        allowedResources.push(...item.allowedResources);
-        denyResources.push(...item.denyResources);
-        let childrenResourcesData = childrenResources(data, item.children);
-        // console.log('childrenResourcesData: ', childrenResourcesData);
-        allowedResources.push(...childrenResourcesData.allowedResources);
-        denyResources.push(...childrenResourcesData.denyResources);
-        lodash.pull(data, item);
-        parents.push(...item.parents);
-        lodash.uniq(parents);
-      }
-    });
-  }
+  let filterData = data.map((item) => {
+    if (arrayMatch(item.parents, parents)) {
+      allowedResources.push(...item.allowedResources);
+      denyResources.push(...item.denyResources);
+      let childrenResourcesData = childrenResources(data, item.children);
+      allowedResources.push(...childrenResourcesData.allowedResources);
+      denyResources.push(...childrenResourcesData.denyResources);
+    }
+  });
+
   return { allowedResources, denyResources };
 };
+
+// /**
+//  * Return acl data of child acls where role is in parent of other acls.
+//  * @param {Array} aclData Acl rule data.
+//  * @param {String} role Children of user role acl
+//  * @return {Object} Returns allowedResources and deniedResources.
+//  */
+// const childrenResourcesAsParent = (aclData, role) => {
+//   let parents = [role];
+//   let allowedResources = [];
+//   let denyResources = [];
+//   let data = aclData;
+
+//   while (whileLoopCheck(data, parents)) {
+//     data.filter((item) => {
+//       if (arrayMatch(item.parents, parents)) {
+//         allowedResources.push(...item.allowedResources);
+//         denyResources.push(...item.denyResources);
+//         let childrenResourcesData = childrenResources(data, item.children);
+//         // console.log('childrenResourcesData: ', childrenResourcesData);
+//         allowedResources.push(...childrenResourcesData.allowedResources);
+//         denyResources.push(...childrenResourcesData.denyResources);
+//         lodash.pull(data, item);
+//         // parents.push(...item.parents);
+//         // lodash.uniq(parents);
+//       }
+//     });
+//   }
+//   return { allowedResources, denyResources };
+// };
 
 /**
  * Check if there is common elements between two array.
