@@ -1,23 +1,21 @@
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 
-// generate JWT token
 /**
- * check resource user want to access.
+ * Generate JWT Token.
  * @param {Object} payload User data .
  * @param {string} secretKey key to encode token.
  * @param {string} expiresTime Expire time in seconds.
  * @return {string} return access token.
  */
 const generateJWTToken = async (payload, secretKey, expiresTime) => {
-  // console.log(payload, secretKey, expiresTime);
+  //
   let token = await jwt.sign(payload, `${secretKey}`, {
     expiresIn: Number(expiresTime),
   });
   return token;
 };
 
-// validates token provided by user
 /**
  * Check wheather token is valid or not
  * @param {string} token JWT token.
@@ -31,7 +29,6 @@ const validateToken = (token) => {
   }
 };
 
-//extract user data from token for later use
 /**
  * Check wheather token is valid or not
  * @param {string} token JWT token.
@@ -45,14 +42,13 @@ const decodeToken = (token) => {
   // return { id: userData.userId };
 };
 
-// generate new token for user so user remained logged in
 /**
+ * Generate new token for user so user remained logged in
  * @param {string} token JWT token.
  * @return {string} return new token.
  */
 const generaterefreshToken = async (token) => {
   let user = decodeToken(token);
-  // console.log(user)
   let refreshtoken = await generateJWTToken(
     user,
     process.env.ACCESS_TOKEN_SECRET,
@@ -61,6 +57,11 @@ const generaterefreshToken = async (token) => {
   return refreshtoken;
 };
 
+/**
+ * Extract token from request header
+ * @param {Object} req http(s) request object.
+ * @return {String} Return JWT token if token present in request header.
+ */
 const extractToken = (req) => {
   try {
     if (!req.headers.authorization) {

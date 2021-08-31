@@ -231,7 +231,7 @@ const childrenResourcesAsParent = (aclData, role) => {
   let data = aclData;
 
   let filterData = data.map((item) => {
-    if (arrayMatch(item.parents, parents)) {
+    if (arrayMatch(item.childOf, parents)) {
       allowedResources.push(...item.allowedResources);
       denyResources.push(...item.denyResources);
       let childrenResourcesData = childrenResources(data, item.children);
@@ -257,7 +257,7 @@ const childrenResourcesAsParent = (aclData, role) => {
 
 //   while (whileLoopCheck(data, parents)) {
 //     data.filter((item) => {
-//       if (arrayMatch(item.parents, parents)) {
+//       if (arrayMatch(item.childOf, parents)) {
 //         allowedResources.push(...item.allowedResources);
 //         denyResources.push(...item.denyResources);
 //         let childrenResourcesData = childrenResources(data, item.children);
@@ -265,7 +265,7 @@ const childrenResourcesAsParent = (aclData, role) => {
 //         allowedResources.push(...childrenResourcesData.allowedResources);
 //         denyResources.push(...childrenResourcesData.denyResources);
 //         lodash.pull(data, item);
-//         // parents.push(...item.parents);
+//         // parents.push(...item.childOf);
 //         // lodash.uniq(parents);
 //       }
 //     });
@@ -291,7 +291,7 @@ const arrayMatch = (arr1, arr2) => {
  */
 const whileLoopCheck = (data, roleInParent) => {
   return data.some((data) => {
-    return arrayMatch(data.parents, roleInParent);
+    return arrayMatch(data.childOf, roleInParent);
   });
 };
 

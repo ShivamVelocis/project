@@ -5,6 +5,7 @@ const aclHelper = require("../Utils/aclHelper");
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
   try {
+    // db call
     let result = await aclModel
       .findById(aclId)
       .populate({
@@ -27,6 +28,7 @@ const getAcl = async (req, res, next) => {
           resource_status: 1,
         },
       });
+    // check if db call return data
     if (!result) {
       res.status(404);
       return res.json({
@@ -36,6 +38,7 @@ const getAcl = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
+    // response
     res.status(200);
     return res.json({
       success: true,
@@ -85,6 +88,7 @@ const getAcl = async (req, res, next) => {
 
 const getAcls = async (req, res, next) => {
   try {
+    // pipeline for aggregate query
     let pipeline = [
       {
         $lookup: {
@@ -175,7 +179,9 @@ const getAcls = async (req, res, next) => {
         },
       },
     ];
+    // db call
     let result = await aclModel.aggregate(pipeline);
+    // if condition if db call return empty array
     if (!result || !result.length) {
       return res.json({
         success: false,
@@ -184,6 +190,7 @@ const getAcls = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     } else {
+      // if db call return array of records
       return res.json({
         success: true,
         message: CONFIG.ADD_ACL,
@@ -202,8 +209,11 @@ const addAcl = async (req, res, next) => {
     let allowedResources = req.body.allowedResources || [];
     let denyResources = req.body.denyResources || [];
     let children = req.body.children || [];
-    let parents = req.body.parents || [];
+    let childOf = req.body.childOf || [];
+    // checks if acl rule already avaliable for given role
     let dbData = await aclModel.findOne({ role: req.body.role });
+    // if acl rule already saved in db
+    // $addToSet added element(s) to array without duplicating
     if (dbData) {
       responseData = await aclModel.findOneAndUpdate(
         { role: req.body.role },
@@ -212,22 +222,24 @@ const addAcl = async (req, res, next) => {
             allowedResources: { $each: allowedResources },
             denyResources: { $each: denyResources },
             children: { $each: children },
-            parents: { $each: parents },
+            childOf: { $each: childOf },
           },
         },
         { new: true }
       );
     } else {
+      // if no acl rule avaliable with given role
       let newAcl = {
         role: req.body.role,
         allowedResources,
         denyResources,
-        parents: parents,
+        childOf: childOf,
         children: children,
       };
       let acl = new aclModel(newAcl);
       responseData = await acl.save();
     }
+
     res.status(201);
     return res.json({
       success: true,
@@ -240,16 +252,20 @@ const addAcl = async (req, res, next) => {
   }
 };
 
+// delete the resource,children and childOf from db
 const editAcl = async (req, res, next) => {
   aclId = req.body.id;
   let allowedResources = req.body.allowedResources || [];
   let denyResources = req.body.denyResources || [];
   let children = req.body.children || [];
-  let parents = req.body.parents || [];
+  let childOf = req.body.childOf || [];
   let updateAcl = {};
+
   if (req.body.aclStatus == 0 || req.body.aclStatus)
     updateAcl.aclStatus = req.body.aclStatus;
   try {
+    // $pull pull element from array in mongodb
+    // $set set new value for specified keys
     let updateACLRule = await aclModel.findByIdAndUpdate(
       aclId,
       {
@@ -257,7 +273,7 @@ const editAcl = async (req, res, next) => {
           allowedResources: { $in: allowedResources },
           denyResources: { $in: denyResources },
           children: { $in: children },
-          parents: { $in: parents },
+          childOf: { $in: childOf },
         },
         $set: updateAcl,
       },
@@ -279,6 +295,7 @@ const deletAcl = async (req, res, next) => {
   aclId = req.body.id;
   try {
     let result = await aclModel.findByIdAndRemove(aclId);
+
     if (!result) {
       res.status(200);
       return res.json({
@@ -288,6 +305,7 @@ const deletAcl = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
+
     res.status(200);
     return res.json({
       success: true,

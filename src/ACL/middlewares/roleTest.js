@@ -2,7 +2,10 @@ const lodash = require("lodash");
 const aclModel = require("../models/aclModel");
 const aclHelper = require("../utils/aclHelper");
 
-// Middleware
+/**
+ * Middleware
+ * check if user allowed to access requested uri based on user role available in req.userRole
+ */
 const isPermitted = async (req, res, next) => {
   let dbRoleData;
   let aclData = await aclModel
