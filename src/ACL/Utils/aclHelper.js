@@ -230,15 +230,19 @@ const childrenResourcesAsParent = (aclData, role) => {
   let denyResources = [];
   let data = aclData;
 
-  let filterData = data.map((item) => {
-    if (arrayMatch(item.childOf, parents)) {
-      allowedResources.push(...item.allowedResources);
-      denyResources.push(...item.denyResources);
-      let childrenResourcesData = childrenResources(data, item.children);
-      allowedResources.push(...childrenResourcesData.allowedResources);
-      denyResources.push(...childrenResourcesData.denyResources);
-    }
-  });
+  while (whileLoopCheck(data, parents)) {
+    let filterData = data.map((item) => {
+      if (arrayMatch(item.childOf, parents)) {
+        allowedResources.push(...item.allowedResources);
+        denyResources.push(...item.denyResources);
+        let childrenResourcesData = childrenResources(data, item.children);
+        allowedResources.push(...childrenResourcesData.allowedResources);
+        denyResources.push(...childrenResourcesData.denyResources);
+        parents.push(item.role);
+        lodash.pull(data, item);
+      }
+    });
+  }
 
   return { allowedResources, denyResources };
 };

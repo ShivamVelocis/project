@@ -1,6 +1,7 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
 const aclHelper = require("../Utils/aclHelper");
+const tester = require("../Utils/helperTest");
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -384,6 +385,29 @@ const aclCheck = async (req, res) => {
   }
 };
 
+const getAllChildrenData = async (req, res, next) => {
+  try {
+    let aclData = await aclModel
+      .find({ aclStatus: 1 })
+      .populate({
+        path: "allowedResources",
+        match: { resource_status: 1 },
+        select: { module: 0, __v: 0 },
+      })
+      .populate({
+        path: "denyResources",
+        match: { resource_status: 1 },
+        select: { module: 0, __v: 0 },
+      });
+
+    let dbRoleData = tester.extractAclSubRolesData(req.userRole, aclData);
+
+    res.send(dbRoleData);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   addAcl,
   editAcl,
@@ -391,4 +415,5 @@ module.exports = {
   getAcls,
   getAcl,
   aclCheck,
+  getAllChildrenData,
 };
