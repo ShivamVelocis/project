@@ -146,46 +146,31 @@ const denyResource = (resource, resourceToBeAccess, method) => {
 };
 
 // -----------------------------------check deny resources end-------------------
-
 /**
  * Return acl data of all children acls.
  * @param {String} role User role.
  * @param {Array} data All acl rules data.
  * @return {Object} Returns allowedResources and deniedResources.
  */
-const extractAclSubRolesData = (role, data) => {
+const extractAclSubRulessData = (role, data) => {
   let children = [];
-  let allowedResources = [];
-  let denyResources = [];
 
   // extract data of current role
   let currentRoleAclData = lodash.find(data, ["role", role]);
-  // console.log('currentRoleAclData: ', currentRoleAclData);
 
   // push current acl role data into arrays
   children.push(...currentRoleAclData.children);
-  // console.log('children: ', children);
-  allowedResources.push(...currentRoleAclData.allowedResources);
-  denyResources.push(...currentRoleAclData.denyResources);
 
   // return acl data of child and child of child
   let childResourcesData = childrenResources(data, children);
 
   // return acl data of of child which contain current user role in parentRole array
   let parentResourcesData = childrenResourcesAsParent(data, role);
-
-  // concat resources from return data of above two function
-  childResourcesData.allowedResources.push(
-    ...parentResourcesData.allowedResources
+  childResourcesData.acls.push(
+    ...parentResourcesData.acls.filter(Boolean),
+    currentRoleAclData
   );
-  childResourcesData.denyResources.push(...parentResourcesData.denyResources);
 
-  // concat role resources
-  childResourcesData.allowedResources.push(...allowedResources);
-  childResourcesData.denyResources.push(...denyResources);
-
-  // log(childResourcesData);
-  // console.log(childResourcesData);
   return { ...childResourcesData };
 };
 
@@ -197,25 +182,20 @@ const extractAclSubRolesData = (role, data) => {
  */
 let childrenResources = (aclData, firstChildData) => {
   let children = [];
-  let allowedResources = [];
-  let denyResources = [];
+  let acls = [];
 
   children.push(...firstChildData);
 
   aclData.map((acl) => {
     if (children.includes(acl.role) && acl.aclStatus) {
       children.push(...acl.children);
-      allowedResources.push(...acl.allowedResources);
-      denyResources.push(...acl.denyResources);
+      acls.push(acl);
     }
     lodash.uniq(children);
     return;
   });
 
-  lodash.uniq(allowedResources);
-  lodash.uniq(denyResources);
-  // console.log(allowedResources)
-  return { allowedResources, denyResources };
+  return { acls };
 };
 
 /**
@@ -225,57 +205,24 @@ let childrenResources = (aclData, firstChildData) => {
  * @return {Object} Returns allowedResources and deniedResources.
  */
 const childrenResourcesAsParent = (aclData, role) => {
+  //   console.log("aclData, role: ", aclData, role);
   let parents = [role];
-  let allowedResources = [];
-  let denyResources = [];
   let data = aclData;
-
+  let acls = [];
   while (whileLoopCheck(data, parents)) {
-    let filterData = data.map((item) => {
+    data.filter((item) => {
       if (arrayMatch(item.childOf, parents)) {
-        allowedResources.push(...item.allowedResources);
-        denyResources.push(...item.denyResources);
+        acls.push(item);
         let childrenResourcesData = childrenResources(data, item.children);
-        allowedResources.push(...childrenResourcesData.allowedResources);
-        denyResources.push(...childrenResourcesData.denyResources);
         parents.push(item.role);
+        acls.push(childrenResourcesData.acl);
         lodash.pull(data, item);
       }
     });
   }
 
-  return { allowedResources, denyResources };
+  return { acls };
 };
-
-// /**
-//  * Return acl data of child acls where role is in parent of other acls.
-//  * @param {Array} aclData Acl rule data.
-//  * @param {String} role Children of user role acl
-//  * @return {Object} Returns allowedResources and deniedResources.
-//  */
-// const childrenResourcesAsParent = (aclData, role) => {
-//   let parents = [role];
-//   let allowedResources = [];
-//   let denyResources = [];
-//   let data = aclData;
-
-//   while (whileLoopCheck(data, parents)) {
-//     data.filter((item) => {
-//       if (arrayMatch(item.childOf, parents)) {
-//         allowedResources.push(...item.allowedResources);
-//         denyResources.push(...item.denyResources);
-//         let childrenResourcesData = childrenResources(data, item.children);
-//         // console.log('childrenResourcesData: ', childrenResourcesData);
-//         allowedResources.push(...childrenResourcesData.allowedResources);
-//         denyResources.push(...childrenResourcesData.denyResources);
-//         lodash.pull(data, item);
-//         // parents.push(...item.childOf);
-//         // lodash.uniq(parents);
-//       }
-//     });
-//   }
-//   return { allowedResources, denyResources };
-// };
 
 /**
  * Check if there is common elements between two array.
@@ -294,9 +241,40 @@ const arrayMatch = (arr1, arr2) => {
  * @return {Boolean} True if there is a role
  */
 const whileLoopCheck = (data, roleInParent) => {
+  //   console.log("data, roleInParent: ", data, roleInParent);
   return data.some((data) => {
     return arrayMatch(data.childOf, roleInParent);
   });
 };
 
-module.exports = { allowedResource, denyResource, extractAclSubRolesData };
+const extractResourcesFromAcls = (userRole, aclData) => {
+  // console.log("data: ", data);
+  let data = extractAclSubRulessData(userRole, aclData).acls;
+  let allowedResources = [];
+  let denyResources = [];
+  data
+    .map((acl) => {
+      let newObj = {};
+      if (
+        (acl.allowedResources && acl.allowedResources.length) ||
+        (acl.denyResources && acl.denyResources.length)
+      ) {
+        newObj.allowedResources = acl.allowedResources;
+        newObj.denyResources = acl.denyResources;
+      }
+      return !lodash.isEmpty(newObj) ? newObj : null;
+    })
+    .filter(Boolean)
+    .map((item) => {
+      allowedResources.push(...item.allowedResources);
+      denyResources.push(...item.denyResources);
+    });
+  return { allowedResources, denyResources };
+};
+
+module.exports = {
+  allowedResource,
+  denyResource,
+  extractAclSubRulessData,
+  extractResourcesFromAcls,
+};
