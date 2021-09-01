@@ -1,36 +1,54 @@
+const lodash = require("lodash");
 const aclModel = require("../models/aclModel");
 const aclHelper = require("../Utils/aclHelper");
 
-// Middleware
+/**
+ * Middleware
+ * check if user allowed to access requested uri based on user role available in req.userRole
+ */
 const isPermitted = async (req, res, next) => {
-  // fetching data from db of particuler role
-  // console.log(req.originalUrl);
-  let userRole = req.userRole;
-  let dbRoleData = await aclModel
-    .findOne({ role : userRole })
+  let dbRoleData;
+  let aclData = await aclModel
+    .find({ aclStatus: 1 })
     .populate({
       path: "allowedResources",
+      match: { resource_status: 1 },
       select: { module: 0, __v: 0 },
     })
     .populate({
       path: "denyResources",
+      match: { resource_status: 1 },
       select: { module: 0, __v: 0 },
     });
+  // console.log('aclData: ', aclData);
+
+  if (
+    aclData &&
+    aclData.length &&
+    lodash.find(aclData, ["role", req.userRole])
+  ) {
+    dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
+    // console.log('dbRoleData: ', dbRoleData);
+  }
 
   let isAllowed = false;
-  // console.log(dbRoleData)
-  if (userRole && dbRoleData) {
+  if (req.userRole && dbRoleData) {
     let allowedResources = dbRoleData.allowedResources.map((resource) => {
+      // console.log('resource: ', resource);
       return { path: resource.resource_path, methods: resource.methods };
     });
     let denyResources = dbRoleData.denyResources.map((resource) => {
       return { path: resource.resource_path, methods: resource.methods };
     });
-    // console.log(allowedResources);
+    console.log(
+      aclHelper.allowedResource(allowedResources, req.originalUrl, req.method)
+    );
     isAllowed =
-    aclHelper.allowedResource(allowedResources, req.originalUrl, req.method) &&
-    aclHelper.denyResource(denyResources, req.originalUrl, req.method);
-    // console.log(allowedResources, req.originalUrl, req.method);
+      aclHelper.allowedResource(
+        allowedResources,
+        req.originalUrl,
+        req.method
+      ) && aclHelper.denyResource(denyResources, req.originalUrl, req.method);
   }
 
   if (isAllowed) return next();

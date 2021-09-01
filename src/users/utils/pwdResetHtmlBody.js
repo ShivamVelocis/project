@@ -39,12 +39,13 @@ exports.resetPwdBody = (resetLink, otp) => {
 <body>
     <div class="container">
         <div class="heading">
-            <p>Someone (hopefully you) has requested a password reset for your Heroku account. Follow the link below to
+            <p>Someone (hopefully you) has requested a password reset for your Nodejs_API account. Follow the link below to
                 set a new password:</p>
         </div>
-        <div class="linkbody"><a href=${resetLink}>
+        <div class="linkbody">
+        <a href=${resetLink}>
                 <button>Reset Password</button>
-            </a>
+        </a>
 
 
         </div>

@@ -164,9 +164,27 @@ exports.updateContentStatus = async (req, res, next) => {
 exports.contentPublish = async (req, res, next) => {
   let id = req.params.id;
   try {
+    let contentData = await Content.findOne({ _id: id });
+    console.log(contentData);
+    if (contentData.content_status == 1) {
+      return res.json({
+        success: false,
+        message: "Content already published",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+    if (contentData.content_status != 0 && contentData.content_status != 2) {
+      return res.json({
+        success: false,
+        message: "Content is in workflow",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
     let result = await Content.findOneAndUpdate(
       { _id: id },
-      { $set: { content_status: 5 } },
+      { $set: { content_status: 1 } },
       { new: true }
     );
     if (result !== undefined && result !== null) {

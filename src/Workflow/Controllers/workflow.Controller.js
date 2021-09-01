@@ -1,6 +1,7 @@
 const WorkflowModel = require("../Models/workflow.model");
 const { CONFIG } = require("../Configs/config");
 
+// fetch workflow data 
 const getWorkflows = async (req, res, next) => {
   try {
     let filter = {};
@@ -32,6 +33,7 @@ const getWorkflows = async (req, res, next) => {
   }
 };
 
+// add new workflow
 const addWorkflow = async (req, res, next) => {
   try {
     let newWorkflow = new WorkflowModel(req.body);
@@ -55,6 +57,7 @@ const addWorkflow = async (req, res, next) => {
   }
 };
 
+// delete workflow
 const deleteWorkflow = async (req, res, next) => {
   try {
     let result = await WorkflowModel.findByIdAndDelete(req.body.id);
