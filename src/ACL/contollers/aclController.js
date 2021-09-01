@@ -1,7 +1,7 @@
 const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
 const aclHelper = require("../Utils/aclHelper");
-const tester = require("../Utils/helperTest");
+
 
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
@@ -344,7 +344,7 @@ const aclCheck = async (req, res) => {
     // console.log('aclData: ', aclData);
 
     if (aclData && aclData.length && lodash.find(aclData, ["role", userRole])) {
-      dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
+      dbRoleData = aclHelper.extractAclSubRulesData(req.userRole, aclData);
     }
 
     if (userRole && dbRoleData) {
@@ -400,8 +400,8 @@ const getAllChildrenData = async (req, res, next) => {
         select: { module: 0, __v: 0 },
       });
 
-    let dbRoleData = tester.extractAclSubRolesData(req.userRole, aclData);
-
+    let dbRoleData = aclHelper.extractAclSubRulesData(req.userRole, aclData);
+    // console.log(tester.extractResourcesFromAcls(dbRoleData.acls));
     res.send(dbRoleData);
   } catch (error) {
     next(error);

@@ -77,7 +77,7 @@ app.use((error, req, res, _next) => {
 //Server start after mongoose connection open
 mongoose.connection.once("open", function callback() {
   app.listen(process.env.PORT || 5000, () =>
-    console.log(`Example app listening on port ${process.env.PORT}!`)
+    console.log(`> App listening on port ${process.env.PORT}!`)
   );
 });
 

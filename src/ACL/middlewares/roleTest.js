@@ -27,14 +27,15 @@ const isPermitted = async (req, res, next) => {
     aclData.length &&
     lodash.find(aclData, ["role", req.userRole])
   ) {
-    dbRoleData = aclHelper.extractAclSubRolesData(req.userRole, aclData);
-    // console.log('dbRoleData: ', dbRoleData);
+    dbRoleData = aclHelper.extractResourcesFromAcls(req.userRole, aclData);
+    // console.log("dbRoleData: ", dbRoleData);
   }
 
   let isAllowed = false;
   if (req.userRole && dbRoleData) {
+    // console.log("dbRoleData: ", dbRoleData);
     let allowedResources = dbRoleData.allowedResources.map((resource) => {
-      // console.log('resource: ', resource);
+      // console.log("resource: ", resource);
       return { path: resource.resource_path, methods: resource.methods };
     });
     let denyResources = dbRoleData.denyResources.map((resource) => {
