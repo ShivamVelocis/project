@@ -152,7 +152,7 @@ const denyResource = (resource, resourceToBeAccess, method) => {
  * @param {Array} data All acl rules data.
  * @return {Object} Returns allowedResources and deniedResources.
  */
-const extractAclSubRulessData = (role, data) => {
+const extractAclSubRulesData = (role, data) => {
   let children = [];
 
   // extract data of current role
@@ -249,7 +249,7 @@ const whileLoopCheck = (data, roleInParent) => {
 
 const extractResourcesFromAcls = (userRole, aclData) => {
   // console.log("data: ", data);
-  let data = extractAclSubRulessData(userRole, aclData).acls;
+  let data = extractAclSubRulesData(userRole, aclData).acls;
   let allowedResources = [];
   let denyResources = [];
   data
@@ -275,6 +275,6 @@ const extractResourcesFromAcls = (userRole, aclData) => {
 module.exports = {
   allowedResource,
   denyResource,
-  extractAclSubRulessData,
+  extractAclSubRulesData,
   extractResourcesFromAcls,
 };

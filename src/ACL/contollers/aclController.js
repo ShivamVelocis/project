@@ -400,7 +400,7 @@ const getAllChildrenData = async (req, res, next) => {
         select: { module: 0, __v: 0 },
       });
 
-    let dbRoleData = aclHelper.extractAclSubRulessData(req.userRole, aclData);
+    let dbRoleData = aclHelper.extractAclSubRulesData(req.userRole, aclData);
     // console.log(tester.extractResourcesFromAcls(dbRoleData.acls));
     res.send(dbRoleData);
   } catch (error) {
