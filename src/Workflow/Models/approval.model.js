@@ -11,4 +11,4 @@ let ApprovalSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("ApprovalV2", ApprovalSchema);
+module.exports = mongoose.model("approval", ApprovalSchema);

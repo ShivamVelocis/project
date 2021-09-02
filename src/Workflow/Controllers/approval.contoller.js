@@ -4,20 +4,19 @@ const lodash = require("lodash");
 const { CONFIG } = require("../Configs/config");
 
 // 0->Draft
-// 1->Published/inititiated
+// 1->Published
 // 2->Unpublished
 // 3->Approved
 // 4->Recjected
-// 5-> level 1
+// 5-> level 1/intialize
 // 6-> level 2
 // 7-> level 3
 // 8-> level 4
 
 // return action available for approver
-const getApprovalData = async (req, res, next) => {
+const nextActionAllowed = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findOne({ id: req.params.id });
-
     if (!approvalData) {
       return res.json({
         success: false,
@@ -30,6 +29,7 @@ const getApprovalData = async (req, res, next) => {
     let workFlowData = await WorkflowModel.findOne({
       module: approvalData.module,
     });
+    // console.log(workFlowData);
 
     if (!workFlowData) {
       return res.json({
@@ -45,7 +45,6 @@ const getApprovalData = async (req, res, next) => {
       return state.wfLevel == approvalData.level;
     });
 
-    //
     if (!state) {
       return res.json({
         success: false,
@@ -55,10 +54,34 @@ const getApprovalData = async (req, res, next) => {
       });
     }
 
+    if (!state.wfNextActions.length) {
+      return res.json({
+        success: false,
+        message: "Workflow already completed",
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
+
+    const findActionName = (actions) => {
+      let nextActions = [];
+      actions.map((action) => {
+        workFlowData.states.map((state) => {
+          if (state.wfLevel == action.nextAction) {
+            nextActions.push({
+              wfLevel: action.nextAction,
+              wfLevelName: state.wfLevelName,
+            });
+          }
+        });
+      });
+      return nextActions;
+    };
+
     return res.json({
       success: true,
       message: CONFIG.ACTIONS_ALLOWED,
-      data: state.wfNextActions,
+      data: findActionName(state.wfNextActions),
       accesstoken: req.accesstoken,
     });
   } catch (error) {
@@ -67,7 +90,7 @@ const getApprovalData = async (req, res, next) => {
 };
 
 // approver action
-const approval = async (req, res, next) => {
+const approvalAction = async (req, res, next) => {
   try {
     //
     let approvalData = await ApprovalModel.findOne({ id: req.body.id });
@@ -204,7 +227,7 @@ const getWfStatu = async (req, res, next) => {
 };
 
 // to item to aprroval table/collection for wrokflow
-const addToapproval = async (req, res, next) => {
+const addForApproval = async (req, res, next) => {
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
     // console.log(isDuplicate);
@@ -268,9 +291,9 @@ const getApprovalsData = async (req, res, next) => {
 };
 
 module.exports = {
-  getApprovalData,
-  approval,
+  nextActionAllowed,
+  approvalAction,
   getWfStatu,
-  addToapproval,
+  addForApproval,
   getApprovalsData,
 };
