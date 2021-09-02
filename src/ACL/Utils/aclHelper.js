@@ -169,7 +169,7 @@ const extractAclSubRulesData = (role, data) => {
   let childResourcesData = childrenResources(data, children);
 
   // return acl data of of child which contain current user role in parentRole array
-  let parentResourcesData = childrenResourcesAsParent(data, role);
+  let parentResourcesData = childOfResources(data, role);
   childResourcesData.acls.push(
     ...parentResourcesData.acls.filter(Boolean),
     currentRoleAclData
@@ -208,7 +208,7 @@ let childrenResources = (aclData, firstChildData) => {
  * @param {String} role Children of user role acl
  * @return {Object} Returns allowedResources and deniedResources.
  */
-const childrenResourcesAsParent = (aclData, role) => {
+const childOfResources = (aclData, role) => {
   //   console.log("aclData, role: ", aclData, role);
   let parents = [role];
   let data = aclData;
