@@ -1,15 +1,15 @@
-const Role = require("../models/rolemodel.js");
+const Feedback = require("../models/feedbackModels.js");
 const Configs = require("../configs/config");
 const { check, validationResult } = require('express-validator');
-exports.addRole = async (req, res) => {
-	console.log("jyoti");
-  try {
-	  var name=req.body.title.replace(' ','_');
-	  console.log(name);
+
+
+exports.addFeedback = async (req, res) => {
+	
+		try {
 	 var form_data = {
-	  role_name:name,
-      role_title: req.body.title,
-      role_status: req.body.status,
+      title: req.body.title,
+	  email:req.body.email,
+      description: req.body.description,
     };
 	
 	  //Validation
@@ -26,29 +26,53 @@ exports.addRole = async (req, res) => {
         data: null,
       });
     } else {
-      let role = new Role(form_data);
-      let saveRole = await role.save();
+      let feedback = new Feedback(form_data);
+      let saveFeedback = await feedback.save();
+	  console.log(saveFeedback);
       return res.json({
 		       success:true,
-               message: "Role added successfully",
-              data: saveRole,
+               message: "Feedback added successfully",
+              data: saveFeedback,
 			  
       });
     }
 
   } catch (error) {
-	  console.log(error);
+	   console.log(error);
 	  return res.json({
 		       success:false,
-               message: "title already exist in database",
+               message: "title and user name already exist in database",
 			  
       });
-     
+    
+  }
+	
+};
+
+exports.getFeedback = async (req, res) => {
+	let id = req.params.id;
+  try {
+    let result = await Feedback.findById(id);
+	if (result !== undefined && result !== null) {
+      return res.json({
+        success: true,
+        message: "Feedback data",
+        data: result,
+      });
+  }else{
+	  return res.json({
+        success: false,
+        message: "feedback id does not exist in database",
+      });
+  }
+  }catch (error) {
+    console.log(error);
   }
 };
 
-exports.getAllRole = async (req, res) => {
-  try {
+exports.getAllFeedback = async (req, res) => {
+	
+	try {
 	let errorsExtract = [];
     let validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -62,10 +86,10 @@ exports.getAllRole = async (req, res) => {
         data: null,
       });
     }else{
-    let resultdata = await Role.find({});
+    let resultdata = await Feedback.find({});
 	return res.json({
         success: true,
-        message: "All Role fetch successfully",
+        message: "All Feedback fetch successfully",
         data: resultdata,
       });
   }
@@ -75,10 +99,9 @@ exports.getAllRole = async (req, res) => {
     }
 };
 
-
-exports.removeRole = async (req, res) => {
-  let id = req.params.id;
- // console.log(id);
+exports.removeFeedback = async (req, res) => {
+	
+	  let id = req.params.id;
   try {
     let errorsExtract = [];
     let validationErrors = validationResult(req);
@@ -93,33 +116,30 @@ exports.removeRole = async (req, res) => {
         data: null,
       }); 
     }else{
-		 let result = await Role.findOneAndRemove({ _id: id });
-		  if (result !== undefined && result !== null) {
+		 let result = await Feedback.findOneAndRemove({ _id: id });
+		 console.log(result);
+		 	if (result !== undefined && result !== null) {
 		 return res.json({
 		       success:true,
-               message: "Role deleted successfully", 
-      });
-		  }else{
-			  res.status(404);
-            return res.json({
-             success: false,
-            message: "role id does not exist in database",
-            data: [],
-           accesstoken: req.accesstoken,
-      });
-		  }
+               message: "Feedback deleted successfully", 
+                  });
+			}else{
+				return res.json({
+		       success:false,
+               message: "Feedback id does not exist in database", 
+                  });
+			}
 	}
   } catch (error) {
 	  console.log(error);
   }
+	
+
 };
 
-exports.updateRole = async (req, res,next) => {
-  let id = req.body.id;
-  var updatedRole = {
-      role_title: req.body.title,
-      role_status: req.body.status,
-    };
+exports.updateFeedback = async (req, res,next) => {
+   let id = req.body.id;
+  let updatedFeedback = req.body;
   try {
 	  let errorsExtract = [];
     let validationErrors = validationResult(req);
@@ -134,16 +154,17 @@ exports.updateRole = async (req, res,next) => {
         data: null,
       }); 
     }else{
-    let result = await Role.findOneAndUpdate(
+    let result = await Feedback.findOneAndUpdate(
       { _id: id },
-      { $set: updatedRole },
+      { $set: updatedFeedback },
       { new: true }
     );
+	console.log(result);
     if (result !== undefined && result !== null) {
       res.status(200);
       return res.json({
         success: true,
-        message: "role updtaed successfully",
+        message: "feedback updated succeessfully",
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -151,7 +172,7 @@ exports.updateRole = async (req, res,next) => {
       res.status(404);
       return res.json({
         success: false,
-        message: "role id not exist in database",
+        message: "feedback id does not exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
@@ -161,40 +182,11 @@ exports.updateRole = async (req, res,next) => {
 	  res.status(404);
       return res.json({
         success: false,
-        message: " title already exist in database",
+        message: "feedback id does not exist in database",
         data: [],
         accesstoken: req.accesstoken,
       });
-   next(error);
+    //next(error);
   }
-};
-exports.getRole = async (req, res) => {
-  let id = req.params.id;
-  try {
-    let result = await Role.findById(id);
-    //console.log(result);
-	if (result !== undefined && result !== null) {
-      return res.json({
-        success: true,
-        message: "Role data",
-        data: result,
-      });
-  }else{
-	  res.status(404);
-      return res.json({
-        success: false,
-        message: "role id not exist in database",
-        data: [],
-        accesstoken: req.accesstoken,
-      });
-  }
-  }catch (error) {
-	   res.status(404);
-      return res.json({
-        success: false,
-        message: "role id does not exist in database",
-        data: [],
-        accesstoken: req.accesstoken,
-      });
-  }
+	
 };

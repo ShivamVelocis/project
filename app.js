@@ -20,6 +20,7 @@ const moduleRouter = require("./src/master/Routes/moduleRouter");
 const resourceRouter = require("./src/master/Routes/resourceRouter");
 const roleRouter = require("./src/roleManagement/routes/roleRoute");
 const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
+const feedbackRouter = require("./src/FeedbackManagement/routes/feedbackRoutes");
 const workflowRouter = require("./src/Workflow/Routers/workflow.routes");
 const approvalRouter = require("./src/Workflow/Routers/approval.routes");
 
@@ -37,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 //assign role to every incoming resquest
 app.use(assignRole);
 
-//Authentication request
+//Authorization check
 app.use(auth().unless({ path: [{ url: "/user/login", methods: ["POST"] }] }));
 
 //Router
@@ -48,10 +49,11 @@ app.use("/module", moduleRouter);
 app.use("/resource", resourceRouter);
 app.use("/role", roleRouter);
 app.use("/contactus", contactusRouter);
+app.use("/feedback", feedbackRouter);
 app.use("/workflow", workflowRouter);
 app.use("/approve", approvalRouter);
 
-//handle wild URI
+//handle wild card URI
 app.use((_req, _res, next) => {
   const error = new Error("URL not found");
   error.status = 404;
@@ -60,7 +62,7 @@ app.use((_req, _res, next) => {
 
 //Error handler
 app.use((error, req, res, _next) => {
-  console.log("Final error handle Middleware--->", error);
+  console.log("> Final error handle Middleware--->", error);
   res.status(error.status || 500);
   return res.json({
     message: error.message ? error.message : error,
@@ -73,12 +75,12 @@ app.use((error, req, res, _next) => {
 //Server start after mongoose connection open
 mongoose.connection.once("open", function callback() {
   app.listen(process.env.APP_PORT || 5000, () =>
-    console.log(`> API listening on port ${process.env.APP_PORT}!`)
+    console.log(`Example app listening on port ${process.env.APP_PORT}!`)
   );
 });
 
 //Error on mongoose connection
 mongoose.connection.on("error", function (err) {
-  console.log("Could not connect to mongo server!");
+  console.log("> Could not connect to mongo server!");
   return console.error(err.message);
 });

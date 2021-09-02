@@ -7,7 +7,7 @@ const {  contentValidationRules, mongoIDValidationRules, validate} = require("..
 router.post("/", contentValidationRules(), validate, controller.addRole);
 router.get("/", controller.getAllRole);
 router.get("/:id",mongoIDValidationRules(),validate, controller.getRole);
-router.put("/:id",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateRole);
+router.put("/",mongoIDValidationRules(),contentValidationRules(), validate, controller.updateRole);
 router.delete("/:id", mongoIDValidationRules(),validate, controller.removeRole);
 
 module.exports = router;

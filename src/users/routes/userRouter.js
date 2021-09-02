@@ -9,7 +9,7 @@ const { uploadProfilePicture } = require("../utils/uploadHandler");
 
 //User management
 router.get("/", userController.getUsers); 
-router.post("/",Validtor.addUserRules(), userController.addUser);
+router.post("/",Validtor.addUserRules(),Validtor.isRequestValid, userController.addUser);
 router.put("/",Validtor.updateUsernRules(),Validtor.isRequestValid,userController.updateUser);
 router.delete("/", Validtor.deleteUserRule(), Validtor.isRequestValid , userController.removeUser); 
 
@@ -19,7 +19,7 @@ router.post("/login", authController.userLogin); //genrate token and send to use
 //forget password and reset using otp and link send to email
 router.post("/forgetpassword/",Validtor.forgetpasswordRule(),Validtor.isRequestValid, authController.forgetPassword); //add otp and token for url expiry to db and sent same to registered user if 
 router.post("/pwdreset/:token", Validtor.otpPasswordRule(),Validtor.isRequestValid,authController.otpVerification); // reset user password if url not expired and redirect to login page
-
+router.post("/auth",authController.userValidation);
 
 //admin change other users password
 router.post('/changepwd/',Validtor.changePasswordRule(),Validtor.isRequestValid,authController.changePassword)
@@ -29,7 +29,7 @@ router.post('/change-my-password/',Validtor.changeMyPasswordRule(),Validtor.isRe
 
 
 //Profile Picture
-router.get('/profile/',Validtor.getUserProfileRule(),userController.getProfilePicture)
+router.get('/profile/',userController.getProfilePicture)
 router.post('/profile/',uploadProfilePicture,userController.uploadProfilePicture)
 
 

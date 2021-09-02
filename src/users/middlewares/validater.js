@@ -8,6 +8,7 @@ exports.addUserRules = () => {
     body("email")
       .exists()
       .withMessage(CONFIG.INVALID_EMAIL)
+      .bail()
       .isEmail()
       .withMessage(CONFIG.INVALID_EMAIL),
 
@@ -20,6 +21,7 @@ exports.addUserRules = () => {
     body("role_id")
       .exists()
       .withMessage(CONFIG.INVALID_ROLE)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
@@ -30,13 +32,13 @@ exports.addUserRules = () => {
     body("username")
       .exists()
       .withMessage(CONFIG.EMPTY_USER_NAME)
+      .bail()
       .matches(CONFIG.CHARONLYREGEX)
+      .withMessage(CONFIG.CHARACTER_ONLY)
+      .bail()
       .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_USER_NAME);
-        }
-        if (value.match(CONFIG.TITLE_PATTERN) == null) {
-          throw new Error(CONFIG.INVALID_USER_NAME);
         }
         return true;
       }),
@@ -44,13 +46,16 @@ exports.addUserRules = () => {
     body("user_status")
       .exists()
       .withMessage(CONFIG.INVALID_STATUS)
-      .isIn([0, 1]),
+      .bail()
+      .isIn([0, 1])
+      .withMessage(CONFIG.INVALID_USER_STATUS),
 
     check("first_name")
       .notEmpty()
       .withMessage("The first name is require")
+      .bail()
       .matches(CONFIG.CHARONLYREGEX)
-      .withMessage("Only allow characters"),
+      .withMessage(CONFIG.CHARACTER_ONLY),
   ];
 };
 
@@ -59,16 +64,18 @@ exports.updateUsernRules = () => {
   return [
     body("id")
       .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
       .custom((value) => {
         if (!ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
+
     body("email")
       .optional()
       .matches(/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/)
-      .withMessage("Email is not valid.")
       .withMessage(CONFIG.INVALID_EMAIL),
 
     body("role_id")
@@ -85,42 +92,52 @@ exports.updateUsernRules = () => {
     check("first_name")
       .optional()
       .matches(CONFIG.CHARONLYREGEX)
-      .withMessage(
-        "Special characters are not allowed in the first name field"
-      ),
+      .withMessage(CONFIG.CHARACTER_ONLY),
   ];
 };
 
 exports.getUserRule = () => {
   return [
-    param("id").custom((value) => {
-      if (!ObjectId(value)) {
-        throw new Error(CONFIG.INVALID_MONGO_ID);
-      }
-      return true;
-    }),
+    param("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGO_ID);
+        }
+        return true;
+      }),
   ];
 };
 
 exports.deleteUserRule = () => {
   return [
-    body("id").custom((value) => {
-      if (!ObjectId(value)) {
-        throw new Error(CONFIG.INVALID_MONGO_ID);
-      }
-      return true;
-    }),
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGO_ID);
+        }
+        return true;
+      }),
   ];
 };
 
 exports.getUserProfileRule = () => {
   return [
-    body("id").custom((value) => {
-      if (!ObjectId(value)) {
-        throw new Error(CONFIG.INVALID_MONGO_ID);
-      }
-      return true;
-    }),
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGO_ID);
+        }
+        return true;
+      }),
   ];
 };
 
@@ -130,27 +147,35 @@ exports.changeMyPasswordRule = () => {
     body("currentPassword")
       .exists()
       .withMessage(CONFIG.INVALID_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_CURRENT_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
+
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
+
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_CURRENT_PASSWORD)
-      .custom((value,{ req }) => {
+      .bail()
+      .custom((value, { req }) => {
         if (value !== req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
         }
@@ -161,20 +186,36 @@ exports.changeMyPasswordRule = () => {
 //change password request body validator
 exports.changePasswordRule = () => {
   return [
+    body("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGO_ID);
+        }
+        return true;
+      }),
+
     body("newPassword")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
+
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .custom((value, { req }) => {
         if (value != req.body.newPassword) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
@@ -189,6 +230,7 @@ exports.otpPasswordRule = () => {
     body("otp")
       .exists()
       .withMessage(CONFIG.EMPTY_OTP)
+      .bail()
       .custom((value) => {
         if (value == "") {
           throw new Error(CONFIG.EMPTY_OTP);
@@ -198,21 +240,27 @@ exports.otpPasswordRule = () => {
         }
         return true;
       }),
+
     body("password")
       .exists()
       .withMessage(CONFIG.INVALID_NEW_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
+      .bail()
       .matches(CONFIG.PASSWORD_PATTERN)
       .withMessage(
         "Password must contain at least one uppercase letter, one lowercase letter and one number"
       ),
+
     body("confirmPassword")
       .exists()
       .withMessage(CONFIG.EMPTY_CONFIRM_PASSWORD)
+      .bail()
       .notEmpty()
       .withMessage(CONFIG.EMPTY_NEW_PASSWORD)
-      .custom((value,{ req }) => {
+      .bail()
+      .custom((value, { req }) => {
         // console.log(value , req.body.password)
         if (value != req.body.password) {
           throw new Error(CONFIG.NEW_CONFIRM_ERROR);
@@ -234,10 +282,12 @@ exports.validateUserLogin = () => {
     check("password")
       .isLength({ min: 5 })
       .withMessage("The password must be 5+ chars long and contain a number"),
+
     check("email")
       .normalizeEmail()
       .isEmail()
       .withMessage("The valid email require"),
+
     check("username").notEmpty().withMessage("The Username is require"),
   ];
 };
@@ -249,6 +299,7 @@ exports.isRequestValid = (req, res, next) => {
     return next();
   }
   const extractedErrors = [];
+  // console.log(errors);
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
   if (extractedErrors) {
     res.status(400);
