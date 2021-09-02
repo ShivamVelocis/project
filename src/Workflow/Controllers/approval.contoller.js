@@ -17,8 +17,6 @@ const { CONFIG } = require("../Configs/config");
 const nextActionAllowed = async (req, res, next) => {
   try {
     let approvalData = await ApprovalModel.findOne({ id: req.params.id });
-    // console.log(req.params.id)
-    // console.log(approvalData)
     if (!approvalData) {
       return res.json({
         success: false,
@@ -55,7 +53,7 @@ const nextActionAllowed = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
-    
+
     if (!state.wfNextActions.length) {
       return res.json({
         success: false,
@@ -64,10 +62,26 @@ const nextActionAllowed = async (req, res, next) => {
         accesstoken: req.accesstoken,
       });
     }
+
+    const findActionName = (actions) => {
+      let nextActions = [];
+      actions.map((action) => {
+        workFlowData.states.map((state) => {
+          if (state.wfLevel == action.nextAction) {
+            nextActions.push({
+              wfLevel: action.nextAction,
+              wfLevelName: state.wfLevelName,
+            });
+          }
+        });
+      });
+      return nextActions;
+    };
+
     return res.json({
       success: true,
       message: CONFIG.ACTIONS_ALLOWED,
-      data: state.wfNextActions,
+      data: findActionName(state.wfNextActions),
       accesstoken: req.accesstoken,
     });
   } catch (error) {
