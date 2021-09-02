@@ -7,9 +7,9 @@ exports.addFeedback = async (req, res) => {
 	
 		try {
 	 var form_data = {
-      feedback_title: req.body.title,
-	  feedback_email:req.body.email,
-      feedback_description: req.body.description,
+      title: req.body.title,
+	  email:req.body.email,
+      description: req.body.description,
     };
 	
 	  //Validation
@@ -28,6 +28,7 @@ exports.addFeedback = async (req, res) => {
     } else {
       let feedback = new Feedback(form_data);
       let saveFeedback = await feedback.save();
+	  console.log(saveFeedback);
       return res.json({
 		       success:true,
                message: "Feedback added successfully",
@@ -138,11 +139,7 @@ exports.removeFeedback = async (req, res) => {
 
 exports.updateFeedback = async (req, res,next) => {
    let id = req.body.id;
-  let updatedFeedback = {
-      feedback_title: req.body.title,
-	  feedback_email:req.body.email,
-      feedback_description: req.body.description,
-    };
+  let updatedFeedback = req.body;
   try {
 	  let errorsExtract = [];
     let validationErrors = validationResult(req);
@@ -162,6 +159,7 @@ exports.updateFeedback = async (req, res,next) => {
       { $set: updatedFeedback },
       { new: true }
     );
+	console.log(result);
     if (result !== undefined && result !== null) {
       res.status(200);
       return res.json({

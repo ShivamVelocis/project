@@ -23,6 +23,12 @@ const contactusRouter = require("./src/ContactUs/routes/contactusRoutes");
 const feedbackRouter = require("./src/FeedbackManagement/routes/feedbackRoutes");
 const workflowRouter = require("./src/Workflow/Routers/workflow.routes");
 const approvalRouter = require("./src/Workflow/Routers/approval.routes");
+<<<<<<< HEAD
+=======
+const menuRouter = require("./src/menu/routes/MenuRouter");
+const galleryRouter = require("./src/gallaryManagement/routes/galleryRouter");
+
+>>>>>>> 9c8bc07aaa7c523d51dd3825ee9d7bb41225e512
 
 //Middleware import
 const { assignRole } = require("./src/ACL/middlewares/roleAssg");
@@ -52,6 +58,9 @@ app.use("/contactus", contactusRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/workflow", workflowRouter);
 app.use("/approve", approvalRouter);
+app.use("/menu", menuRouter);
+app.use("/gallery", galleryRouter);
+
 
 //handle wild card URI
 app.use((_req, _res, next) => {

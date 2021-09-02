@@ -5,8 +5,8 @@ const { check, validationResult } = require("express-validator");
 exports.addContactus = async (req, res) => {
   try {
     var form_data = {
-      contactus_title: req.body.title,
-      contactus_description: req.body.description,
+      title: req.body.title,
+      description: req.body.description,
     };
 
     //Validation
@@ -142,10 +142,7 @@ exports.removeContactus = async (req, res) => {
 exports.updateContactus = async (req, res) => {
 
  let id = req.body.id;
-  let updatedContactus = {
-      contactus_title: req.body.title,
-      contactus_description: req.body.description,
-    };
+  let updatedContactus = req.body;
   try {
 	   let errorsExtract = [];
     let validationErrors = validationResult(req);

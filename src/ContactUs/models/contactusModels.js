@@ -2,8 +2,9 @@ let mongoose = require("mongoose");
 
 let contactusSchema = new mongoose.Schema(
   {
-    contactus_title: String,
-    contactus_description: String,
+    title: String,
+    description: String,
+    status: Number,
   },
   { timestamps: true }
 );
