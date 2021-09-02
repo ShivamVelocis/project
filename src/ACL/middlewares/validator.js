@@ -36,7 +36,6 @@ const addACLRuleValidation = () => {
     body("children").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
     body("children.*").isString().withMessage(CONFIG.INVALID_ROLE),
 
-
     body("parents").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
     body("parents.*").isString().withMessage(CONFIG.INVALID_ROLE),
   ];
@@ -94,6 +93,20 @@ const deleteACLRuleValidation = () => {
   ];
 };
 
+const getAclRuleValidation = () => {
+  return [
+    param("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+  ];
+};
 // middleware to check if any error encouter during validation
 const isRequestValid = (req, res, next) => {
   const errors = validationResult(req);
@@ -114,4 +127,5 @@ module.exports = {
   updateACLRuleValidation,
   deleteACLRuleValidation,
   isRequestValid,
+  getAclRuleValidation,
 };
