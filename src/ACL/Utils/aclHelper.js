@@ -26,7 +26,7 @@ const isMethodAllowed = (data, method) => {
 const allowedResource = (resource, resourceToBeAccess, method) => {
   // console.log(resource, resourceToBeAccess,method)
   if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    console.log("resourceToBeAccess: ", resourceToBeAccess);
+    // console.log("resourceToBeAccess: ", resourceToBeAccess);
     let isAllowed = isMethodAllowed(
       resource.filter(filterCallback("path", resourceToBeAccess)),
       method
@@ -254,7 +254,7 @@ const whileLoopCheck = (data, roleInParent) => {
 const extractResourcesFromAcls = (userRole, aclData) => {
   // console.log("data: ", data);
   let data = extractAclSubRulesData(userRole, aclData).acls;
-  console.log("data: ", data);
+  // console.log("data: ", data);
   if (!!!data) return;
   let allowedResources = [];
   let denyResources = [];
