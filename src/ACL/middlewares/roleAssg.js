@@ -4,6 +4,11 @@ const {
   generaterefreshToken,
 } = require("../Utils/authHelper");
 
+/* 
+* Middleware
+* Assign role to user by accessing the token in request header else assign anonymous
+* req.user
+*/
 let assignRole = async (req, _res, next) => {
   try {
     if (isUserTokenValid(req)) {
