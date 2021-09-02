@@ -6,6 +6,7 @@ let WorkflowSchema = new mongoose.Schema(
     states: [
       {
         _id: false,
+        stateName: String,
         wfLevel: { type: Number, required: true },
         wfLevelName: { type: String, required: true },
         wfRole: [{ type: String }],
