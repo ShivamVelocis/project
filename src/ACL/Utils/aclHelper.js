@@ -26,7 +26,7 @@ const isMethodAllowed = (data, method) => {
 const allowedResource = (resource, resourceToBeAccess, method) => {
   // console.log(resource, resourceToBeAccess,method)
   if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    console.log("resourceToBeAccess: ", resourceToBeAccess);
+    // console.log("resourceToBeAccess: ", resourceToBeAccess);
     let isAllowed = isMethodAllowed(
       resource.filter(filterCallback("path", resourceToBeAccess)),
       method
@@ -169,7 +169,7 @@ const extractAclSubRulesData = (role, data) => {
   let childResourcesData = childrenResources(data, children);
 
   // return acl data of of child which contain current user role in parentRole array
-  let parentResourcesData = childrenResourcesAsParent(data, role);
+  let parentResourcesData = childOfResources(data, role);
   childResourcesData.acls.push(
     ...parentResourcesData.acls.filter(Boolean),
     currentRoleAclData
@@ -208,7 +208,7 @@ let childrenResources = (aclData, firstChildData) => {
  * @param {String} role Children of user role acl
  * @return {Object} Returns allowedResources and deniedResources.
  */
-const childrenResourcesAsParent = (aclData, role) => {
+const childOfResources = (aclData, role) => {
   //   console.log("aclData, role: ", aclData, role);
   let parents = [role];
   let data = aclData;
@@ -254,7 +254,7 @@ const whileLoopCheck = (data, roleInParent) => {
 const extractResourcesFromAcls = (userRole, aclData) => {
   // console.log("data: ", data);
   let data = extractAclSubRulesData(userRole, aclData).acls;
-  console.log("data: ", data);
+  // console.log("data: ", data);
   if (!!!data) return;
   let allowedResources = [];
   let denyResources = [];

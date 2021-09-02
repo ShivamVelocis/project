@@ -49,7 +49,7 @@ const isPermitted = async (req, res, next) => {
         allowedResources,
         req.originalUrl,
         req.method
-      ) && aclHelper.denyResource(denyResources, req.originalUrl, req.method);
+      ) && !aclHelper.allowedResource(denyResources, req.originalUrl, req.method);
   }
 
   if (isAllowed) return next();
