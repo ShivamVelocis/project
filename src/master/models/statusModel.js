@@ -4,6 +4,7 @@ let statusSchema = new mongoose.Schema(
   {
     status_title: String,
     status: Number,
+    module: { type: mongoose.Schema.Types.ObjectId, ref: "Module" },
   },
   { timestamps: true }
 );

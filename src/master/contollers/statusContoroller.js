@@ -120,7 +120,7 @@ const deleteStatus = async (req, res, next) => {
       res.status(400);
       return res.json({
         success: false,
-        message: CONFIG.RESOURCE_DELETE_FAILED,
+        message: "CONFIG.RESOURCE_DELETE_FAILED",
         data: result,
         accesstoken: req.accesstoken,
       });
@@ -128,7 +128,7 @@ const deleteStatus = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: CONFIG.RESOURCE_DELETE_SUCCESS,
+      message: "CONFIG.RESOURCE_DELETE_SUCCESS",
       data: result,
       accesstoken: req.accesstoken,
     });
