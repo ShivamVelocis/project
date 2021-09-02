@@ -2,7 +2,6 @@ const CONFIG = require("../configs/config");
 const aclModel = require("../models/aclModel");
 const aclHelper = require("../Utils/aclHelper");
 
-
 const getAcl = async (req, res, next) => {
   aclId = req.params.id;
   try {
@@ -386,6 +385,7 @@ const aclCheck = async (req, res) => {
 };
 
 const getAllChildrenData = async (req, res, next) => {
+  let dbRoleData;
   try {
     let aclData = await aclModel
       .find({ aclStatus: 1 })
@@ -399,10 +399,38 @@ const getAllChildrenData = async (req, res, next) => {
         match: { resource_status: 1 },
         select: { module: 0, __v: 0 },
       });
+    // console.log(aclData);
+    if (!aclData.length) {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: `No reocrd(s) found`,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
 
-    let dbRoleData = aclHelper.extractAclSubRulesData(req.userRole, aclData);
+    dbRoleData = aclHelper.extractAclSubRulesData(req.params.userRole, aclData);
+    // console.log("dbRoleData: ", dbRoleData);
+
     // console.log(tester.extractResourcesFromAcls(dbRoleData.acls));
-    res.send(dbRoleData);
+    if (dbRoleData) {
+      res.status(200);
+      return res.json({
+        success: true,
+        message: `Children of ${req.params.userRole}`,
+        data: dbRoleData,
+        accesstoken: req.accesstoken,
+      });
+    } else {
+      res.status(404);
+      return res.json({
+        success: false,
+        message: `No reocrd(s) found`,
+        data: null,
+        accesstoken: req.accesstoken,
+      });
+    }
   } catch (error) {
     next(error);
   }

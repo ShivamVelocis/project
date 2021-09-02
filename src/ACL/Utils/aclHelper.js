@@ -157,7 +157,11 @@ const extractAclSubRulesData = (role, data) => {
 
   // extract data of current role
   let currentRoleAclData = lodash.find(data, ["role", role]);
-
+  // console.log('currentRoleAclData: ', currentRoleAclData);
+  if (!!!currentRoleAclData) {
+    // console.log("currentRoleAclData: ", !!!currentRoleAclData);
+    return;
+  }
   // push current acl role data into arrays
   children.push(...currentRoleAclData.children);
 
@@ -250,6 +254,8 @@ const whileLoopCheck = (data, roleInParent) => {
 const extractResourcesFromAcls = (userRole, aclData) => {
   // console.log("data: ", data);
   let data = extractAclSubRulesData(userRole, aclData).acls;
+  console.log("data: ", data);
+  if (!!!data) return;
   let allowedResources = [];
   let denyResources = [];
   data
