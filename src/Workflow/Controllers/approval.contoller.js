@@ -206,7 +206,17 @@ const getWfStatu = async (req, res, next) => {
   console.log(req.params.id);
   try {
     let approvalData = await ApprovalModel.findOne({ id: req.params.id });
+    let workflowData = await WorkflowModel.findOne({
+      module: approvalData.module,
+    });
     // console.log(approvalData);
+    let stateName;
+    workflowData.states.map((state) => {
+      if (state.wfLevel == approvalData.level) {
+        stateName = state.stateName;
+      }
+    });
+
     if (!approvalData) {
       return res.json({
         success: false,
@@ -218,7 +228,11 @@ const getWfStatu = async (req, res, next) => {
     return res.json({
       success: true,
       message: "Status",
-      data: { status: approvalData.level, comment: approvalData.comment },
+      data: {
+        levelName: approvalData.level,
+        comment: approvalData.comment,
+        Status: stateName,
+      },
       accesstoken: req.accesstoken,
     });
   } catch (error) {
