@@ -218,7 +218,11 @@ const getWfStatu = async (req, res, next) => {
     return res.json({
       success: true,
       message: "Status",
-      data: { status: approvalData.level, comment: approvalData.comment },
+      data: {
+        levelName: approvalData.level,
+        comment: approvalData.comment,
+        Status: approvalData.stateName,
+      },
       accesstoken: req.accesstoken,
     });
   } catch (error) {
