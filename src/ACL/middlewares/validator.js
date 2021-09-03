@@ -8,28 +8,36 @@ const addACLRuleValidation = () => {
       .optional()
       .isArray()
       .withMessage(CONFIG.INVALID_RESOURCE),
+
     body("allowedResources.*")
       .optional()
       .custom((value) => {
-        if (!ObjectId(value)) {
+        if (value && !ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
+
     body("denyResources")
       .optional()
       .isArray()
-      .optional()
       .withMessage(CONFIG.INVALID_RESOURCE),
-    body("denyResources")
+
+    body("denyResources.*")
       .optional()
       .custom((value) => {
-        if (!ObjectId(value)) {
+        if (value && !ObjectId(value)) {
           throw new Error(CONFIG.INVALID_MONGODB_ID);
         }
         return true;
       }),
     body("role").isString().withMessage(CONFIG.INVALID_ROLE),
+
+    body("children").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
+    body("children.*").isString().withMessage(CONFIG.INVALID_ROLE),
+
+    body("parents").optional().isArray().withMessage(CONFIG.INVALID_ROLE),
+    body("parents.*").isString().withMessage(CONFIG.INVALID_ROLE),
   ];
 };
 const updateACLRuleValidation = () => {
@@ -85,6 +93,20 @@ const deleteACLRuleValidation = () => {
   ];
 };
 
+const getAclRuleValidation = () => {
+  return [
+    param("id")
+      .exists()
+      .withMessage(CONFIG.EMPTY_ID)
+      .bail()
+      .custom((value) => {
+        if (!ObjectId(value)) {
+          throw new Error(CONFIG.INVALID_MONGODB_ID);
+        }
+        return true;
+      }),
+  ];
+};
 // middleware to check if any error encouter during validation
 const isRequestValid = (req, res, next) => {
   const errors = validationResult(req);
@@ -105,4 +127,5 @@ module.exports = {
   updateACLRuleValidation,
   deleteACLRuleValidation,
   isRequestValid,
+  getAclRuleValidation,
 };
