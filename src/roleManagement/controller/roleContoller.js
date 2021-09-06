@@ -2,10 +2,14 @@ const Role = require("../models/rolemodel.js");
 const Configs = require("../configs/config");
 const { check, validationResult } = require('express-validator');
 exports.addRole = async (req, res) => {
+	console.log("jyoti");
   try {
+	  var name=req.body.title.replace(' ','_');
+	  console.log(name);
 	 var form_data = {
-      title: req.body.title,
-      status: req.body.status,
+	  role_name:name,
+      role_title: req.body.title,
+      role_status: req.body.status,
     };
 	
 	  //Validation
@@ -33,7 +37,7 @@ exports.addRole = async (req, res) => {
     }
 
   } catch (error) {
-	  //console.log(error);
+	  console.log(error);
 	  return res.json({
 		       success:false,
                message: "title already exist in database",
@@ -112,7 +116,10 @@ exports.removeRole = async (req, res) => {
 
 exports.updateRole = async (req, res,next) => {
   let id = req.body.id;
-  let updatedRole = req.body;
+  var updatedRole = {
+      role_title: req.body.title,
+      role_status: req.body.status,
+    };
   try {
 	  let errorsExtract = [];
     let validationErrors = validationResult(req);
