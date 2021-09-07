@@ -87,7 +87,7 @@ const getResource = async (req, res, next) => {
     res.status(200);
     return res.json({
       success: true,
-      message: RESOURCE_FETCH_SUCCESS,
+      message: CONFIG.RESOURCE_FETCH_SUCCESS,
       data: result,
       accesstoken: req.accesstoken,
     });
