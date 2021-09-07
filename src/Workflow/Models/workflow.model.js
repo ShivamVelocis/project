@@ -6,6 +6,7 @@ let WorkflowSchema = new mongoose.Schema(
     states: [
       {
         _id: false,
+        stateName: String,
         wfLevel: { type: Number, required: true },
         wfLevelName: { type: String, required: true },
         wfRole: [{ type: String }],
@@ -16,7 +17,16 @@ let WorkflowSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("WorkflowV3", WorkflowSchema);
+WorkflowSchema.pre("save", async function (next) {
+  let data = await this.constructor.findOne({ module: this.module });
+  if (data) {
+    next(new Error("Worfkflow already available for this Module"));
+  } else {
+    next();
+  }
+});
+
+module.exports = mongoose.model("Workflow", WorkflowSchema);
 
 // 0-drafted
 // 1-initiated

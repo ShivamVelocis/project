@@ -10,7 +10,7 @@ router.put("/",updateContentRule(), isRequestValid, controller.updateContent);
 router.delete("/",deleteContentRule(),isRequestValid,controller.removeContent);
 router.get("/:id", getContentRule(),isRequestValid,controller.getContent);
 router.put("/:id", controller.updateContentStatus);
-router.get("/publish/:id", controller.contentPublish);
+router.put("/publish/:id", controller.contentPublish);
 
 
 module.exports = router;
