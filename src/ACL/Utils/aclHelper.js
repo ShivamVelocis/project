@@ -14,6 +14,27 @@ const isMethodAllowed = (data, method) => {
   });
 };
 
+/**
+ * Return changed resource,Repalce {text} with corresponding value in resource to be access value.
+ * @param {Array} allowedResources Resources allowed.
+ * @param {Array} resourceToBeAccess Resource to bo accessed.
+ * @return {Array} Returns Changed resource path.
+ */
+const changeResource = (allowedResources, resourceToBeAccess) => {
+  let urlArray = lodash.remove(resourceToBeAccess.split("/"), (n) => !!n);
+  return allowedResources.map((item) => {
+    let pathArray = lodash.remove(item.path.split("/"), (n) => !!n);
+    pathArray.map((item, index) => {
+      if (/(^{).*(}$)/.test(item)) {
+        pathArray[index] = urlArray[index] || item;
+      }
+    });
+    let path = pathArray.join("/");
+    console.log("pathArray: ", pathArray);
+    return { path, methods: item.methods };
+  });
+};
+
 // -----------------------------------check allowed resources start--------------
 /**
 /**
@@ -218,21 +239,6 @@ const extractResourcesFromAcls = (userRole, aclData) => {
       denyResources.push(...item.denyResources);
     });
   return { allowedResources, denyResources };
-};
-
-const changeResource = (allowedResources, resourceToBeAccess) => {
-  let urlArray = lodash.remove(resourceToBeAccess.split("/"), (n) => !!n);
-  return allowedResources.map((item) => {
-    let pathArray = lodash.remove(item.path.split("/"), (n) => !!n);
-    pathArray.map((item, index) => {
-      if (/(^{).*(}$)/.test(item)) {
-        pathArray[index] = urlArray[index] || item;
-      }
-    });
-    let path = pathArray.join("/");
-    console.log("pathArray: ", pathArray);
-    return { path, methods: item.methods };
-  });
 };
 
 module.exports = {
