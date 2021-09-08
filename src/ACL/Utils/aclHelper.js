@@ -24,9 +24,7 @@ const isMethodAllowed = (data, method) => {
  * @return {boolean} if allowed return True else False.
  */
 const allowedResource = (resource, resourceToBeAccess, method) => {
-  // console.log(resource, resourceToBeAccess,method)
   if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    // console.log("resourceToBeAccess: ", resourceToBeAccess);
     let isAllowed = isMethodAllowed(
       resource.filter(filterCallback("path", resourceToBeAccess)),
       method
@@ -35,7 +33,6 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
       return true;
     }
   }
-  // if (lodash.find(resource, ["path", "/*"])) {
   if (lodash.find(resource, filterCallback("path", "/*"))) {
     let isAllowed = isMethodAllowed(
       resource.filter(filterCallback("path", "/*")),
@@ -45,6 +42,9 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
       return true;
     }
   }
+
+  resource = changeResource(resource, resourceToBeAccess);
+
   let path =
     resourceToBeAccess.substring(resourceToBeAccess.length - 1) == "/"
       ? resourceToBeAccess.slice(0, resourceToBeAccess.length - 1)
@@ -88,64 +88,6 @@ const allowedResource = (resource, resourceToBeAccess, method) => {
 
 // -----------------------------------check allowed resources end----------------
 
-// -----------------------------------check deny resources start-----------------
-/**
- * check resource user want to access.
- * @param {Array} resource List of resources deny.
- * @param {string} resourceToBeAccess Resource user want to access.
- * @param {string} method Request method user want to access.
- * @return {boolean} if deny return True else False.
- */
-const denyResource = (resource, resourceToBeAccess, method) => {
-  let resourcePathIndex = null;
-  if (lodash.find(resource, ["path", resourceToBeAccess])) {
-    resourcePathIndex = lodash.findIndex(resource, [
-      "path",
-      resourceToBeAccess,
-    ]);
-    deniedMethods = resource[resourcePathIndex].methods;
-    isMethodDenied = deniedMethods.includes(method);
-    return !isMethodDenied;
-  }
-  if (lodash.find(resource, ["path", "/*"])) {
-    resourcePathIndex = lodash.findIndex(resource, ["path", "/*"]);
-    deniedMethods = resource[resourcePathIndex].methods;
-    isMethodDenied = deniedMethods.includes(method);
-    return !isMethodDenied;
-  }
-  let path =
-    resourceToBeAccess.substring(resourceToBeAccess.length - 1) == "/"
-      ? resourceToBeAccess.slice(0, resourceToBeAccess.length - 1)
-      : resourceToBeAccess;
-  let pathArray = lodash.remove(path.split("/"), (n) => !!n);
-  let i = 0;
-  let subPath = pathArray[0];
-  while (pathArray.length > i) {
-    astrikPath = subPath + "/*";
-    if (lodash.find(resource, ["path", astrikPath])) {
-      resourcePathIndex = lodash.findIndex(resource, ["path", astrikPath]);
-      deniedMethods = resource[resourcePathIndex].methods;
-      return !deniedMethods.includes(method);
-    }
-    i++;
-    subPath = subPath + "/" + pathArray[i];
-  }
-  i = 0;
-  subPath = pathArray[0];
-  while (pathArray.length > i) {
-    subPath = subPath + "/";
-    if (lodash.find(resource, ["path", subPath])) {
-      resourcePathIndex = lodash.findIndex(resource, ["path", subPath]);
-      deniedMethods = resource[resourcePathIndex].methods;
-      return !deniedMethods.includes(method);
-    }
-    i++;
-    subPath = subPath + pathArray[i];
-  }
-  return true;
-};
-
-// -----------------------------------check deny resources end-------------------
 /**
  * Return acl data of all children acls.
  * @param {String} role User role.
@@ -278,9 +220,23 @@ const extractResourcesFromAcls = (userRole, aclData) => {
   return { allowedResources, denyResources };
 };
 
+const changeResource = (allowedResources, resourceToBeAccess) => {
+  let urlArray = lodash.remove(resourceToBeAccess.split("/"), (n) => !!n);
+  return allowedResources.map((item) => {
+    let pathArray = lodash.remove(item.path.split("/"), (n) => !!n);
+    pathArray.map((item, index) => {
+      if (/(^{).*(}$)/.test(item)) {
+        pathArray[index] = urlArray[index] || item;
+      }
+    });
+    let path = pathArray.join("/");
+    console.log("pathArray: ", pathArray);
+    return { path, methods: item.methods };
+  });
+};
+
 module.exports = {
   allowedResource,
-  denyResource,
   extractAclSubRulesData,
   extractResourcesFromAcls,
 };
