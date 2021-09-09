@@ -242,6 +242,7 @@ const getWfStatu = async (req, res, next) => {
 
 // to item to aprroval table/collection for wrokflow
 const addForApproval = async (req, res, next) => {
+  let wfLevel = req.wfLevel || 5;
   try {
     let isDuplicate = await ApprovalModel.findOne({ id: req.body.id });
     // console.log(isDuplicate);
@@ -254,7 +255,7 @@ const addForApproval = async (req, res, next) => {
       });
     }
     let newRequest = new ApprovalModel({
-      level: 5,
+      level: wfLevel,
       updatedBy: req.user,
       id: req.body.id,
       module: req.body.module,
