@@ -53,10 +53,10 @@ const prepareTableData = async (columns, data, headerText, serialNo) => {
                 newObj = {}
                 return;
             } else if (typeof val == "number") {
-                console.log('val: ', val);
+                
                 newObj.text = val;
                 newObj.alignment = "right";
-                console.log('newObj: ', newObj);
+                
                 temp.push(newObj);
                 newObj = {}
             } else if (val instanceof Date) {
@@ -68,7 +68,7 @@ const prepareTableData = async (columns, data, headerText, serialNo) => {
         dataRows.push(temp);
     });
 
-    // console.log("dataRows", dataRows)
+    // 
 
 
     return { headerRow, dataRows, widths, headerTextRow };
