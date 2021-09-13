@@ -9,12 +9,11 @@ const pdfDownload = async (req, res, next) => {
     let columns = req.body.columns;
     let pdfName = req.body.fileName;
     let data = req.body.data;
-
-
+    
     try {
         let { headerRow, dataRows, widths, headerTextRow } = await prepareTableData(columns, data, req.body.headerText);
         let table = await tableGenerator(headerRow, dataRows, widths, headerTextRow)
-        console.log('table: ', table);
+
         pdfMake.createPdf({ content: [table] }).getBuffer((buffer) => {
             res.writeHead(201, {
                 "Content-disposition": "attachment;filename=" + `${pdfName}.pdf`,
