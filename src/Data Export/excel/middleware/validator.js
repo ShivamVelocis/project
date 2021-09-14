@@ -1,18 +1,17 @@
-const { body, validationResult } = require("express-validator");
-const localization = require("../configs/Localization");
-
+const { body, validationResult } = require('express-validator')
+const localization = require('../configs/Localization')
 
 const excelJsonFile = () => {
   return [
-    body("fileName").exists().withMessage(localization.EMPTY_FILENAME),
+    body('fileName').exists().withMessage(localization.EMPTY_FILENAME),
 
-    body("columns")
+    body('columns')
       .exists()
       .withMessage(localization.EMPTY_COLUMNS)
       .isArray()
       .withMessage(localization.INVALID_COLUMNS),
 
-    body("columns.*")
+    body('columns.*')
       .exists()
       .withMessage(localization.EMPTY_COLUMNS)
       .isObject()
@@ -20,37 +19,37 @@ const excelJsonFile = () => {
       .custom((value) => {
         if (value.title) {
           if (!value.field) {
-            throw new Error(localization.EMPTY_COLUMN_FIELD);
+            throw new Error(localization.EMPTY_COLUMN_FIELD)
           }
         }
         if (value.field) {
           if (!value.title) {
-            throw new Error(localization.EMPTY_COLUMN_TITLE);
+            throw new Error(localization.EMPTY_COLUMN_TITLE)
           }
         }
-        return true;
+        return true
       }),
 
-    body("data")
+    body('data')
       .exists()
       .withMessage(localization.EMPTY_DATA)
       .isArray()
-      .withMessage(localization.INVALID_DATA),
-  ];
-};
+      .withMessage(localization.INVALID_DATA)
+  ]
+}
 
 const isRequestValid = (req, res, next) => {
-  const errors = validationResult(req);
+  const errors = validationResult(req)
   if (errors.isEmpty()) {
-    return next();
+    return next()
   }
-  const extractedErrors = [];
-  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
+  const extractedErrors = []
+  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }))
   if (extractedErrors) {
-    res.status(400);
-    return res.json({ success: false, message: extractedErrors, data: null });
+    res.status(400)
+    return res.json({ success: false, message: extractedErrors, data: null })
   }
-  next();
-};
+  next()
+}
 
-module.exports = { excelJsonFile, isRequestValid };
+module.exports = { excelJsonFile, isRequestValid }
